@@ -1,76 +1,95 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mon Site - Single Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Site ESP32</title>
   <style>
-    :root{
-      --accent:#0b76ef;
-      --bg:#f6f8fb;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --radius:14px;
-      --glass: rgba(255,255,255,0.6);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
-      background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%);
-      color:#111827;
-      -webkit-font-smoothing:antialiased;
-      scroll-behavior:smooth;
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
     }
 
-    /* NAV */
-    .nav{
-      position:fixed;
-      top:0;
-      left:0;
-      right:0;
-      height:64px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 24px;
-      background:rgba(255,255,255,0.8);
-      backdrop-filter: blur(6px);
-      border-bottom:1px solid rgba(0,0,0,0.04);
-      z-index:1000;
-    }
-    .brand{font-weight:700; color:var(--accent)}
-    .menu{display:flex; gap:14px; align-items:center}
-    .menu a{
-      text-decoration:none;
-      color:var(--muted);
-      padding:8px 10px;
-      border-radius:8px;
-      font-weight:600;
-    }
-    .menu a.active, .menu a:hover{ color:#0b233f; background:rgba(11,118,239,0.08) }
-
-    /* Hero */
-    .hero{
-      padding:120px 20px 60px;
-      max-width:1100px;
-      margin:0 auto;
-      display:grid;
-      grid-template-columns: 1fr 420px;
-      gap:30px;
-      align-items:center;
-    }
-    .hero h1{ margin:0 0 12px; font-size:32px; line-height:1.05}
-    .hero p{ margin:0 0 18px; color:var(--muted) }
-
-    .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      box-shadow:0 6px 24px rgba(12,20,40,0.06);
-      padding:18px;
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 15px;
+      text-align: center;
     }
 
-    /* Sections */
-    section{ max-width:1100px; margin:40px auto; padding:20px }
-    .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px }
-    .center{ text-align:center }
+    nav {
+      background-color: #005fa3;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    section {
+      display: none;
+      padding: 20px;
+      background-color: white;
+      max-width: 800px;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    section.active {
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Projet ESP32 🌿</h1>
+  </header>
+
+  <nav>
+    <a onclick="showTab('accueil')">Accueil</a>
+    <a onclick="showTab('donnees')">Données</a>
+  </nav>
+
+  <section id="accueil" class="active">
+    <h2>Bienvenue</h2>
+    <p>Bienvenue sur le site de test pour ton projet ESP32 !</p>
+    <p>Utilise les onglets ci-dessus pour naviguer entre les différentes sections.</p>
+  </section>
+
+  <section id="donnees">
+    <h2>Données du capteur</h2>
+    <p>Ici tu pourras afficher la température, humidité, etc. reçues de ton ESP32.</p>
+  </section>
+
+  <footer>
+    <p>© 2025 - Mon projet ESP32</p>
+  </footer>
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+    }
+  </script>
+
+</body>
+</html>
