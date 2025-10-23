@@ -5,57 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon Site ESP32</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f4f4f4;
-    }
-
-    header {
-      background-color: #0077cc;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-
-    nav {
-      background-color: #005fa3;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      padding: 10px;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    nav a:hover {
-      text-decoration: underline;
-    }
-
-    section {
-      display: none;
-      padding: 20px;
-      background-color: white;
-      max-width: 800px;
-      margin: 20px auto;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    section.active {
-      display: block;
-    }
-
-    footer {
-      text-align: center;
-      padding: 10px;
-      color: #555;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; }
+    header { background-color: #0077cc; color: white; padding: 15px; text-align: center; }
+    nav { background-color: #005fa3; display: flex; justify-content: center; gap: 20px; padding: 10px; }
+    nav a { color: white; text-decoration: none; font-weight: bold; cursor: pointer; }
+    nav a:hover { text-decoration: underline; }
+    section { display: none; padding: 20px; background-color: white; max-width: 800px; margin: 20px auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    section.active { display: block; }
+    footer { text-align: center; padding: 10px; color: #555; }
+    .data-item { margin-bottom: 10px; font-size: 1.2em; }
   </style>
 </head>
 <body>
@@ -77,7 +35,9 @@
 
   <section id="donnees">
     <h2>Données du capteur</h2>
-    <p>Ici tu pourras afficher la température, humidité, etc. reçues de ton ESP32.</p>
+    <div id="capteurData">
+      <p>Chargement des données...</p>
+    </div>
   </section>
 
   <footer>
@@ -89,6 +49,29 @@
       document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
       document.getElementById(tabId).classList.add("active");
     }
+
+    // --- Fonction pour récupérer les données depuis le backend ---
+    async function fetchData() {
+      try {
+        const response = await fetch('http://192.168.1.145:3000/api/data/latest');
+        if (!response.ok) throw new Error('Erreur réseau');
+        const data = await response.json();
+
+        const container = document.getElementById('capteurData');
+        container.innerHTML = `
+          <div class="data-item"><strong>Température :</strong> ${data.temperature.toFixed(1)} °C</div>
+          <div class="data-item"><strong>Humidité :</strong> ${data.humidity.toFixed(1)} %</div>
+          <div class="data-item"><strong>Timestamp :</strong> ${data.timestamp}</div>
+        `;
+      } catch (err) {
+        console.error('Erreur fetch:', err);
+        document.getElementById('capteurData').innerHTML = '<p>Impossible de récupérer les données.</p>';
+      }
+    }
+
+    // --- Mise à jour toutes les 10 secondes ---
+    fetchData(); // premier appel
+    setInterval(fetchData, 10000);
   </script>
 
 </body>
