@@ -1,19 +1,91 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon Site ESP32</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Suivi des données ESP32</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; }
-    header { background-color: #0077cc; color: white; padding: 15px; text-align: center; }
-    nav { background-color: #005fa3; display: flex; justify-content: center; gap: 20px; padding: 10px; }
-    nav a { color: white; text-decoration: none; font-weight: bold; cursor: pointer; }
-    nav a:hover { text-decoration: underline; }
-    section { display: none; padding: 20px; background-color: white; max-width: 800px; margin: 20px auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    section.active { display: block; }
-    footer { text-align: center; padding: 10px; color: #555; }
-    .data-item { margin-bottom: 10px; font-size: 1.2em; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    nav {
+      background-color: #005fa3;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    nav a:hover,
+    nav a.active {
+      background-color: #004d80;
+      text-decoration: underline;
+    }
+    section {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.12);
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .data-box {
+      background: #e9f1fb;
+      border: 2px solid #0077cc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .data-box:hover {
+      transform: scale(1.05);
+    }
+    .data-label {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      color: #005fa3;
+      font-weight: 600;
+    }
+    .data-value {
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #003366;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: #555;
+      background-color: #f9f9f9;
+      margin-top: 40px;
+      font-size: 0.9em;
+    }
   </style>
 </head>
 <body>
@@ -23,20 +95,28 @@
   </header>
 
   <nav>
-    <a onclick="showTab('accueil')">Accueil</a>
-    <a onclick="showTab('donnees')">Données</a>
+    <a class="active" onclick="showTab('suivi')">Suivi des données</a>
   </nav>
 
-  <section id="accueil" class="active">
-    <h2>Bienvenue</h2>
-    <p>Bienvenue sur le site de test pour ton projet ESP32 !</p>
-    <p>Utilise les onglets ci-dessus pour naviguer entre les différentes sections.</p>
-  </section>
-
-  <section id="donnees">
-    <h2>Données du capteur</h2>
-    <div id="capteurData">
-      <p>Chargement des données...</p>
+  <section id="suivi" class="active">
+    <h2>Suivi des données du capteur</h2>
+    <div class="grid-container" id="dataGrid">
+      <div class="data-box" id="airHumidityBox">
+        <div class="data-label">Humidité de l'air</div>
+        <div class="data-value" id="airHumidity">-- %</div>
+      </div>
+      <div class="data-box" id="soilHumidityBox">
+        <div class="data-label">Humidité du sol</div>
+        <div class="data-value" id="soilHumidity">-- %</div>
+      </div>
+      <div class="data-box" id="temperatureBox">
+        <div class="data-label">Température</div>
+        <div class="data-value" id="temperature">-- °C</div>
+      </div>
+      <div class="data-box" id="luminosityBox">
+        <div class="data-label">Luminosité</div>
+        <div class="data-value" id="luminosity">-- lx</div>
+      </div>
     </div>
   </section>
 
@@ -46,33 +126,32 @@
 
   <script>
     function showTab(tabId) {
-      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-      document.getElementById(tabId).classList.add("active");
+      document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('nav a').forEach(nav => nav.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`nav a[onclick="showTab('${tabId}')"]`).classList.add('active');
     }
 
-    // --- Fonction pour récupérer les données depuis le backend ---
     async function fetchData() {
       try {
         const response = await fetch('http://192.168.1.145:3000/api/data/latest');
         if (!response.ok) throw new Error('Erreur réseau');
         const data = await response.json();
 
-        const container = document.getElementById('capteurData');
-        container.innerHTML = `
-          <div class="data-item"><strong>Température :</strong> ${data.temperature.toFixed(1)} °C</div>
-          <div class="data-item"><strong>Humidité :</strong> ${data.humidity.toFixed(1)} %</div>
-          <div class="data-item"><strong>Timestamp :</strong> ${data.timestamp}</div>
-        `;
+        // Mettre à jour les valeurs dans les cases
+        document.getElementById('airHumidity').textContent = data.airHumidity !== undefined ? data.airHumidity.toFixed(1) + ' %' : '-- %';
+        document.getElementById('soilHumidity').textContent = data.soilHumidity !== undefined ? data.soilHumidity.toFixed(1) + ' %' : '-- %';
+        document.getElementById('temperature').textContent = data.temperature !== undefined ? data.temperature.toFixed(1) + ' °C' : '-- °C';
+        document.getElementById('luminosity').textContent = data.luminosity !== undefined ? data.luminosity.toFixed(0) + ' lx' : '-- lx';
       } catch (err) {
         console.error('Erreur fetch:', err);
-        document.getElementById('capteurData').innerHTML = '<p>Impossible de récupérer les données.</p>';
+        const grid = document.getElementById('dataGrid');
+        grid.innerHTML = '<p style="color: #a00;">Impossible de récupérer les données.</p>';
       }
     }
 
-    // --- Mise à jour toutes les 10 secondes ---
-    fetchData(); // premier appel
+    fetchData();
     setInterval(fetchData, 10000);
   </script>
-
 </body>
 </html>
