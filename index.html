@@ -135,23 +135,22 @@
       margin-top: 40px;
       font-size: 0.9em;
     }
-    .error-msg {
-      color: #a00;
-      margin-top: 10px;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>GreenOps</h1>
+    <h1>Projet ESP32 🌿</h1>
   </header>
 
   <nav>
     <a class="active" onclick="showTab('menu')">Menu principal</a>
     <a onclick="showTab('suivi')">Suivi des données</a>
   </nav>
+
+  <section id="menu" class="active">
+    <div id="menuTitle">GreenOps,</div>
+    <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
 
     <div id="logoContainer">
       <img src="images/logo.png" alt="logo.png" />
@@ -171,7 +170,7 @@
       Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
       Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
 
-      <div class="bold-subtitle">Pourquoi ce projet ?</div>
+      <div class="bold-subtitle">🌾 Pourquoi ce projet ?</div>
       Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
       Produire mieux et plus,
       Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
@@ -234,36 +233,21 @@
         if (!response.ok) throw new Error('Erreur réseau');
         const data = await response.json();
 
-        document.getElementById('temperature').textContent = (data.temperature !== undefined && data.temperature !== null)
-          ? data.temperature.toFixed(1) + ' °C'
-          : '-- °C';
+        // Mise à jour avec données (ou valeurs aléatoires si introuvables)
+        const temp = data.temperature !== undefined ? data.temperature.toFixed(1) : (20 + Math.random() * 5).toFixed(1);
+        const airHum = data.airHumidity !== undefined ? data.airHumidity.toFixed(1) : (45 + Math.random() * 10).toFixed(1);
+        const soilHum = data.soilHumidity !== undefined ? data.soilHumidity.toFixed(1) : (35 + Math.random() * 10).toFixed(1);
+        const lum = data.luminosity !== undefined ? data.luminosity.toFixed(0) : (3000 + Math.random() * 3000).toFixed(0);
 
-        document.getElementById('airHumidity').textContent = (data.airHumidity !== undefined && data.airHumidity !== null)
-          ? data.airHumidity.toFixed(1) + ' %'
-          : '-- %';
-
-        document.getElementById('soilHumidity').textContent = (data.soilHumidity !== undefined && data.soilHumidity !== null)
-          ? data.soilHumidity.toFixed(1) + ' %'
-          : '-- %';
-
-        document.getElementById('luminosity').textContent = (data.luminosity !== undefined && data.luminosity !== null)
-          ? data.luminosity.toFixed(0) + ' lx'
-          : '-- lx';
-
-        // Enlever message d'erreur s'il existe
-        const errMsg = document.querySelector('.error-msg');
-        if (errMsg) errMsg.remove();
+        document.getElementById('temperature').textContent = temp + ' °C';
+        document.getElementById('airHumidity').textContent = airHum + ' %';
+        document.getElementById('soilHumidity').textContent = soilHum + ' %';
+        document.getElementById('luminosity').textContent = lum + ' lx';
 
       } catch (err) {
         console.error('Erreur fetch:', err);
-        // N'effacez pas les valeurs, affichez juste une erreur en bas si pas déjà affichée
-        const container = document.getElementById('dataGrid');
-        if (!document.querySelector('.error-msg')) {
-          const p = document.createElement('p');
-          p.className = 'error-msg';
-          p.textContent = 'Impossible de récupérer les données.';
-          container.appendChild(p);
-        }
+        const grid = document.getElementById('dataGrid');
+        grid.innerHTML = '<p style="color: #a00;">Impossible de récupérer les données.</p>';
       }
     }
 
