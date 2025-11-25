@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Suivi des données ESP32</title>
+  <title>GreenOps - Projet ESP32</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -44,12 +44,42 @@
       background-color: white;
       padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.12);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
       display: none;
     }
     section.active {
       display: block;
     }
+    #menuTitle {
+      font-size: 2.4em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0077cc;
+      text-align: center;
+    }
+    #creators {
+      font-size: 1.4em;
+      font-weight: 600;
+      color: #005fa3;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #logoContainer {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    #logoContainer img {
+      max-width: 200px;
+      height: auto;
+    }
+    #presentationText {
+      white-space: pre-line;
+      line-height: 1.5em;
+      font-size: 1.1em;
+      color: #333;
+      padding: 0 20px;
+    }
+    /* Garder aussi le style pour les données comme avant */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -61,7 +91,7 @@
       border-radius: 8px;
       padding: 20px;
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       transition: transform 0.2s;
     }
     .data-box:hover {
@@ -95,10 +125,48 @@
   </header>
 
   <nav>
-    <a class="active" onclick="showTab('suivi')">Suivi des données</a>
+    <a class="active" onclick="showTab('menu')">Menu principal</a>
+    <a onclick="showTab('suivi')">Suivi des données</a>
   </nav>
 
-  <section id="suivi" class="active">
+  <section id="menu" class="active">
+    <div id="menuTitle">GreenOps by Jade Revol & Agathe Monteil</div>
+    <div id="creators">Votre projet et ses créateurs</div>
+
+    <div id="logoContainer">
+      <!-- Mettre ici votre logo -->
+      <img src="logo.png" alt="Logo GreenOps" />
+    </div>
+
+    <div id="presentationText">
+[translate:GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.
+
+Bienvenue sur GreenOps, votre solution d’agriculture intelligente.
+Notre système vous permet de surveiller en temps réel l’état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
+Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
+Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
+Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
+Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c’est nécessaire. Pourquoi GreenOps ?
+Green : pour notre engagement dans une agriculture plus durable.
+Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
+Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
+
+🌾 Pourquoi ce projet ?
+Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
+Produire mieux et plus,
+Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
+Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d’erreurs.
+Notre objectif est simple : aider les agriculteurs, qu’ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple.
+GreenOps a été conçu pour :
+Réduire les tâches répétitives, grâce à une surveillance automatisée,
+Limiter le gaspillage en eau et optimiser l’arrosage,
+Améliorer la qualité des cultures en anticipant les besoins,
+Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
+En bref : nous voulons mettre la technologie au service d’une agriculture plus humaine, plus durable et plus intelligente.]
+    </div>
+  </section>
+
+  <section id="suivi">
     <h2>Suivi des données du capteur</h2>
     <div class="grid-container" id="dataGrid">
       <div class="data-box" id="airHumidityBox">
@@ -138,7 +206,6 @@
         if (!response.ok) throw new Error('Erreur réseau');
         const data = await response.json();
 
-        // Mettre à jour les valeurs dans les cases
         document.getElementById('airHumidity').textContent = data.airHumidity !== undefined ? data.airHumidity.toFixed(1) + ' %' : '-- %';
         document.getElementById('soilHumidity').textContent = data.soilHumidity !== undefined ? data.soilHumidity.toFixed(1) + ' %' : '-- %';
         document.getElementById('temperature').textContent = data.temperature !== undefined ? data.temperature.toFixed(1) + ' °C' : '-- °C';
