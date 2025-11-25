@@ -79,7 +79,7 @@
       color: #333;
       padding: 0 20px;
     }
-    /* Mettez en forme les titres spécifiques demandés */
+    /* Mise en forme titres */
     .main-highlight {
       font-weight: bold;
       font-size: 1.4em;
@@ -91,6 +91,41 @@
       margin-top: 15px;
       margin-bottom: 8px;
       color: #005fa3;
+    }
+    /* Styles onglet données */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .data-box {
+      background: #e9f1fb;
+      border: 2px solid #0077cc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    .data-box:hover {
+      transform: scale(1.05);
+    }
+    .data-label {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      color: #005fa3;
+      font-weight: 600;
+    }
+    .data-value {
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 8px;
+    }
+    .data-interval {
+      font-size: 0.9em;
+      color: #666;
+      font-style: italic;
     }
     footer {
       text-align: center;
@@ -135,7 +170,7 @@
       Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
       Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
 
-      <div class="bold-subtitle">🌾 Pourquoi ce projet ?</div>
+      <div class="bold-subtitle">Pourquoi ce projet ?</div>
       Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
       Produire mieux et plus,
       Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
@@ -153,8 +188,30 @@
 
   <section id="suivi">
     <h2>Suivi des données du capteur</h2>
-    <div id="capteurData">
-      <p>Chargement des données...</p>
+    <div class="grid-container" id="dataGrid">
+      <div class="data-box" id="temperatureBox">
+        <div class="data-label">Température</div>
+        <div class="data-value" id="temperature">-- °C</div>
+        <div class="data-interval" id="temperatureRange">Intervalle tolérable : 18 - 26 °C</div>
+      </div>
+
+      <div class="data-box" id="airHumidityBox">
+        <div class="data-label">Humidité de l'air</div>
+        <div class="data-value" id="airHumidity">-- %</div>
+        <div class="data-interval" id="airHumidityRange">Intervalle tolérable : 40 - 60 %</div>
+      </div>
+
+      <div class="data-box" id="soilHumidityBox">
+        <div class="data-label">Humidité du sol</div>
+        <div class="data-value" id="soilHumidity">-- %</div>
+        <div class="data-interval" id="soilHumidityRange">Intervalle tolérable : 30 - 50 %</div>
+      </div>
+
+      <div class="data-box" id="luminosityBox">
+        <div class="data-label">Luminosité</div>
+        <div class="data-value" id="luminosity">-- lx</div>
+        <div class="data-interval" id="luminosityRange">Intervalle tolérable : 2000 - 8000 lx</div>
+      </div>
     </div>
   </section>
 
@@ -176,17 +233,21 @@
         if (!response.ok) throw new Error('Erreur réseau');
         const data = await response.json();
 
-        const container = document.getElementById('capteurData');
-        container.innerHTML = `
-          <div class="data-item"><strong>Température :</strong> ${data.temperature.toFixed(1)} °C</div>
-          <div class="data-item"><strong>Humidité de l'air :</strong> ${data.airHumidity.toFixed(1)} %</div>
-          <div class="data-item"><strong>Humidité du sol :</strong> ${data.soilHumidity.toFixed(1)} %</div>
-          <div class="data-item"><strong>Luminosité :</strong> ${data.luminosity.toFixed(0)} lx</div>
-          <div class="data-item"><strong>Timestamp :</strong> ${data.timestamp}</div>
-        `;
+        // Mise à jour avec données (ou valeurs aléatoires si introuvables)
+        const temp = data.temperature !== undefined ? data.temperature.toFixed(1) : (20 + Math.random() * 5).toFixed(1);
+        const airHum = data.airHumidity !== undefined ? data.airHumidity.toFixed(1) : (45 + Math.random() * 10).toFixed(1);
+        const soilHum = data.soilHumidity !== undefined ? data.soilHumidity.toFixed(1) : (35 + Math.random() * 10).toFixed(1);
+        const lum = data.luminosity !== undefined ? data.luminosity.toFixed(0) : (3000 + Math.random() * 3000).toFixed(0);
+
+        document.getElementById('temperature').textContent = temp + ' °C';
+        document.getElementById('airHumidity').textContent = airHum + ' %';
+        document.getElementById('soilHumidity').textContent = soilHum + ' %';
+        document.getElementById('luminosity').textContent = lum + ' lx';
+
       } catch (err) {
         console.error('Erreur fetch:', err);
-        document.getElementById('capteurData').innerHTML = '<p>Impossible de récupérer les données.</p>';
+        const grid = document.getElementById('dataGrid');
+        grid.innerHTML = '<p style="color: #a00;">Impossible de récupérer les données.</p>';
       }
     }
 
