@@ -79,7 +79,20 @@
       color: #333;
       padding: 0 20px;
     }
-    /* Garder aussi le style pour les données comme avant */
+    /* Mettez en forme les titres spécifiques demandés */
+    .main-highlight {
+      font-weight: bold;
+      font-size: 1.4em;
+      margin-bottom: 15px;
+      color: #003366;
+    }
+    .bold-subtitle {
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      color: #005fa3;
+    }
+    /* Style pour le deuxième onglet */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -121,7 +134,7 @@
 <body>
 
   <header>
-    <h1>Projet ESP32 🌿</h1>
+    <h1>Projet ESP32 </h1>
   </header>
 
   <nav>
@@ -130,39 +143,42 @@
   </nav>
 
   <section id="menu" class="active">
-    <div id="menuTitle">GreenOps by Jade Revol & Agathe Monteil</div>
+    <div id="menuTitle">GreenOps by Jade Revol &amp; Agathe Monteil</div>
     <div id="creators">Votre projet et ses créateurs</div>
 
     <div id="logoContainer">
       <!-- Mettre ici votre logo -->
-      <img src="logo.png" alt="Logo GreenOps" />
+<img src="images/logo.png" alt="Logo GreenOps" />
+
     </div>
 
     <div id="presentationText">
-[translate:GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.
+      <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
+      Bienvenue sur GreenOps, votre solution d’agriculture intelligente.
+      Notre système vous permet de surveiller en temps réel l’état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
+      Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
+      Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
+      Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
+      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c’est nécessaire.
 
-Bienvenue sur GreenOps, votre solution d’agriculture intelligente.
-Notre système vous permet de surveiller en temps réel l’état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
-Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
-Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
-Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
-Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c’est nécessaire. Pourquoi GreenOps ?
-Green : pour notre engagement dans une agriculture plus durable.
-Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
-Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
+      <div class="bold-subtitle">Pourquoi GreenOps ?</div>
+      Green : pour notre engagement dans une agriculture plus durable.
+      Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
+      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
 
-🌾 Pourquoi ce projet ?
-Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
-Produire mieux et plus,
-Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
-Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d’erreurs.
-Notre objectif est simple : aider les agriculteurs, qu’ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple.
-GreenOps a été conçu pour :
-Réduire les tâches répétitives, grâce à une surveillance automatisée,
-Limiter le gaspillage en eau et optimiser l’arrosage,
-Améliorer la qualité des cultures en anticipant les besoins,
-Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
-En bref : nous voulons mettre la technologie au service d’une agriculture plus humaine, plus durable et plus intelligente.]
+      <div class="bold-subtitle">Pourquoi ce projet ?</div>
+      Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
+      Produire mieux et plus,
+      Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
+      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d’erreurs.
+      Notre objectif est simple : aider les agriculteurs, qu’ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple. 
+
+      <div class="bold-subtitle">GreenOps a été conçu pour :</div>
+      Réduire les tâches répétitives, grâce à une surveillance automatisée,
+      Limiter le gaspillage en eau et optimiser l’arrosage,
+      Améliorer la qualité des cultures en anticipant les besoins,
+      Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
+      En bref : nous voulons mettre la technologie au service d’une agriculture plus humaine, plus durable et plus intelligente.
     </div>
   </section>
 
