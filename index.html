@@ -53,13 +53,13 @@
     #menuTitle {
       font-size: 2.4em;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
       color: #0077cc;
       text-align: center;
     }
-    #creators {
-      font-size: 1.4em;
-      font-weight: 600;
+    #menuSubtitle {
+      font-size: 1em;
+      font-style: italic;
       color: #005fa3;
       text-align: center;
       margin-bottom: 20px;
@@ -92,35 +92,6 @@
       margin-bottom: 8px;
       color: #005fa3;
     }
-    /* Style pour le deuxième onglet */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-    }
-    .data-box {
-      background: #e9f1fb;
-      border: 2px solid #0077cc;
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s;
-    }
-    .data-box:hover {
-      transform: scale(1.05);
-    }
-    .data-label {
-      font-size: 1.1em;
-      margin-bottom: 10px;
-      color: #005fa3;
-      font-weight: 600;
-    }
-    .data-value {
-      font-size: 2.2em;
-      font-weight: bold;
-      color: #003366;
-    }
     footer {
       text-align: center;
       padding: 15px;
@@ -134,7 +105,7 @@
 <body>
 
   <header>
-    <h1>Projet ESP32 </h1>
+    <h1>Projet ESP32 🌿</h1>
   </header>
 
   <nav>
@@ -143,13 +114,11 @@
   </nav>
 
   <section id="menu" class="active">
-    <div id="menuTitle">GreenOps by Jade Revol &amp; Agathe Monteil</div>
-    <div id="creators">Votre projet et ses créateurs</div>
+    <div id="menuTitle">GreenOps,</div>
+    <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
 
     <div id="logoContainer">
-      <!-- Mettre ici votre logo -->
-<img src="images/logo.png" alt="Logo GreenOps" />
-
+      <img src="images/logo.png" alt="logo.png" />
     </div>
 
     <div id="presentationText">
@@ -166,7 +135,7 @@
       Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
       Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
 
-      <div class="bold-subtitle">Pourquoi ce projet ?</div>
+      <div class="bold-subtitle">🌾 Pourquoi ce projet ?</div>
       Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
       Produire mieux et plus,
       Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
@@ -184,23 +153,8 @@
 
   <section id="suivi">
     <h2>Suivi des données du capteur</h2>
-    <div class="grid-container" id="dataGrid">
-      <div class="data-box" id="airHumidityBox">
-        <div class="data-label">Humidité de l'air</div>
-        <div class="data-value" id="airHumidity">-- %</div>
-      </div>
-      <div class="data-box" id="soilHumidityBox">
-        <div class="data-label">Humidité du sol</div>
-        <div class="data-value" id="soilHumidity">-- %</div>
-      </div>
-      <div class="data-box" id="temperatureBox">
-        <div class="data-label">Température</div>
-        <div class="data-value" id="temperature">-- °C</div>
-      </div>
-      <div class="data-box" id="luminosityBox">
-        <div class="data-label">Luminosité</div>
-        <div class="data-value" id="luminosity">-- lx</div>
-      </div>
+    <div id="capteurData">
+      <p>Chargement des données...</p>
     </div>
   </section>
 
@@ -222,14 +176,17 @@
         if (!response.ok) throw new Error('Erreur réseau');
         const data = await response.json();
 
-        document.getElementById('airHumidity').textContent = data.airHumidity !== undefined ? data.airHumidity.toFixed(1) + ' %' : '-- %';
-        document.getElementById('soilHumidity').textContent = data.soilHumidity !== undefined ? data.soilHumidity.toFixed(1) + ' %' : '-- %';
-        document.getElementById('temperature').textContent = data.temperature !== undefined ? data.temperature.toFixed(1) + ' °C' : '-- °C';
-        document.getElementById('luminosity').textContent = data.luminosity !== undefined ? data.luminosity.toFixed(0) + ' lx' : '-- lx';
+        const container = document.getElementById('capteurData');
+        container.innerHTML = `
+          <div class="data-item"><strong>Température :</strong> ${data.temperature.toFixed(1)} °C</div>
+          <div class="data-item"><strong>Humidité de l'air :</strong> ${data.airHumidity.toFixed(1)} %</div>
+          <div class="data-item"><strong>Humidité du sol :</strong> ${data.soilHumidity.toFixed(1)} %</div>
+          <div class="data-item"><strong>Luminosité :</strong> ${data.luminosity.toFixed(0)} lx</div>
+          <div class="data-item"><strong>Timestamp :</strong> ${data.timestamp}</div>
+        `;
       } catch (err) {
         console.error('Erreur fetch:', err);
-        const grid = document.getElementById('dataGrid');
-        grid.innerHTML = '<p style="color: #a00;">Impossible de récupérer les données.</p>';
+        document.getElementById('capteurData').innerHTML = '<p>Impossible de récupérer les données.</p>';
       }
     }
 
