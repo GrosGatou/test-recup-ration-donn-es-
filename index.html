@@ -1,113 +1,279 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Données Capteur DHT22</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-        h1 {
-            margin-bottom: 30px;
-        }
-        .data {
-            display: flex;
-            justify-content: space-around;
-            margin: 30px 0;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 15px;
-            min-width: 150px;
-        }
-        .value {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .label {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-        .timestamp {
-            margin-top: 20px;
-            opacity: 0.8;
-        }
-        .error {
-            color: #ff6b6b;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GreenOps - Projet ESP32</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    nav {
+      background-color: #005fa3;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    nav a:hover,
+    nav a.active {
+      background-color: #004d80;
+      text-decoration: underline;
+    }
+    section {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.12);
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    #menuTitle {
+      font-size: 2.4em;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #0077cc;
+      text-align: center;
+    }
+    #menuSubtitle {
+      font-size: 1em;
+      font-style: italic;
+      color: #005fa3;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #logoContainer {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    #logoContainer img {
+      max-width: 200px;
+      height: auto;
+    }
+    #presentationText {
+      white-space: pre-line;
+      line-height: 1.5em;
+      font-size: 1.1em;
+      color: #333;
+      padding: 0 20px;
+    }
+    .main-highlight {
+      font-weight: bold;
+      font-size: 1.4em;
+      margin-bottom: 15px;
+      color: #003366;
+    }
+    .bold-subtitle {
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      color: #005fa3;
+    }
+    /* Page Suivi des données */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 20px;
+    }
+    .data-box {
+      background: #e9f1fb;
+      border: 2px solid #0077cc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .data-box:hover {
+      transform: scale(1.05);
+    }
+    .data-label {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      color: #005fa3;
+      font-weight: 600;
+    }
+    .data-value {
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 8px;
+    }
+    .data-interval {
+      font-size: 0.9em;
+      color: #666;
+      font-style: italic;
+    }
+    .timestamp {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #666;
+      text-align: center;
+    }
+    .error {
+      margin-top: 15px;
+      text-align: center;
+      color: #a00;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: #555;
+      background-color: #f9f9f9;
+      margin-top: 40px;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌡️ Capteur DHT22 - ESP32</h1>
-        <div class="data">
-            <div class="card">
-                <div class="label">Température</div>
-                <div class="value" id="temperature">--</div>
-                <div class="label">°C</div>
-            </div>
-            <div class="card">
-                <div class="label">Humidité</div>
-                <div class="value" id="humidity">--</div>
-                <div class="label">%</div>
-            </div>
-        </div>
-        <div class="timestamp" id="timestamp">Chargement...</div>
-        <div class="error" id="error" style="display: none;"></div>
+
+  <header>
+    <h1> GreenOps</h1>
+  </header>
+
+  <nav>
+    <a class="active" onclick="showTab('menu')">Menu principal</a>
+    <a onclick="showTab('suivi')">Suivi des données</a>
+  </nav>
+
+  <section id="menu" class="active">
+    <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
+
+    <div id="logoContainer">
+      <img src="image/logo.png" alt="logo.png" />
     </div>
 
-    <script>
-        const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
+    <div id="presentationText">
+      <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
+      Bienvenue sur GreenOps, votre solution d’agriculture intelligente.
+      Notre système vous permet de surveiller en temps réel l’état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
+      Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
+      Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
+      Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
+      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c’est nécessaire.
 
-        async function fetchSensorData() {
-            try {
-                const response = await fetch(API_URL);
-                const apiResponse = await response.json();
-                
-                // Extraire le body (qui est une chaîne JSON)
-                const data = JSON.parse(apiResponse.body);
-                
-                document.getElementById('temperature').textContent = data.temperature.toFixed(1);
-                document.getElementById('humidity').textContent = data.humidity.toFixed(1);
-                
-                // Convertir timestamp en millisecondes
-                const date = new Date(data.timestamp);
-                document.getElementById('timestamp').textContent = 
-                    `Dernière mise à jour : ${date.toLocaleString('fr-FR')}`;
-                
-                document.getElementById('error').style.display = 'none';
-            } catch (error) {
-                document.getElementById('error').textContent = 
-                    'Erreur de chargement des données';
-                document.getElementById('error').style.display = 'block';
-                console.error('Erreur:', error);
-            }
-        }
+      <div class="bold-subtitle">Pourquoi GreenOps ?</div>
+      Green : pour notre engagement dans une agriculture plus durable.
+      Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
+      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
 
-        // Charger les données au démarrage
-        fetchSensorData();
-        
-        // Actualiser toutes les 10 secondes
-        setInterval(fetchSensorData, 10000);
-    </script>
+      <div class="bold-subtitle">Pourquoi ce projet ?</div>
+      Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
+      Produire mieux et plus,
+      Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
+      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d’erreurs.
+      Notre objectif est simple : aider les agriculteurs, qu’ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple. 
+
+      <div class="bold-subtitle">GreenOps a été conçu pour :</div>
+      Réduire les tâches répétitives, grâce à une surveillance automatisée,
+      Limiter le gaspillage en eau et optimiser l’arrosage,
+      Améliorer la qualité des cultures en anticipant les besoins,
+      Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
+      En bref : nous voulons mettre la technologie au service d’une agriculture plus humaine, plus durable et plus intelligente.
+    </div>
+  </section>
+
+  <section id="suivi">
+    <h2>Suivi des données du capteur</h2>
+    <div class="grid-container" id="dataGrid">
+      <div class="data-box" id="airHumidityBox">
+        <div class="data-label">Humidité de l'air</div>
+        <div class="data-value" id="airHumidity">-- %</div>
+        <div class="data-interval">Intervalle tolérable : 40 - 60 %</div>
+      </div>
+      <div class="data-box" id="soilHumidityBox">
+        <div class="data-label">Humidité du sol</div>
+        <div class="data-value" id="soilHumidity">-- %</div>
+        <div class="data-interval">Intervalle tolérable : 30 - 50 %</div>
+      </div>
+      <div class="data-box" id="temperatureBox">
+        <div class="data-label">Température</div>
+        <div class="data-value" id="temperature">-- °C</div>
+        <div class="data-interval">Intervalle tolérable : 18 - 26 °C</div>
+      </div>
+      <div class="data-box" id="luminosityBox">
+        <div class="data-label">Luminosité</div>
+        <div class="data-value" id="luminosity">-- lx</div>
+        <div class="data-interval">Intervalle tolérable : 2000 - 8000 lx</div>
+      </div>
+    </div>
+
+    <div class="timestamp" id="timestamp">Dernière mise à jour : --</div>
+    <div class="error" id="error" style="display:none;"></div>
+  </section>
+
+  <footer>
+    <p>© 2025 - Mon projet ESP32</p>
+  </footer>
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('section').forEach(section => section.classList.remove('active'));
+      document.querySelectorAll('nav a').forEach(nav => nav.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`nav a[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+
+    const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
+
+    async function fetchData() {
+      try {
+        const response = await fetch(API_URL);
+        const apiResponse = await response.json();
+        const data = JSON.parse(apiResponse.body); // { temperature, humidity, timestamp } [web:1][web:11]
+
+        // Comme ton API ne renvoie que température + humidité, on les mappe sur tes cases existantes
+        const temperature = data.temperature;
+        const airHumidity = data.humidity;
+
+        document.getElementById('temperature').textContent =
+          temperature !== undefined ? temperature.toFixed(1) + ' °C' : '-- °C';
+        document.getElementById('airHumidity').textContent =
+          airHumidity !== undefined ? airHumidity.toFixed(1) + ' %' : '-- %';
+
+        // Si tu n'as pas encore de vraies valeurs pour le sol et la luminosité, on laisse "--"
+        // document.getElementById('soilHumidity').textContent = '-- %';
+        // document.getElementById('luminosity').textContent = '-- lx';
+
+        const date = new Date(data.timestamp);
+        document.getElementById('timestamp').textContent =
+          'Dernière mise à jour : ' + date.toLocaleString('fr-FR'); [web:19]
+
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('error').textContent = '';
+      } catch (error) {
+        console.error('Erreur fetch:', error);
+        document.getElementById('error').textContent = 'Erreur de chargement des données du capteur.';
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+
+    fetchData();
+    setInterval(fetchData, 10000);
+  </script>
+
 </body>
 </html>
