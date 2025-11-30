@@ -261,14 +261,14 @@
       });
     }
 
-    // Récupération des données capteur (API AWS qui marche déjà chez toi)
+    // Récupération des données capteur (API AWS)
     const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
 
     async function fetchData() {
       try {
         const response = await fetch(API_URL);
         const apiResponse = await response.json();
-        const data = JSON.parse(apiResponse.body); // { temperature, humidity, timestamp } [web:1][web:11]
+        const data = JSON.parse(apiResponse.body); // { temperature, humidity, timestamp }
 
         const temperature = data.temperature;
         const airHumidity = data.humidity;
@@ -280,7 +280,7 @@
 
         const date = new Date(data.timestamp);
         document.getElementById('timestamp').textContent =
-          'Dernière mise à jour : ' + date.toLocaleString('fr-FR'); [web:19]
+          'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
 
         document.getElementById('error').style.display = 'none';
         document.getElementById('error').textContent = '';
