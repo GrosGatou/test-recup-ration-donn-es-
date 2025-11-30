@@ -12,6 +12,7 @@
             text-align: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            min-height: 100vh;
         }
         .container {
             background: rgba(255, 255, 255, 0.1);
@@ -80,11 +81,15 @@
         async function fetchSensorData() {
             try {
                 const response = await fetch(API_URL);
-                const data = await response.json();
+                const apiResponse = await response.json();
+                
+                // Extraire le body (qui est une chaîne JSON)
+                const data = JSON.parse(apiResponse.body);
                 
                 document.getElementById('temperature').textContent = data.temperature.toFixed(1);
                 document.getElementById('humidity').textContent = data.humidity.toFixed(1);
                 
+                // Convertir timestamp en millisecondes
                 const date = new Date(data.timestamp);
                 document.getElementById('timestamp').textContent = 
                     `Dernière mise à jour : ${date.toLocaleString('fr-FR')}`;
