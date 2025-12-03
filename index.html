@@ -138,20 +138,6 @@
       color: #a00;
       font-weight: bold;
     }
-    .alert {
-      margin: 20px auto;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      max-width: 900px;
-    }
-    .alert-disconnected {
-      background-color: #ffe6e6;
-      color: #d00;
-      border: 2px solid #d00;
-      display: none;
-    }
     footer {
       text-align: center;
       padding: 15px;
@@ -165,7 +151,7 @@
 <body>
 
   <header>
-    <h1>GreenOps</h1>
+    <h1> GreenOps</h1>
   </header>
 
   <nav>
@@ -183,65 +169,59 @@
 
     <div id="presentationText">
       <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
-      Bienvenue sur GreenOps, votre solution d'agriculture intelligente.
-      Notre système vous permet de surveiller en temps réel l'état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
+      Bienvenue sur GreenOps, votre solution d’agriculture intelligente.
+      Notre système vous permet de surveiller en temps réel l’état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
       Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
       Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
       Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
-      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c'est nécessaire.
+      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c’est nécessaire.
 
       <div class="bold-subtitle">Pourquoi GreenOps ?</div>
       Green : pour notre engagement dans une agriculture plus durable.
-      Ops : pour "operations", car nous optimisons vos tâches quotidiennes.
-      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l'environnement.
+      Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
+      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
 
       <div class="bold-subtitle">Pourquoi ce projet ?</div>
-      Parce que l'agriculture d'aujourd'hui doit gérer un défi double :
+      Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
       Produire mieux et plus,
       Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
-      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d'erreurs.
-      Notre objectif est simple : aider les agriculteurs, qu'ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple. 
+      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d’erreurs.
+      Notre objectif est simple : aider les agriculteurs, qu’ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple. 
 
       <div class="bold-subtitle">GreenOps a été conçu pour :</div>
       Réduire les tâches répétitives, grâce à une surveillance automatisée,
-      Limiter le gaspillage en eau et optimiser l'arrosage,
+      Limiter le gaspillage en eau et optimiser l’arrosage,
       Améliorer la qualité des cultures en anticipant les besoins,
       Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
-      En bref : nous voulons mettre la technologie au service d'une agriculture plus humaine, plus durable et plus intelligente.
+      En bref : nous voulons mettre la technologie au service d’une agriculture plus humaine, plus durable et plus intelligente.
     </div>
   </section>
 
   <!-- Onglet SUIVI DES DONNÉES -->
   <section id="suivi">
     <h2>Suivi des données du capteur</h2>
-    
-    <div class="alert alert-disconnected" id="disconnectedAlert">
-      ⚠️ Capteur DHT22 inactif ou déconnecté
-    </div>
-
     <div class="grid-container" id="dataGrid">
       <div class="data-box" id="airHumidityBox">
         <div class="data-label">Humidité de l'air</div>
         <div class="data-value" id="airHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 40 - 60 %</div>
+        <div class="data-interval">Intervalle tolérable : 40 - 60 %</div>
       </div>
       <div class="data-box" id="soilHumidityBox">
         <div class="data-label">Humidité du sol</div>
         <div class="data-value" id="soilHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 30 - 50 %</div>
+        <div class="data-interval">Intervalle tolérable : 30 - 50 %</div>
       </div>
       <div class="data-box" id="temperatureBox">
         <div class="data-label">Température</div>
         <div class="data-value" id="temperature">-- °C</div>
-        <div class="data-interval">Intervalle tolérable : 18 - 26 °C</div>
+        <div class="data-interval">Intervalle tolérable : 18 - 26 °C</div>
       </div>
       <div class="data-box" id="luminosityBox">
         <div class="data-label">Luminosité</div>
         <div class="data-value" id="luminosity">-- lx</div>
-        <div class="data-interval">Intervalle tolérable : 2000 - 8000 lx</div>
+        <div class="data-interval">Intervalle tolérable : 2000 - 8000 lx</div>
       </div>
     </div>
-
   </section>
 
   <footer>
@@ -281,63 +261,36 @@
     // Récupération des données capteur (API AWS)
     const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
 
-async function fetchData() {
-  try {
-    const response = await fetch(API_URL);
-    
-    // Vérifier si la réponse est OK
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const apiResponse = await response.json();
-    const data = JSON.parse(apiResponse.body);
+    async function fetchData() {
+      try {
+        const response = await fetch(API_URL);
+        const apiResponse = await response.json();
+        const data = JSON.parse(apiResponse.body); // { temperature, humidity, timestamp }
 
-    const temperature = data.temperature;
-    const airHumidity = data.humidity;
-    const timestamp = data.timestamp;
+        const temperature = data.temperature;
+        const airHumidity = data.humidity;
 
-    // Calcule la différence de temps (en secondes)
-    const now = Math.floor(Date.now() / 1000);
-    const timeDiff = now - Math.floor(timestamp / 1000);
+        document.getElementById('temperature').textContent =
+          temperature !== undefined ? temperature.toFixed(1) + ' °C' : '-- °C';
+        document.getElementById('airHumidity').textContent =
+          airHumidity !== undefined ? airHumidity.toFixed(1) + ' %' : '-- %';
 
-    console.log('Temps écoulé depuis dernier envoi:', timeDiff, 'sec'); // DEBUG
+        const date = new Date(data.timestamp);
+        document.getElementById('timestamp').textContent =
+          'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
 
-    // Si plus de 30 sec = capteur déconnecté
-    if (timeDiff > 30) {
-      document.getElementById('disconnectedAlert').style.display = 'block';
-      document.getElementById('temperature').textContent = '-- °C';
-      document.getElementById('airHumidity').textContent = '-- %';
-    } else {
-      // ✅ MASQUER L'ALERTE SI DONNÉES VALIDES
-      document.getElementById('disconnectedAlert').style.display = 'none';
-      document.getElementById('temperature').textContent = temperature.toFixed(1) + ' °C';
-      document.getElementById('airHumidity').textContent = airHumidity.toFixed(1) + ' %';
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('error').textContent = '';
+      } catch (error) {
+        console.error('Erreur fetch:', error);
+        document.getElementById('error').textContent =
+          'Erreur de chargement des données du capteur.';
+        document.getElementById('error').style.display = 'block';
+      }
     }
 
-    const date = new Date(timestamp);
-    document.getElementById('timestamp').textContent =
-      'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
-
-    // ✅ MASQUER LE MESSAGE D'ERREUR SI ÇA MARCHE
-    document.getElementById('error').style.display = 'none';
-    document.getElementById('error').textContent = '';
-
-  } catch (error) {
-    console.error('Erreur fetch:', error);
-    console.log('URL appelée:', API_URL); // DEBUG
-    
-    // AFFICHE L'ERREUR SEULEMENT EN CAS DE VRAI PROBLÈME
-    document.getElementById('disconnectedAlert').style.display = 'block';
-    document.getElementById('error').textContent =
-      'Erreur de chargement: ' + error.message;
-    document.getElementById('error').style.display = 'block';
-  }
-}
-
-fetchData();
-setInterval(fetchData, 10000);
-
+    fetchData();
+    setInterval(fetchData, 10000);
   </script>
 
 </body>
