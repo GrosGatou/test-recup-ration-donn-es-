@@ -294,8 +294,8 @@
         const timestamp = data.timestamp;
 
         // Calcule la différence de temps (en secondes)
-        const now = Date.now();
-        const timeDiff = (now - timestamp) / 1000;
+        const now = Math.floor(Date.now() / 1000); // convertit en secondes
+        const timeDiff = now - Math.floor(timestamp / 1000); // assure que timestamp est aussi en secondes
 
         // Si plus de 30 sec = capteur déconnecté
         if (timeDiff > 30) {
