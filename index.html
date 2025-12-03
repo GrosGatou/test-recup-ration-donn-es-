@@ -242,8 +242,6 @@
       </div>
     </div>
 
-    <div class="timestamp" id="timestamp">Dernière mise à jour : --</div>
-    <div class="error" id="error" style="display:none;"></div>
   </section>
 
   <footer>
@@ -283,48 +281,63 @@
     // Récupération des données capteur (API AWS)
     const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
 
-    async function fetchData() {
-      try {
-        const response = await fetch(API_URL);
-        const apiResponse = await response.json();
-        const data = JSON.parse(apiResponse.body);
+async function fetchData() {
+  try {
+    const response = await fetch(API_URL);
+    
+    // Vérifier si la réponse est OK
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const apiResponse = await response.json();
+    const data = JSON.parse(apiResponse.body);
 
-        const temperature = data.temperature;
-        const airHumidity = data.humidity;
-        const timestamp = data.timestamp;
+    const temperature = data.temperature;
+    const airHumidity = data.humidity;
+    const timestamp = data.timestamp;
 
-        // Calcule la différence de temps (en secondes)
-        const now = Math.floor(Date.now() / 1000); // convertit en secondes
-        const timeDiff = now - Math.floor(timestamp / 1000); // assure que timestamp est aussi en secondes
+    // Calcule la différence de temps (en secondes)
+    const now = Math.floor(Date.now() / 1000);
+    const timeDiff = now - Math.floor(timestamp / 1000);
 
-        // Si plus de 30 sec = capteur déconnecté
-        if (timeDiff > 30) {
-          document.getElementById('disconnectedAlert').style.display = 'block';
-          document.getElementById('temperature').textContent = '-- °C';
-          document.getElementById('airHumidity').textContent = '-- %';
-        } else {
-          document.getElementById('disconnectedAlert').style.display = 'none';
-          document.getElementById('temperature').textContent = temperature.toFixed(1) + ' °C';
-          document.getElementById('airHumidity').textContent = airHumidity.toFixed(1) + ' %';
-        }
+    console.log('Temps écoulé depuis dernier envoi:', timeDiff, 'sec'); // DEBUG
 
-        const date = new Date(timestamp);
-        document.getElementById('timestamp').textContent =
-          'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
-
-        document.getElementById('error').style.display = 'none';
-        document.getElementById('error').textContent = '';
-      } catch (error) {
-        console.error('Erreur fetch:', error);
-        document.getElementById('disconnectedAlert').style.display = 'block';
-        document.getElementById('error').textContent =
-          'Erreur de chargement des données du capteur.';
-        document.getElementById('error').style.display = 'block';
-      }
+    // Si plus de 30 sec = capteur déconnecté
+    if (timeDiff > 30) {
+      document.getElementById('disconnectedAlert').style.display = 'block';
+      document.getElementById('temperature').textContent = '-- °C';
+      document.getElementById('airHumidity').textContent = '-- %';
+    } else {
+      // ✅ MASQUER L'ALERTE SI DONNÉES VALIDES
+      document.getElementById('disconnectedAlert').style.display = 'none';
+      document.getElementById('temperature').textContent = temperature.toFixed(1) + ' °C';
+      document.getElementById('airHumidity').textContent = airHumidity.toFixed(1) + ' %';
     }
 
-    fetchData();
-    setInterval(fetchData, 10000);
+    const date = new Date(timestamp);
+    document.getElementById('timestamp').textContent =
+      'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
+
+    // ✅ MASQUER LE MESSAGE D'ERREUR SI ÇA MARCHE
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('error').textContent = '';
+
+  } catch (error) {
+    console.error('Erreur fetch:', error);
+    console.log('URL appelée:', API_URL); // DEBUG
+    
+    // AFFICHE L'ERREUR SEULEMENT EN CAS DE VRAI PROBLÈME
+    document.getElementById('disconnectedAlert').style.display = 'block';
+    document.getElementById('error').textContent =
+      'Erreur de chargement: ' + error.message;
+    document.getElementById('error').style.display = 'block';
+  }
+}
+
+fetchData();
+setInterval(fetchData, 10000);
+
   </script>
 
 </body>
