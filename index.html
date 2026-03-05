@@ -420,8 +420,18 @@
 
   <!-- Onglet SUIVI DES DONNÉES -->
   <section id="suivi">
-    <h2>Suivi des données du capteur</h2>
-    <div class="grid-container" id="dataGrid">
+
+    <!-- Date petite case haut droite -->
+<div style="position: absolute; top: 30px; right: 30px; background: linear-gradient(135deg, #005fa3, #0077cc); color: white; padding: 12px 18px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,95,163,0.3); font-weight: bold; font-size: 1em; min-width: 160px; text-align: center;">
+  <div id="currentDateMini">Jeudi 5 Mars</div>
+  <div id="currentDayMini" style="font-size: 0.85em; opacity: 0.9;">Chargement...</div>
+</div>
+
+<!-- BOX Capteurs -->
+<div class="weather-section" style="margin-top: 80px;">
+  <h3 style="text-align: center; color: #0077cc; margin-bottom: 25px;">📊 Suivi des données des capteurs</h3>
+  <div class="grid-container" id="dataGrid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap
+
       <div class="data-box" id="airHumidityBox">
         <div class="data-label">Humidité de l'air</div>
         <div class="data-value" id="airHumidity">-- %</div>
@@ -451,12 +461,6 @@
 <!-- ⭐ STATION MÉTÉO PRO -->
 <div class="weather-section">
   
-  <!-- Date -->
-  <div class="date-banner">
-    <div id="currentDate">Chargement...</div>
-    <div id="currentDay"></div>
-  </div>
-
   <!-- Titre -->
   <h3 class="weather-title">🌤️ Station Météo</h3>
 
@@ -493,8 +497,6 @@
   </div>
 
 </div>
-
-    <div class="timestamp" id="timestamp">Dernière mise à jour : --</div>
     <div class="error" id="error" style="display:none;"></div>
   </section>
 
