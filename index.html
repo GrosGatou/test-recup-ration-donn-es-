@@ -92,6 +92,46 @@
       color: #005fa3;
     }
 
+    /* Station Météo */
+    .weather-station {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    .weather-current {
+      font-size: 2.2em;
+      font-weight: 300;
+      margin-bottom: 5px;
+    }
+    .weather-city {
+      font-size: 1.1em;
+      opacity: 0.95;
+      margin-bottom: 15px;
+    }
+    .weather-forecast {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      font-size: 0.9em;
+    }
+    .forecast-item {
+      background: rgba(255,255,255,0.15);
+      padding: 8px 12px;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+    }
+    .forecast-time { font-weight: 600; }
+    .forecast-temp { font-size: 1.1em; }
+    .weather-updating {
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin-top: 12px;
+    }
+
     /* Page Suivi des données */
     .grid-container {
       display: grid;
@@ -242,57 +282,68 @@
 
     <div id="presentationText">
       <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
-      Bienvenue sur GreenOps, votre solution d’agriculture intelligente.
-      Notre système vous permet de surveiller en temps réel l’état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
+      Bienvenue sur GreenOps, votre solution d'agriculture intelligente.
+      Notre système vous permet de surveiller en temps réel l'état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
       Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
       Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
       Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
-      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c’est nécessaire.
+      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c'est nécessaire.
 
       <div class="bold-subtitle">Pourquoi GreenOps ?</div>
       Green : pour notre engagement dans une agriculture plus durable.
-      Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
-      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
+      Ops : pour "operations", car nous optimisons vos tâches quotidiennes.
+      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l'environnement.
 
       <div class="bold-subtitle">Pourquoi ce projet ?</div>
-      Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
+      Parce que l'agriculture d'aujourd'hui doit gérer un défi double :
       Produire mieux et plus,
       Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
-      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d’erreurs.
-      Notre objectif est simple : aider les agriculteurs, qu’ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple. 
+      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d'erreurs.
+      Notre objectif est simple : aider les agriculteurs, qu'ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple. 
 
       <div class="bold-subtitle">GreenOps a été conçu pour :</div>
       Réduire les tâches répétitives, grâce à une surveillance automatisée,
-      Limiter le gaspillage en eau et optimiser l’arrosage,
+      Limiter le gaspillage en eau et optimiser l'arrosage,
       Améliorer la qualité des cultures en anticipant les besoins,
       Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
-      En bref : nous voulons mettre la technologie au service d’une agriculture plus humaine, plus durable et plus intelligente.
+      En bref : nous voulons mettre la technologie au service d'une agriculture plus humaine, plus durable et plus intelligente.
     </div>
   </section>
 
   <!-- Onglet SUIVI DES DONNÉES -->
   <section id="suivi">
     <h2>Suivi des données du capteur</h2>
+    
+    <!-- Station Météo ajoutée ici -->
+    <div class="weather-station" id="weatherStation">
+      <div id="weatherCurrent">--°C</div>
+      <div id="weatherCity">Chargement...</div>
+      <div class="weather-forecast" id="weatherForecast">
+        <!-- Prévisions auto-remplies -->
+      </div>
+      <div class="weather-updating" id="weatherUpdate">--</div>
+    </div>
+
     <div class="grid-container" id="dataGrid">
       <div class="data-box" id="airHumidityBox">
         <div class="data-label">Humidité de l'air</div>
         <div class="data-value" id="airHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
+        <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
       </div>
       <div class="data-box" id="soilHumidityBox">
         <div class="data-label">Humidité du sol</div>
         <div class="data-value" id="soilHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
+        <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
       </div>
       <div class="data-box" id="temperatureBox">
         <div class="data-label">Température</div>
         <div class="data-value" id="temperature">-- °C</div>
-        <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
+        <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
       </div>
       <div class="data-box" id="luminosityBox">
         <div class="data-label">Luminosité</div>
         <div class="data-value" id="luminosity">-- lx</div>
-        <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
+        <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
       </div>
     </div>
 
@@ -318,7 +369,7 @@
       </div>
 
       <div class="modal-actions">
-        <button id="ackBtn">J’ai compris / Accuser réception</button>
+        <button id="ackBtn">J'ai compris / Accuser réception</button>
         <button id="closeAdviceBtn">Fermer</button>
       </div>
     </div>
@@ -372,24 +423,58 @@
       temperature: {
         meaning: "Température en dehors de la plage critique définie.",
         risks: "Si trop bas : ralentissement de croissance, mauvaise nouaison, dégâts de froid si prolongé. Si trop haut : stress thermique, baisse de nouaison, qualité des fruits en baisse.",
-        actions: "Trop bas : activer la résistance chauffante. Trop haut : activer la ventilation, ombrer si possible, surveiller l’arrosage."
+        actions: "Trop bas : activer la résistance chauffante. Trop haut : activer la ventilation, ombrer si possible, surveiller l'arrosage."
       },
       airHumidity: {
-        meaning: "Humidité de l’air (RH) en dehors de l’intervalle critique.",
+        meaning: "Humidité de l'air (RH) en dehors de l'intervalle critique.",
         risks: "Trop bas : transpiration très forte, stress hydrique, flétrissement, bords des feuilles secs. Trop haut : condensation, risque élevé de maladies (botrytis, oïdium), pollinisation moins efficace.",
-        actions: "Trop bas : adapter la fréquence d’arrosage et surveiller le stress hydrique. Trop haut : activer la ventilation, limiter les sources d’humidité stagnante."
+        actions: "Trop bas : adapter la fréquence d'arrosage et surveiller le stress hydrique. Trop haut : activer la ventilation, limiter les sources d'humidité stagnante."
       },
       soilHumidity: {
         meaning: "Humidité du sol en dehors de la plage critique.",
-        risks: "Trop bas : stress hydrique, croissance ralentie, avortement de fleurs, nécrose apicale favorisée par des à-coups d’arrosage. Trop haut : asphyxie racinaire, jaunissement, maladies racinaires.",
-        actions: "Trop bas : activer la pompe/arrosage. Trop haut : réduire l’arrosage, améliorer le drainage et l’aération du substrat."
+        risks: "Trop bas : stress hydrique, croissance ralentie, avortement de fleurs, nécrose apicale favorisée par des à-coups d'arrosage. Trop haut : asphyxie racinaire, jaunissement, maladies racinaires.",
+        actions: "Trop bas : activer la pompe/arrosage. Trop haut : réduire l'arrosage, améliorer le drainage et l'aération du substrat."
       },
       luminosity: {
         meaning: "Luminosité en dehors de la plage critique.",
-        risks: "Trop bas : photosynthèse limitée, plants filés, floraison/production plus faible, maturation plus lente. Trop haut : stress lumineux et souvent thermique, feuilles qui s’enroulent ou brûlent, coups de soleil sur fruits.",
-        actions: "Trop bas : allumer les LED ou augmenter l’éclairement. Trop haut : ombrer, surveiller température et arrosage."
+        risks: "Trop bas : photosynthèse limitée, plants filés, floraison/production plus faible, maturation plus lente. Trop haut : stress lumineux et souvent thermique, feuilles qui s'enroulent ou brûlent, coups de soleil sur fruits.",
+        actions: "Trop bas : allumer les LED ou augmenter l'éclairement. Trop haut : ombrer, surveiller température et arrosage."
       }
     };
+
+    // Météo Paris (Open-Meteo gratuit, pas de clé)
+    async function updateWeather() {
+      try {
+        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&current_weather=true&hourly=temperature_2m&timezone=Europe/Paris&forecast_days=1');
+        const data = await response.json();
+        
+        const now = new Date(data.current_weather.time);
+        const temp = Math.round(data.current_weather.temperature);
+        const city = 'Paris, Île-de-France';
+        
+        document.getElementById('weatherCurrent').textContent = `${temp}°C`;
+        document.getElementById('weatherCity').textContent = city;
+        
+        // 4 prévisions horaires
+        const forecastContainer = document.getElementById('weatherForecast');
+        forecastContainer.innerHTML = '';
+        for (let i = 1; i <= 4; i++) {
+          const hour = now.getHours() + i;
+          const tempForecast = Math.round(data.hourly.temperature_2m[hour] || temp);
+          const item = document.createElement('div');
+          item.className = 'forecast-item';
+          item.innerHTML = `
+            <div class="forecast-time">${hour}h</div>
+            <div class="forecast-temp">${tempForecast}°</div>
+          `;
+          forecastContainer.appendChild(item);
+        }
+        
+        document.getElementById('weatherUpdate').textContent = `Mis à jour ${now.toLocaleString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
+      } catch(e) {
+        document.getElementById('weatherCity').textContent = 'Météo indisponible';
+      }
+    }
 
 function classify(value, ranges) {
   if (value == null || Number.isNaN(value)) return "unknown";
@@ -400,7 +485,6 @@ function classify(value, ranges) {
   if (value >= aMin && value <= aMax) return "warn";
   return "crit"; // rouge
 }
-
 
     function setBoxStatus(sensorKey, status) {
       const ui = SENSOR_UI[sensorKey];
@@ -447,11 +531,11 @@ function openAdvice(sensorKey, value) {
       break;
     case "airHumidity":
       if (isTooLow) {
-        advMeaning = "Humidité de l’air trop basse (sous seuil critique).";
+        advMeaning = "Humidité de l'air trop basse (sous seuil critique).";
         advRisks = "Transpiration qui explose (stress hydrique), flétrissement, bords de feuilles qui se dessèchent.";
         advActions = "Surveiller arrosage et évaporation.";
       } else {
-        advMeaning = "Humidité de l’air trop haute (au-dessus seuil critique).";
+        advMeaning = "Humidité de l'air trop haute (au-dessus seuil critique).";
         advRisks = "Condensation sur feuilles/fleurs, hausse forte risque maladies (botrytis, oïdium), pollinisation moins efficace.";
         advActions = "Activer la ventilation.";
       }
@@ -470,7 +554,7 @@ function openAdvice(sensorKey, value) {
     case "luminosity":
       if (isTooLow) {
         advMeaning = "Luminosité trop basse (sous seuil critique).";
-        advRisks = "Photosynthèse limitée, plants “filés”, floraison/production faible, maturation lente.";
+        advRisks = "Photosynthèse limitée, plants "filés", floraison/production faible, maturation lente.";
         advActions = "Allumer LED.";
       } else {
         advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
@@ -491,7 +575,6 @@ function openAdvice(sensorKey, value) {
 
   overlay.style.display = "flex";
 }
-
 
     function closeAdvice() {
       const overlay = document.getElementById("adviceOverlay");
@@ -520,7 +603,7 @@ function openAdvice(sensorKey, value) {
         const apiResponse = await response.json();
         const data = JSON.parse(apiResponse.body); // { temperature, humidity, timestamp }
 
-        // Pour l’instant, on n’a que DHT22 : température + humidité de l’air
+        // Pour l'instant, on n'a que DHT22 : température + humidité de l'air
         const temperature = typeof data.temperature === "number" ? data.temperature : null;
         const airHumidity = typeof data.humidity === "number" ? data.humidity : null;
 
@@ -571,7 +654,11 @@ function openAdvice(sensorKey, value) {
     }
 
     fetchData();
-    setInterval(fetchData, 10000); // toutes les 10 s [web:13]
+    updateWeather();  // Première météo
+    setInterval(() => {
+      fetchData();
+      updateWeather();
+    }, 10000);
   </script>
 
 </body>
