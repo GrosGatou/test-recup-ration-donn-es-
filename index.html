@@ -91,6 +91,7 @@
       margin-bottom: 8px;
       color: #005fa3;
     }
+
     /* Page Suivi des données */
     .grid-container {
       display: grid;
@@ -104,7 +105,7 @@
       padding: 20px;
       text-align: center;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
     }
     .data-box:hover {
       transform: scale(1.05);
@@ -138,6 +139,78 @@
       color: #a00;
       font-weight: bold;
     }
+
+    /* Couleurs de statut */
+    .data-box.ok {
+      background:#eaf7ee;
+      border-color:#2e9e57;
+    }
+    .data-box.ok .data-value {
+      color:#1f7a3a;
+    }
+    .data-box.warn {
+      background:#fff4e5;
+      border-color:#f59e0b;
+    }
+    .data-box.warn .data-value {
+      color:#b45309;
+    }
+    .data-box.crit {
+      background:#ffe7e7;
+      border-color:#e11d48;
+    }
+    .data-box.crit .data-value {
+      color:#b91c1c;
+    }
+    .data-box.clickable {
+      cursor:pointer;
+    }
+    .data-box:not(.clickable) {
+      cursor:default;
+    }
+
+    /* Overlay / Conseils */
+    .overlay {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+    }
+    .modal {
+      width:min(720px, 92vw);
+      background:white;
+      border-radius:12px;
+      padding:18px 18px 12px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    }
+    .advice-block {
+      margin-top:12px;
+      padding:12px;
+      border-radius:10px;
+      background:#f6f8fb;
+    }
+    .advice-h {
+      font-weight:700;
+      color:#003366;
+      margin-bottom:6px;
+    }
+    .modal-actions {
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:14px;
+    }
+    .modal-actions button {
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      background:#fff;
+      cursor:pointer;
+    }
+
     footer {
       text-align: center;
       padding: 15px;
@@ -204,25 +277,52 @@
       <div class="data-box" id="airHumidityBox">
         <div class="data-label">Humidité de l'air</div>
         <div class="data-value" id="airHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 40 - 60 %</div>
+        <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
       </div>
       <div class="data-box" id="soilHumidityBox">
         <div class="data-label">Humidité du sol</div>
         <div class="data-value" id="soilHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 30 - 50 %</div>
+        <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
       </div>
       <div class="data-box" id="temperatureBox">
         <div class="data-label">Température</div>
         <div class="data-value" id="temperature">-- °C</div>
-        <div class="data-interval">Intervalle tolérable : 18 - 26 °C</div>
+        <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
       </div>
       <div class="data-box" id="luminosityBox">
         <div class="data-label">Luminosité</div>
         <div class="data-value" id="luminosity">-- lx</div>
-        <div class="data-interval">Intervalle tolérable : 2000 - 8000 lx</div>
+        <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
       </div>
     </div>
+
+    <div class="timestamp" id="timestamp">Dernière mise à jour : --</div>
+    <div class="error" id="error" style="display:none;"></div>
   </section>
+
+  <!-- Overlay Conseils -->
+  <div id="adviceOverlay" class="overlay" style="display:none;">
+    <div class="modal">
+      <h3 id="adviceTitle">Conseils</h3>
+      <div class="advice-block">
+        <div class="advice-h">Ce que ça signifie</div>
+        <div id="adviceMeaning">--</div>
+      </div>
+      <div class="advice-block">
+        <div class="advice-h">Risques</div>
+        <div id="adviceRisks">--</div>
+      </div>
+      <div class="advice-block">
+        <div class="advice-h">Actions conseillées</div>
+        <div id="adviceActions">--</div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="ackBtn">J’ai compris / Accuser réception</button>
+        <button id="closeAdviceBtn">Fermer</button>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <p>© 2025 - Mon projet ESP32</p>
@@ -231,22 +331,15 @@
   <script>
     // Gestion des onglets
     function showTab(tabId) {
-      // cacher toutes les sections
       document.querySelectorAll('section').forEach(section =>
         section.classList.remove('active')
       );
-
-      // afficher la bonne
       const target = document.getElementById(tabId);
-      if (target) {
-        target.classList.add('active');
-      }
+      if (target) target.classList.add('active');
 
-      // mise à jour de l'onglet actif dans le menu
       document.querySelectorAll('nav a').forEach(link =>
         link.classList.remove('active')
       );
-
       document.querySelectorAll('nav a').forEach(link => {
         const text = link.textContent.trim();
         if (tabId === 'menu' && text === 'Menu principal') {
@@ -258,8 +351,108 @@
       });
     }
 
-    // Récupération des données capteur (API AWS)
     const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
+
+    // Seuils: vert = cible, orange = acceptable hors cible, rouge = critique
+    const THRESHOLDS = {
+      temperature: { target: [20, 26], acceptable: [16, 28] },
+      airHumidity:  { target: [60, 70], acceptable: [50, 85] },
+      soilHumidity: { target: [60, 75], acceptable: [55, 85] },
+      luminosity:   { target: [30000, 40000], acceptable: [20000, 50000] }
+    };
+
+    const SENSOR_UI = {
+      temperature: { boxId: "temperatureBox", valueId: "temperature", unit: " °C", label: "Température" },
+      airHumidity: { boxId: "airHumidityBox", valueId: "airHumidity", unit: " %", label: "Humidité de l'air" },
+      soilHumidity:{ boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %", label: "Humidité du sol" },
+      luminosity:  { boxId: "luminosityBox", valueId: "luminosity", unit: " lx", label: "Luminosité" }
+    };
+
+    const ADVICE = {
+      temperature: {
+        meaning: "Température en dehors de la plage critique définie.",
+        risks: "Si trop bas : ralentissement de croissance, mauvaise nouaison, dégâts de froid si prolongé. Si trop haut : stress thermique, baisse de nouaison, qualité des fruits en baisse.",
+        actions: "Trop bas : activer la résistance chauffante. Trop haut : activer la ventilation, ombrer si possible, surveiller l’arrosage."
+      },
+      airHumidity: {
+        meaning: "Humidité de l’air (RH) en dehors de l’intervalle critique.",
+        risks: "Trop bas : transpiration très forte, stress hydrique, flétrissement, bords des feuilles secs. Trop haut : condensation, risque élevé de maladies (botrytis, oïdium), pollinisation moins efficace.",
+        actions: "Trop bas : adapter la fréquence d’arrosage et surveiller le stress hydrique. Trop haut : activer la ventilation, limiter les sources d’humidité stagnante."
+      },
+      soilHumidity: {
+        meaning: "Humidité du sol en dehors de la plage critique.",
+        risks: "Trop bas : stress hydrique, croissance ralentie, avortement de fleurs, nécrose apicale favorisée par des à-coups d’arrosage. Trop haut : asphyxie racinaire, jaunissement, maladies racinaires.",
+        actions: "Trop bas : activer la pompe/arrosage. Trop haut : réduire l’arrosage, améliorer le drainage et l’aération du substrat."
+      },
+      luminosity: {
+        meaning: "Luminosité en dehors de la plage critique.",
+        risks: "Trop bas : photosynthèse limitée, plants filés, floraison/production plus faible, maturation plus lente. Trop haut : stress lumineux et souvent thermique, feuilles qui s’enroulent ou brûlent, coups de soleil sur fruits.",
+        actions: "Trop bas : allumer les LED ou augmenter l’éclairement. Trop haut : ombrer, surveiller température et arrosage."
+      }
+    };
+
+    function classify(value, ranges) {
+      if (value == null || Number.isNaN(value)) return "unknown";
+      const [tMin, tMax] = ranges.target;
+      const [aMin, aMax] = ranges.acceptable;
+      if (value >= tMin && value <= tMax) return "ok";
+      if (value >= aMin && value <= aMax) return "warn";
+      return "crit";
+    }
+
+    function setBoxStatus(sensorKey, status) {
+      const ui = SENSOR_UI[sensorKey];
+      const box = document.getElementById(ui.boxId);
+      if (!box) return;
+      box.classList.remove("ok","warn","crit","clickable");
+      if (status === "ok")  box.classList.add("ok");
+      if (status === "warn")box.classList.add("warn");
+      if (status === "crit"){
+        box.classList.add("crit","clickable");
+      }
+    }
+
+    function openAdvice(sensorKey, value) {
+      const overlay = document.getElementById("adviceOverlay");
+      const title = document.getElementById("adviceTitle");
+      const meaning = document.getElementById("adviceMeaning");
+      const risks = document.getElementById("adviceRisks");
+      const actions = document.getElementById("adviceActions");
+
+      const ui = SENSOR_UI[sensorKey];
+      const adv = ADVICE[sensorKey];
+
+      const unit = ui.unit || "";
+      const valText = (value != null) ? `${value}${unit}` : "--";
+
+      title.textContent = `Conseils — ${ui.label} (${valText})`;
+      meaning.textContent = adv.meaning;
+      risks.textContent = adv.risks;
+      actions.textContent = adv.actions;
+
+      overlay.style.display = "flex";
+    }
+
+    function closeAdvice() {
+      const overlay = document.getElementById("adviceOverlay");
+      overlay.style.display = "none";
+    }
+
+    document.getElementById("closeAdviceBtn").addEventListener("click", closeAdvice);
+    document.getElementById("ackBtn").addEventListener("click", closeAdvice);
+    document.getElementById("adviceOverlay").addEventListener("click", (e) => {
+      if (e.target && e.target.id === "adviceOverlay") closeAdvice();
+    });
+
+    function wireClick(sensorKey, status, value) {
+      const ui = SENSOR_UI[sensorKey];
+      const box = document.getElementById(ui.boxId);
+      if (!box) return;
+      box.onclick = null;
+      if (status === "crit") {
+        box.onclick = () => openAdvice(sensorKey, value);
+      }
+    }
 
     async function fetchData() {
       try {
@@ -267,30 +460,58 @@
         const apiResponse = await response.json();
         const data = JSON.parse(apiResponse.body); // { temperature, humidity, timestamp }
 
-        const temperature = data.temperature;
-        const airHumidity = data.humidity;
+        // Pour l’instant, on n’a que DHT22 : température + humidité de l’air
+        const temperature = typeof data.temperature === "number" ? data.temperature : null;
+        const airHumidity = typeof data.humidity === "number" ? data.humidity : null;
 
-        document.getElementById('temperature').textContent =
-          temperature !== undefined ? temperature.toFixed(1) + ' °C' : '-- °C';
-        document.getElementById('airHumidity').textContent =
-          airHumidity !== undefined ? airHumidity.toFixed(1) + ' %' : '-- %';
+        // Capteurs futurs
+        const soilHumidity = null;
+        const luminosity = null;
 
-        const date = new Date(data.timestamp);
-        document.getElementById('timestamp').textContent =
-          'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
+        const values = { temperature, airHumidity, soilHumidity, luminosity };
 
-        document.getElementById('error').style.display = 'none';
-        document.getElementById('error').textContent = '';
+        // Affichage des valeurs brutes
+        for (const k of Object.keys(SENSOR_UI)) {
+          const ui = SENSOR_UI[k];
+          const v = values[k];
+          const el = document.getElementById(ui.valueId);
+          if (!el) continue;
+          if (v != null) {
+            const decimals = (k === "luminosity") ? 0 : 1;
+            el.textContent = v.toFixed(decimals) + ui.unit;
+          } else {
+            el.textContent = "--" + ui.unit;
+          }
+        }
+
+        // Timestamp
+        if (data.timestamp) {
+          const date = new Date(data.timestamp);
+          document.getElementById('timestamp').textContent =
+            'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
+        }
+
+        // Statuts + couleurs + clic rouge
+        for (const k of Object.keys(THRESHOLDS)) {
+          const v = values[k];
+          const status = classify(v, THRESHOLDS[k]);
+          setBoxStatus(k, status);
+          wireClick(k, status, v);
+        }
+
+        const err = document.getElementById('error');
+        err.style.display = 'none';
+        err.textContent = '';
       } catch (error) {
         console.error('Erreur fetch:', error);
-        document.getElementById('error').textContent =
-          'Erreur de chargement des données du capteur.';
-        document.getElementById('error').style.display = 'block';
+        const err = document.getElementById('error');
+        err.textContent = 'Erreur de chargement des données du capteur.';
+        err.style.display = 'block';
       }
     }
 
     fetchData();
-    setInterval(fetchData, 10000);
+    setInterval(fetchData, 10000); // toutes les 10 s [web:13]
   </script>
 
 </body>
