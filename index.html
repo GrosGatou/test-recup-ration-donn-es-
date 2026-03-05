@@ -354,12 +354,12 @@
     const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
 
     // Seuils: vert = cible, orange = acceptable hors cible, rouge = critique
-    const THRESHOLDS = {
-      temperature: { target: [20, 26], acceptable: [16, 28] },
-      airHumidity:  { target: [60, 70], acceptable: [50, 85] },
-      soilHumidity: { target: [60, 75], acceptable: [55, 85] },
-      luminosity:   { target: [30000, 40000], acceptable: [20000, 50000] }
-    };
+   const THRESHOLDS = {
+  temperature: { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
+  airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
+  soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
+  luminosity:   { target: [30000, 40000], acceptable: [20000, 50000], critLow: 20000, critHigh: 50000 }
+};
 
     const SENSOR_UI = {
       temperature: { boxId: "temperatureBox", valueId: "temperature", unit: " °C", label: "Température" },
@@ -391,14 +391,16 @@
       }
     };
 
-    function classify(value, ranges) {
-      if (value == null || Number.isNaN(value)) return "unknown";
-      const [tMin, tMax] = ranges.target;
-      const [aMin, aMax] = ranges.acceptable;
-      if (value >= tMin && value <= tMax) return "ok";
-      if (value >= aMin && value <= aMax) return "warn";
-      return "crit";
-    }
+function classify(value, ranges) {
+  if (value == null || Number.isNaN(value)) return "unknown";
+  const [tMin, tMax] = ranges.target;
+  const [aMin, aMax] = ranges.acceptable;
+
+  if (value >= tMin && value <= tMax) return "ok";
+  if (value >= aMin && value <= aMax) return "warn";
+  return "crit"; // rouge
+}
+
 
     function setBoxStatus(sensorKey, status) {
       const ui = SENSOR_UI[sensorKey];
@@ -412,26 +414,84 @@
       }
     }
 
-    function openAdvice(sensorKey, value) {
-      const overlay = document.getElementById("adviceOverlay");
-      const title = document.getElementById("adviceTitle");
-      const meaning = document.getElementById("adviceMeaning");
-      const risks = document.getElementById("adviceRisks");
-      const actions = document.getElementById("adviceActions");
+function openAdvice(sensorKey, value) {
+  const overlay = document.getElementById("adviceOverlay");
+  const title = document.getElementById("adviceTitle");
+  const meaning = document.getElementById("adviceMeaning");
+  const risks = document.getElementById("adviceRisks");
+  const actions = document.getElementById("adviceActions");
 
-      const ui = SENSOR_UI[sensorKey];
-      const adv = ADVICE[sensorKey];
+  const ui = SENSOR_UI[sensorKey];
+  const ranges = THRESHOLDS[sensorKey];
+  const unit = ui.unit || "";
+  const valText = (value != null) ? `${value}${unit}` : "--";
 
-      const unit = ui.unit || "";
-      const valText = (value != null) ? `${value}${unit}` : "--";
+  // Détecter la direction du problème
+  const isTooLow = value < ranges.critLow;
+  const isTooHigh = value > ranges.critHigh;
+  const direction = isTooLow ? "trop bas" : (isTooHigh ? "trop haut" : "hors limites");
 
-      title.textContent = `Conseils — ${ui.label} (${valText})`;
-      meaning.textContent = adv.meaning;
-      risks.textContent = adv.risks;
-      actions.textContent = adv.actions;
+  // Messages adaptés selon direction
+  let advMeaning, advRisks, advActions;
+  switch(sensorKey) {
+    case "temperature":
+      if (isTooLow) {
+        advMeaning = "Température trop basse (sous seuil critique).";
+        advRisks = "Ralentissement de croissance, mauvaise nouaison (pollinisation/fruit set), risques de dégâts de froid si prolongé.";
+        advActions = "Activer la résistance chauffante.";
+      } else {
+        advMeaning = "Température trop haute (au-dessus seuil critique).";
+        advRisks = "Stress thermique, baisse de nouaison (pollen moins viable), fruits de moins bonne qualité, transpiration forte.";
+        advActions = "Activer la ventilation, ombrer, surveiller arrosage.";
+      }
+      break;
+    case "airHumidity":
+      if (isTooLow) {
+        advMeaning = "Humidité de l’air trop basse (sous seuil critique).";
+        advRisks = "Transpiration qui explose (stress hydrique), flétrissement, bords de feuilles qui se dessèchent.";
+        advActions = "Surveiller arrosage et évaporation.";
+      } else {
+        advMeaning = "Humidité de l’air trop haute (au-dessus seuil critique).";
+        advRisks = "Condensation sur feuilles/fleurs, hausse forte risque maladies (botrytis, oïdium), pollinisation moins efficace.";
+        advActions = "Activer la ventilation.";
+      }
+      break;
+    case "soilHumidity":
+      if (isTooLow) {
+        advMeaning = "Humidité du sol trop basse (sous seuil critique).";
+        advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent, risque nécrose apicale.";
+        advActions = "Activer la pompe/arrosage.";
+      } else {
+        advMeaning = "Humidité du sol trop haute (au-dessus seuil critique).";
+        advRisks = "Asphyxie racinaire (manque oxygène), jaunissement, maladies racinaires, baisse vigueur.";
+        advActions = "Réduire arrosage, améliorer drainage.";
+      }
+      break;
+    case "luminosity":
+      if (isTooLow) {
+        advMeaning = "Luminosité trop basse (sous seuil critique).";
+        advRisks = "Photosynthèse limitée, plants “filés”, floraison/production faible, maturation lente.";
+        advActions = "Allumer LED.";
+      } else {
+        advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
+        advRisks = "Stress lumineux + thermique, feuilles enroulées/brûlées, coups de soleil sur fruits.";
+        advActions = "Ombrer, surveiller température/arrosage.";
+      }
+      break;
+    default:
+      advMeaning = "Seuil critique dépassé.";
+      advRisks = "Vérifier capteur et configuration.";
+      advActions = "Contrôler matériel et seuils.";
+  }
 
-      overlay.style.display = "flex";
-    }
+  title.textContent = `Conseils — ${ui.label} ${direction} (${valText})`;
+  meaning.textContent = advMeaning;
+  risks.textContent = advRisks;
+  actions.textContent = advActions;
+
+  overlay.style.display = "flex";
+}
+
 
     function closeAdvice() {
       const overlay = document.getElementById("adviceOverlay");
