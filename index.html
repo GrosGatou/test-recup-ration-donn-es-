@@ -162,6 +162,20 @@
     .data-box.crit .data-value {
       color:#b91c1c;
     }
+        /* Styles Météo */
+    .meteo-current {
+      background: linear-gradient(135deg, #a8e6cf, #81d4fa) !important;
+      border-color: #4fc3f7 !important;
+      color: #0277bd;
+    }
+    .meteo-current .data-value {
+      color: #01579b !important;
+      font-size: 2em !important;
+    }
+    .meteo-current .data-interval {
+      font-weight: 500;
+    }
+
     .data-box.clickable {
       cursor:pointer;
     }
@@ -295,6 +309,37 @@
         <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
       </div>
     </div>
+    <!-- Section Station Météo -->
+    <div style="margin: 40px 0;">
+      <h3 style="text-align: center; color: #0077cc; margin-bottom: 25px; font-size: 1.6em;">🌤️ Station Météo</h3>
+      
+      <!-- Données actuelles du jour -->
+      <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 25px;">
+        <div class="data-box meteo-current" id="weatherTempBox">
+          <div class="data-label">🌡️ Température</div>
+          <div class="data-value" id="weatherTemp">-- °C</div>
+          <div class="data-interval" id="weatherTempDesc">--</div>
+        </div>
+        <div class="data-box meteo-current" id="weatherHumidityBox">
+          <div class="data-label">💧 Humidité</div>
+          <div class="data-value" id="weatherHumidity">-- %</div>
+        </div>
+        <div class="data-box meteo-current" id="weatherWindBox">
+          <div class="data-label">💨 Vent</div>
+          <div class="data-value" id="weatherWind">-- km/h</div>
+          <div class="data-interval" id="weatherWindDir">--</div>
+        </div>
+      </div>
+
+      <!-- Prévisions du jour -->
+      <div style="background: linear-gradient(135deg, #74b9ff, #0984e3); border-radius: 12px; padding: 25px; color: white; text-align: center;">
+        <h4 style="margin: 0 0 20px 0; font-size: 1.3em;">📅 Prévisions du jour</h4>
+        <div id="weatherForecast" style="font-size: 1.1em; line-height: 1.6;">
+          Chargement des prévisions...
+        </div>
+        <div style="margin-top: 15px; font-size: 0.85em; opacity: 0.9;" id="weatherForecastTime">--</div>
+      </div>
+    </div>
 
     <div class="timestamp" id="timestamp">Dernière mise à jour : --</div>
     <div class="error" id="error" style="display:none;"></div>
@@ -366,6 +411,18 @@
       airHumidity: { boxId: "airHumidityBox", valueId: "airHumidity", unit: " %", label: "Humidité de l'air" },
       soilHumidity:{ boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %", label: "Humidité du sol" },
       luminosity:  { boxId: "luminosityBox", valueId: "luminosity", unit: " lx", label: "Luminosité" }
+    };
+    //  CONFIG MÉTÉO 
+    const WEATHER_API_KEY = 'VOTRE_CLE_API_OPENWEATHERMAP'; // Remplacez par votre clé gratuite
+    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
+    const FORECAST_API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
+
+    const WEATHER_ICONS = {
+      '01d': '☀️', '01n': '🌙', '02d': '⛅', '02n': '🌤️',
+      '03d': '☁️', '03n': '☁️', '04d': '🌥️', '04n': '🌥️',
+      '09d': '🌦️', '09n': '🌦️', '10d': '🌧️', '10n': '🌧️',
+      '11d': '⛈️', '11n': '⛈️', '13d': '❄️', '13n': '❄️',
+      '50d': '🌫️', '50n': '🌫️'
     };
 
     const ADVICE = {
@@ -513,6 +570,68 @@ function openAdvice(sensorKey, value) {
         box.onclick = () => openAdvice(sensorKey, value);
       }
     }
+    // ⭐ FONCTION MÉTÉO - AJOUTER ICI (nouvelle fonction complète)
+    async function fetchWeather() {
+      try {
+        const weatherRes = await fetch(WEATHER_API_URL);
+        const weatherData = await weatherRes.json();
+        
+        // Données actuelles
+        document.getElementById('weatherTemp').textContent = 
+          Math.round(weatherData.main.temp) + ' °C';
+        document.getElementById('weatherHumidity').textContent = 
+          weatherData.main.humidity + ' %';
+        document.getElementById('weatherWind').textContent = 
+          Math.round(weatherData.wind.speed * 3.6) + ' km/h'; // m/s → km/h
+        
+        // Description temp
+        document.getElementById('weatherTempDesc').textContent = 
+          weatherData.weather[0].description;
+        document.getElementById('weatherWindDir').textContent = 
+          weatherData.wind.deg ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg/45)]})` : '';
+
+        // Timestamp météo
+        const weatherDate = new Date(weatherData.dt * 1000);
+        document.getElementById('weatherForecastTime').textContent = 
+          `Mis à jour: ${weatherDate.toLocaleString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
+
+        // Prévisions du jour (8 tranches de 3h)
+        const forecastRes = await fetch(FORECAST_API_URL);
+        const forecastData = await forecastRes.json();
+        const today = new Date().toDateString();
+        const forecastContainer = document.getElementById('weatherForecast');
+        forecastContainer.innerHTML = '';
+        
+        forecastData.list.slice(0, 8).forEach(item => {
+          const itemDate = new Date(item.dt * 1000);
+          if (itemDate.toDateString() === today) {
+            const icon = WEATHER_ICONS[item.weather[0].icon.slice(0, -1) + (itemDate.getHours() >= 18 ? 'n' : 'd')] || '🌤️';
+            const div = document.createElement('div');
+            div.style.cssText = `
+              background: rgba(255,255,255,0.9);
+              padding: 15px 10px;
+              border-radius: 12px;
+              text-align: center;
+              min-width: 70px;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            `;
+            div.innerHTML = `
+              <div style="font-size: 2em;">${icon}</div>
+              <div style="font-weight: bold; font-size: 1.3em;">${Math.round(item.main.temp)}°</div>
+              <div style="font-size: 0.85em; opacity: 0.8;">${itemDate.getHours()}h</div>
+            `;
+            forecastContainer.appendChild(div);
+          }
+        });
+
+      } catch (error) {
+        console.error('Erreur météo:', error);
+        document.getElementById('weatherTemp').textContent = '-- °C';
+        document.getElementById('weatherHumidity').textContent = '-- %';
+        document.getElementById('weatherWind').textContent = '-- km/h';
+        document.getElementById('weatherForecast').textContent = 'Météo indisponible';
+      }
+    }
 
     async function fetchData() {
       try {
@@ -562,16 +681,28 @@ function openAdvice(sensorKey, value) {
         const err = document.getElementById('error');
         err.style.display = 'none';
         err.textContent = '';
+        
+        // ⭐ AJOUT MÉTÉO
+        fetchWeather();
       } catch (error) {
-        console.error('Erreur fetch:', error);
+        console.error('Erreur ESP32:', error);
         const err = document.getElementById('error');
-        err.textContent = 'Erreur de chargement des données du capteur.';
+        err.textContent = 'Erreur capteur ESP32.';
         err.style.display = 'block';
+        fetchWeather(); // Météo continue même si ESP32 HS
       }
     }
 
+    // ⭐ LANCEMENT INITIAL
     fetchData();
-    setInterval(fetchData, 10000); // toutes les 10 s [web:13]
+    fetchWeather();
+    
+    // ⭐ UPDATE TOUT CHAQUE 10s
+    setInterval(() => {
+      fetchData();
+      fetchWeather();
+    }, 10000);
+
   </script>
 
 </body>
