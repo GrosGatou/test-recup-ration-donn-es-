@@ -452,12 +452,6 @@
 <!-- ⭐ STATION MÉTÉO PRO -->
 <div class="weather-section">
   
-  <!-- Date -->
-  <div class="date-banner">
-    <div id="currentDate">Chargement...</div>
-    <div id="currentDay"></div>
-  </div>
-
   <!-- Titre -->
   <h3 class="weather-title">🌤️ Station Météo</h3>
 
@@ -823,12 +817,6 @@ document.getElementById('currentDay').textContent = now.toLocaleDateString('fr-F
           }
         }
 
-        // Timestamp
-        if (data.timestamp) {
-          const date = new Date(data.timestamp);
-          document.getElementById('timestamp').textContent =
-            'Dernière mise à jour : ' + date.toLocaleString('fr-FR');
-        }
 
         // Statuts + couleurs + clic rouge
         for (const k of Object.keys(THRESHOLDS)) {
