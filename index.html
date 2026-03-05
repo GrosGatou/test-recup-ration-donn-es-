@@ -162,19 +162,153 @@
     .data-box.crit .data-value {
       color:#b91c1c;
     }
-        /* Styles Météo */
-    .meteo-current {
-      background: linear-gradient(135deg, #a8e6cf, #81d4fa) !important;
-      border-color: #4fc3f7 !important;
-      color: #0277bd;
-    }
-    .meteo-current .data-value {
-      color: #01579b !important;
-      font-size: 2em !important;
-    }
-    .meteo-current .data-interval {
-      font-weight: 500;
-    }
+ /* ⭐ STATION MÉTÉO PRO - NOUVEAU STYLE */
+.weather-section {
+  margin: 40px 0;
+  background: #e9f1fb;
+  border-radius: 12px;
+  padding: 30px;
+  border: 3px solid #0077cc;
+  box-shadow: 0 4px 20px rgba(0,119,204,0.15);
+}
+
+.weather-title {
+  text-align: center;
+  color: #0077cc;
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.date-banner {
+  background: linear-gradient(135deg, #005fa3, #0077cc);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0,95,163,0.3);
+}
+
+.date-banner #currentDate {
+  font-size: 1.6em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.date-banner #currentDay {
+  font-size: 1.1em;
+  opacity: 0.95;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.weather-box {
+  background: white;
+  border: 2px solid #0077cc;
+  border-radius: 12px;
+  padding: 25px 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,119,204,0.1);
+  transition: all 0.3s ease;
+}
+
+.weather-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,119,204,0.2);
+}
+
+.weather-icon {
+  font-size: 3em;
+  margin-bottom: 12px;
+}
+
+.weather-label {
+  font-size: 1em;
+  color: #005fa3;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.weather-value {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 5px;
+}
+
+.weather-desc {
+  font-size: 0.95em;
+  color: #666;
+  font-style: italic;
+}
+
+.forecast-section {
+  background: linear-gradient(135deg, #e9f1fb, #d6eaf8);
+  border-radius: 12px;
+  padding: 25px;
+  border: 2px solid #0077cc;
+}
+
+.forecast-title {
+  text-align: center;
+  color: #0077cc;
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.forecast-grid {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.forecast-item {
+  background: white;
+  padding: 18px 12px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 75px;
+  box-shadow: 0 3px 12px rgba(0,119,204,0.15);
+  transition: transform 0.2s;
+}
+
+.forecast-item:hover {
+  transform: scale(1.05);
+}
+
+.forecast-icon {
+  font-size: 2.2em;
+  margin-bottom: 8px;
+}
+
+.forecast-temp {
+  font-weight: bold;
+  font-size: 1.4em;
+  color: #003366;
+  margin-bottom: 4px;
+}
+
+.forecast-hour {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.weather-timestamp {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.95em;
+  color: #666;
+  font-style: italic;
+}
 
     .data-box.clickable {
       cursor:pointer;
@@ -314,37 +448,51 @@
   <div style="font-size: 1em; opacity: 0.9;" id="currentDay"></div>
 </div>
 
-    <!-- Section Station Météo -->
-    <div style="margin: 40px 0;">
-      <h3 style="text-align: center; color: #0077cc; margin-bottom: 25px; font-size: 1.6em;">🌤️ Station Météo</h3>
-      
-      <!-- Données actuelles du jour -->
-      <div class="grid-container" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 25px;">
-        <div class="data-box meteo-current" id="weatherTempBox">
-          <div class="data-label">🌡️ Température</div>
-          <div class="data-value" id="weatherTemp">-- °C</div>
-          <div class="data-interval" id="weatherTempDesc">--</div>
-        </div>
-        <div class="data-box meteo-current" id="weatherHumidityBox">
-          <div class="data-label">💧 Humidité</div>
-          <div class="data-value" id="weatherHumidity">-- %</div>
-        </div>
-        <div class="data-box meteo-current" id="weatherWindBox">
-          <div class="data-label">💨 Vent</div>
-          <div class="data-value" id="weatherWind">-- km/h</div>
-          <div class="data-interval" id="weatherWindDir">--</div>
-        </div>
-      </div>
+<!-- ⭐ STATION MÉTÉO PRO -->
+<div class="weather-section">
+  
+  <!-- Date -->
+  <div class="date-banner">
+    <div id="currentDate">Chargement...</div>
+    <div id="currentDay"></div>
+  </div>
 
-      <!-- Prévisions du jour -->
-      <div style="background: linear-gradient(135deg, #74b9ff, #0984e3); border-radius: 12px; padding: 25px; color: white; text-align: center;">
-        <h4 style="margin: 0 0 20px 0; font-size: 1.3em;">📅 Prévisions du jour</h4>
-        <div id="weatherForecast" style="font-size: 1.1em; line-height: 1.6;">
-          Chargement des prévisions...
-        </div>
-        <div style="margin-top: 15px; font-size: 0.85em; opacity: 0.9;" id="weatherForecastTime">--</div>
-      </div>
+  <!-- Titre -->
+  <h3 class="weather-title">🌤️ Station Météo</h3>
+
+  <!-- Données actuelles -->
+  <div class="weather-grid">
+    <div class="weather-box" id="weatherTempBox">
+      <div class="weather-icon">🌡️</div>
+      <div class="weather-label">Température</div>
+      <div class="weather-value" id="weatherTemp">-- °C</div>
+      <div class="weather-desc" id="weatherTempDesc">--</div>
     </div>
+    
+    <div class="weather-box" id="weatherHumidityBox">
+      <div class="weather-icon">💧</div>
+      <div class="weather-label">Humidité</div>
+      <div class="weather-value" id="weatherHumidity">-- %</div>
+    </div>
+    
+    <div class="weather-box" id="weatherWindBox">
+      <div class="weather-icon">💨</div>
+      <div class="weather-label">Vent</div>
+      <div class="weather-value" id="weatherWind">-- km/h</div>
+      <div class="weather-desc" id="weatherWindDir">--</div>
+    </div>
+  </div>
+
+  <!-- Prévisions -->
+  <div class="forecast-section">
+    <h4 class="forecast-title">📅 Prévisions du jour</h4>
+    <div class="forecast-grid" id="weatherForecast">
+      <!-- Généré par JS -->
+    </div>
+    <div class="weather-timestamp" id="weatherForecastTime">--</div>
+  </div>
+
+</div>
 
     <div class="timestamp" id="timestamp">Dernière mise à jour : --</div>
     <div class="error" id="error" style="display:none;"></div>
