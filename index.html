@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -94,6 +93,51 @@
     }
 
     /* Page Suivi des données */
+
+    /* Encadré global des capteurs, harmonisé avec station météo */
+    .sensors-section {
+      margin: 10px 0 30px 0;
+      background: #e9f1fb;
+      border-radius: 12px;
+      padding: 25px 25px 30px 25px;
+      border: 3px solid #0077cc;
+      box-shadow: 0 4px 20px rgba(0,119,204,0.15);
+      position: relative;
+    }
+
+    .sensors-title {
+      text-align: center;
+      color: #0077cc;
+      font-size: 1.6em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    /* Petit encadré date en haut à droite */
+    .date-badge {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: white;
+      color: #005fa3;
+      border-radius: 8px;
+      padding: 6px 12px;
+      border: 1px solid #0077cc;
+      font-size: 0.9em;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .date-badge-main {
+      font-weight: bold;
+    }
+    .date-badge-day {
+      font-size: 0.8em;
+      opacity: 0.85;
+    }
+
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
@@ -163,153 +207,133 @@
     .data-box.crit .data-value {
       color:#b91c1c;
     }
- /* ⭐ STATION MÉTÉO PRO - NOUVEAU STYLE */
-.weather-section {
-  margin: 40px 0;
-  background: #e9f1fb;
-  border-radius: 12px;
-  padding: 30px;
-  border: 3px solid #0077cc;
-  box-shadow: 0 4px 20px rgba(0,119,204,0.15);
-}
 
-.weather-title {
-  text-align: center;
-  color: #0077cc;
-  font-size: 1.8em;
-  font-weight: bold;
-  margin-bottom: 30px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    /* ⭐ STATION MÉTÉO PRO - STYLE EXISTANT */
+    .weather-section {
+      margin: 40px 0;
+      background: #e9f1fb;
+      border-radius: 12px;
+      padding: 30px;
+      border: 3px solid #0077cc;
+      box-shadow: 0 4px 20px rgba(0,119,204,0.15);
+    }
 
-.date-banner {
-  background: linear-gradient(135deg, #005fa3, #0077cc);
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(0,95,163,0.3);
-}
+    .weather-title {
+      text-align: center;
+      color: #0077cc;
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-.date-banner #currentDate {
-  font-size: 1.6em;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
 
-.date-banner #currentDay {
-  font-size: 1.1em;
-  opacity: 0.95;
-}
+    .weather-box {
+      background: white;
+      border: 2px solid #0077cc;
+      border-radius: 12px;
+      padding: 25px 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,119,204,0.1);
+      transition: all 0.3s ease;
+    }
 
-.weather-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
-  margin-bottom: 30px;
-}
+    .weather-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,119,204,0.2);
+    }
 
-.weather-box {
-  background: white;
-  border: 2px solid #0077cc;
-  border-radius: 12px;
-  padding: 25px 20px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,119,204,0.1);
-  transition: all 0.3s ease;
-}
+    .weather-icon {
+      font-size: 3em;
+      margin-bottom: 12px;
+    }
 
-.weather-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,119,204,0.2);
-}
+    .weather-label {
+      font-size: 1em;
+      color: #005fa3;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
 
-.weather-icon {
-  font-size: 3em;
-  margin-bottom: 12px;
-}
+    .weather-value {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 5px;
+    }
 
-.weather-label {
-  font-size: 1em;
-  color: #005fa3;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
+    .weather-desc {
+      font-size: 0.95em;
+      color: #666;
+      font-style: italic;
+    }
 
-.weather-value {
-  font-size: 2.5em;
-  font-weight: bold;
-  color: #003366;
-  margin-bottom: 5px;
-}
+    .forecast-section {
+      background: linear-gradient(135deg, #e9f1fb, #d6eaf8);
+      border-radius: 12px;
+      padding: 25px;
+      border: 2px solid #0077cc;
+    }
 
-.weather-desc {
-  font-size: 0.95em;
-  color: #666;
-  font-style: italic;
-}
+    .forecast-title {
+      text-align: center;
+      color: #0077cc;
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
 
-.forecast-section {
-  background: linear-gradient(135deg, #e9f1fb, #d6eaf8);
-  border-radius: 12px;
-  padding: 25px;
-  border: 2px solid #0077cc;
-}
+    .forecast-grid {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-.forecast-title {
-  text-align: center;
-  color: #0077cc;
-  font-size: 1.4em;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+    .forecast-item {
+      background: white;
+      padding: 18px 12px;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 75px;
+      box-shadow: 0 3px 12px rgba(0,119,204,0.15);
+      transition: transform 0.2s;
+    }
 
-.forecast-grid {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+    .forecast-item:hover {
+      transform: scale(1.05);
+    }
 
-.forecast-item {
-  background: white;
-  padding: 18px 12px;
-  border-radius: 10px;
-  text-align: center;
-  min-width: 75px;
-  box-shadow: 0 3px 12px rgba(0,119,204,0.15);
-  transition: transform 0.2s;
-}
+    .forecast-icon {
+      font-size: 2.2em;
+      margin-bottom: 8px;
+    }
 
-.forecast-item:hover {
-  transform: scale(1.05);
-}
+    .forecast-temp {
+      font-weight: bold;
+      font-size: 1.4em;
+      color: #003366;
+      margin-bottom: 4px;
+    }
 
-.forecast-icon {
-  font-size: 2.2em;
-  margin-bottom: 8px;
-}
+    .forecast-hour {
+      font-size: 0.85em;
+      color: #666;
+    }
 
-.forecast-temp {
-  font-weight: bold;
-  font-size: 1.4em;
-  color: #003366;
-  margin-bottom: 4px;
-}
-
-.forecast-hour {
-  font-size: 0.85em;
-  color: #666;
-}
-
-.weather-timestamp {
-  text-align: center;
-  margin-top: 25px;
-  font-size: 0.95em;
-  color: #666;
-  font-style: italic;
-}
+    .weather-timestamp {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 0.95em;
+      color: #666;
+      font-style: italic;
+    }
 
     .data-box.clickable {
       cursor:pointer;
@@ -421,73 +445,74 @@
 
   <!-- Onglet SUIVI DES DONNÉES -->
   <section id="suivi">
-    <h2>Suivi des données du capteur</h2>
-    <div class="grid-container" id="dataGrid">
-      <div class="data-box" id="airHumidityBox">
-        <div class="data-label">Humidité de l'air</div>
-        <div class="data-value" id="airHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
-      </div>
-      <div class="data-box" id="soilHumidityBox">
-        <div class="data-label">Humidité du sol</div>
-        <div class="data-value" id="soilHumidity">-- %</div>
-        <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
-      </div>
-      <div class="data-box" id="temperatureBox">
-        <div class="data-label">Température</div>
-        <div class="data-value" id="temperature">-- °C</div>
-        <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
-      </div>
-      <div class="data-box" id="luminosityBox">
-        <div class="data-label">Luminosité</div>
-        <div class="data-value" id="luminosity">-- lx</div>
-        <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
-      </div>
-    </div>
-    <div style="text-align: center; margin-bottom: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 12px;">
-  <div style="font-size: 1.6em; font-weight: bold;" id="currentDate">Chargement...</div>
-  <div style="font-size: 1em; opacity: 0.9;" id="currentDay"></div>
-</div>
+    <!-- Bloc capteurs harmonisé -->
+    <div class="sensors-section">
+      <div class="sensors-title">Suivi des données du capteur</div>
 
-<!-- ⭐ STATION MÉTÉO PRO -->
-<div class="weather-section">
-  
-  <!-- Titre -->
-  <h3 class="weather-title">🌤️ Station Météo</h3>
+      <!-- Badge date -->
+      <div class="date-badge">
+        <span class="date-badge-main" id="badgeDate">--/--/----</span>
+        <span class="date-badge-day" id="badgeDay">--</span>
+      </div>
 
-  <!-- Données actuelles -->
-  <div class="weather-grid">
-    <div class="weather-box" id="weatherTempBox">
-      <div class="weather-icon">🌡️</div>
-      <div class="weather-label">Température</div>
-      <div class="weather-value" id="weatherTemp">-- °C</div>
-      <div class="weather-desc" id="weatherTempDesc">--</div>
+      <div class="grid-container" id="dataGrid">
+        <div class="data-box" id="airHumidityBox">
+          <div class="data-label">Humidité de l'air</div>
+          <div class="data-value" id="airHumidity">-- %</div>
+          <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
+        </div>
+        <div class="data-box" id="soilHumidityBox">
+          <div class="data-label">Humidité du sol</div>
+          <div class="data-value" id="soilHumidity">-- %</div>
+          <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
+        </div>
+        <div class="data-box" id="temperatureBox">
+          <div class="data-label">Température</div>
+          <div class="data-value" id="temperature">-- °C</div>
+          <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
+        </div>
+        <div class="data-box" id="luminosityBox">
+          <div class="data-label">Luminosité</div>
+          <div class="data-value" id="luminosity">-- lx</div>
+          <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
+        </div>
+      </div>
     </div>
-    
-    <div class="weather-box" id="weatherHumidityBox">
-      <div class="weather-icon">💧</div>
-      <div class="weather-label">Humidité</div>
-      <div class="weather-value" id="weatherHumidity">-- %</div>
-    </div>
-    
-    <div class="weather-box" id="weatherWindBox">
-      <div class="weather-icon">💨</div>
-      <div class="weather-label">Vent</div>
-      <div class="weather-value" id="weatherWind">-- km/h</div>
-      <div class="weather-desc" id="weatherWindDir">--</div>
-    </div>
-  </div>
 
-  <!-- Prévisions -->
-  <div class="forecast-section">
-    <h4 class="forecast-title">📅 Prévisions du jour</h4>
-    <div class="forecast-grid" id="weatherForecast">
-      <!-- Généré par JS -->
-    </div>
-    <div class="weather-timestamp" id="weatherForecastTime">--</div>
-  </div>
+    <!-- ⭐ STATION MÉTÉO PRO -->
+    <div class="weather-section">
+      <h3 class="weather-title">🌤️ Station Météo</h3>
 
-</div>
+      <div class="weather-grid">
+        <div class="weather-box" id="weatherTempBox">
+          <div class="weather-icon">🌡️</div>
+          <div class="weather-label">Température</div>
+          <div class="weather-value" id="weatherTemp">-- °C</div>
+          <div class="weather-desc" id="weatherTempDesc">--</div>
+        </div>
+        
+        <div class="weather-box" id="weatherHumidityBox">
+          <div class="weather-icon">💧</div>
+          <div class="weather-label">Humidité</div>
+          <div class="weather-value" id="weatherHumidity">-- %</div>
+        </div>
+        
+        <div class="weather-box" id="weatherWindBox">
+          <div class="weather-icon">💨</div>
+          <div class="weather-label">Vent</div>
+          <div class="weather-value" id="weatherWind">-- km/h</div>
+          <div class="weather-desc" id="weatherWindDir">--</div>
+        </div>
+      </div>
+
+      <div class="forecast-section">
+        <h4 class="forecast-title">📅 Prévisions du jour</h4>
+        <div class="forecast-grid" id="weatherForecast">
+          <!-- Généré par JS -->
+        </div>
+        <div class="weather-timestamp" id="weatherForecastTime">--</div>
+      </div>
+    </div>
   </section>
 
   <!-- Overlay Conseils -->
@@ -515,7 +540,7 @@
   </div>
 
   <footer>
-    <p>© 2025 - Mon projet ESP32</p>
+    <p>© 2026 - Mon projet ESP32</p>
   </footer>
 
   <script>
@@ -543,13 +568,12 @@
 
     const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
 
-    // Seuils: vert = cible, orange = acceptable hors cible, rouge = critique
-   const THRESHOLDS = {
-  temperature: { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
-  airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
-  soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
-  luminosity:   { target: [30000, 40000], acceptable: [20000, 50000], critLow: 20000, critHigh: 50000 }
-};
+    const THRESHOLDS = {
+      temperature: { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
+      airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
+      soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
+      luminosity:   { target: [30000, 40000], acceptable: [20000, 50000], critLow: 20000, critHigh: 50000 }
+    };
 
     const SENSOR_UI = {
       temperature: { boxId: "temperatureBox", valueId: "temperature", unit: " °C", label: "Température" },
@@ -557,8 +581,9 @@
       soilHumidity:{ boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %", label: "Humidité du sol" },
       luminosity:  { boxId: "luminosityBox", valueId: "luminosity", unit: " lx", label: "Luminosité" }
     };
+
     //  CONFIG MÉTÉO 
-const WEATHER_API_KEY = '6ccbda539bcbb73fe70461c935ab77e1';
+    const WEATHER_API_KEY = '6ccbda539bcbb73fe70461c935ab77e1';
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
     const FORECAST_API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
 
@@ -593,16 +618,15 @@ const WEATHER_API_KEY = '6ccbda539bcbb73fe70461c935ab77e1';
       }
     };
 
-function classify(value, ranges) {
-  if (value == null || Number.isNaN(value)) return "unknown";
-  const [tMin, tMax] = ranges.target;
-  const [aMin, aMax] = ranges.acceptable;
+    function classify(value, ranges) {
+      if (value == null || Number.isNaN(value)) return "unknown";
+      const [tMin, tMax] = ranges.target;
+      const [aMin, aMax] = ranges.acceptable;
 
-  if (value >= tMin && value <= tMax) return "ok";
-  if (value >= aMin && value <= aMax) return "warn";
-  return "crit"; // rouge
-}
-
+      if (value >= tMin && value <= tMax) return "ok";
+      if (value >= aMin && value <= aMax) return "warn";
+      return "crit";
+    }
 
     function setBoxStatus(sensorKey, status) {
       const ui = SENSOR_UI[sensorKey];
@@ -616,84 +640,81 @@ function classify(value, ranges) {
       }
     }
 
-function openAdvice(sensorKey, value) {
-  const overlay = document.getElementById("adviceOverlay");
-  const title = document.getElementById("adviceTitle");
-  const meaning = document.getElementById("adviceMeaning");
-  const risks = document.getElementById("adviceRisks");
-  const actions = document.getElementById("adviceActions");
+    function openAdvice(sensorKey, value) {
+      const overlay = document.getElementById("adviceOverlay");
+      const title = document.getElementById("adviceTitle");
+      const meaning = document.getElementById("adviceMeaning");
+      const risks = document.getElementById("adviceRisks");
+      const actions = document.getElementById("adviceActions");
 
-  const ui = SENSOR_UI[sensorKey];
-  const ranges = THRESHOLDS[sensorKey];
-  const unit = ui.unit || "";
-  const valText = (value != null) ? `${value}${unit}` : "--";
+      const ui = SENSOR_UI[sensorKey];
+      const ranges = THRESHOLDS[sensorKey];
+      const unit = ui.unit || "";
+      const valText = (value != null) ? `${value}${unit}` : "--";
 
-  // Détecter la direction du problème
-  const isTooLow = value < ranges.critLow;
-  const isTooHigh = value > ranges.critHigh;
-  const direction = isTooLow ? "trop bas" : (isTooHigh ? "trop haut" : "hors limites");
+      const isTooLow = value < ranges.critLow;
+      const isTooHigh = value > ranges.critHigh;
+      const direction = isTooLow ? "trop bas" : (isTooHigh ? "trop haut" : "hors limites");
 
-  // Messages adaptés selon direction
-  let advMeaning, advRisks, advActions;
-  switch(sensorKey) {
-    case "temperature":
-      if (isTooLow) {
-        advMeaning = "Température trop basse (sous seuil critique).";
-        advRisks = "Ralentissement de croissance, mauvaise nouaison (pollinisation/fruit set), risques de dégâts de froid si prolongé.";
-        advActions = "Activer la résistance chauffante.";
-      } else {
-        advMeaning = "Température trop haute (au-dessus seuil critique).";
-        advRisks = "Stress thermique, baisse de nouaison (pollen moins viable), fruits de moins bonne qualité, transpiration forte.";
-        advActions = "Activer la ventilation, ombrer, surveiller arrosage.";
+      let advMeaning, advRisks, advActions;
+      switch(sensorKey) {
+        case "temperature":
+          if (isTooLow) {
+            advMeaning = "Température trop basse (sous seuil critique).";
+            advRisks = "Ralentissement de croissance, mauvaise nouaison (pollinisation/fruit set), risques de dégâts de froid si prolongé.";
+            advActions = "Activer la résistance chauffante.";
+          } else {
+            advMeaning = "Température trop haute (au-dessus seuil critique).";
+            advRisks = "Stress thermique, baisse de nouaison (pollen moins viable), fruits de moins bonne qualité, transpiration forte.";
+            advActions = "Activer la ventilation, ombrer, surveiller arrosage.";
+          }
+          break;
+        case "airHumidity":
+          if (isTooLow) {
+            advMeaning = "Humidité de l’air trop basse (sous seuil critique).";
+            advRisks = "Transpiration qui explose (stress hydrique), flétrissement, bords de feuilles qui se dessèchent.";
+            advActions = "Surveiller arrosage et évaporation.";
+          } else {
+            advMeaning = "Humidité de l’air trop haute (au-dessus seuil critique).";
+            advRisks = "Condensation sur feuilles/fleurs, hausse forte risque maladies (botrytis, oïdium), pollinisation moins efficace.";
+            advActions = "Activer la ventilation.";
+          }
+          break;
+        case "soilHumidity":
+          if (isTooLow) {
+            advMeaning = "Humidité du sol trop basse (sous seuil critique).";
+            advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent, risque nécrose apicale.";
+            advActions = "Activer la pompe/arrosage.";
+          } else {
+            advMeaning = "Humidité du sol trop haute (au-dessus seuil critique).";
+            advRisks = "Asphyxie racinaire (manque oxygène), jaunissement, maladies racinaires, baisse vigueur.";
+            advActions = "Réduire arrosage, améliorer drainage.";
+          }
+          break;
+        case "luminosity":
+          if (isTooLow) {
+            advMeaning = "Luminosité trop basse (sous seuil critique).";
+            advRisks = "Photosynthèse limitée, plants “filés”, floraison/production faible, maturation lente.";
+            advActions = "Allumer LED.";
+          } else {
+            advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
+            advRisks = "Stress lumineux + thermique, feuilles enroulées/brûlées, coups de soleil sur fruits.";
+            advActions = "Ombrer, surveiller température/arrosage.";
+          }
+          break;
+        default:
+          advMeaning = "Seuil critique dépassé.";
+          advRisks = "Vérifier capteur et configuration.";
+          advActions = "Contrôler matériel et seuils.";
       }
-      break;
-    case "airHumidity":
-      if (isTooLow) {
-        advMeaning = "Humidité de l’air trop basse (sous seuil critique).";
-        advRisks = "Transpiration qui explose (stress hydrique), flétrissement, bords de feuilles qui se dessèchent.";
-        advActions = "Surveiller arrosage et évaporation.";
-      } else {
-        advMeaning = "Humidité de l’air trop haute (au-dessus seuil critique).";
-        advRisks = "Condensation sur feuilles/fleurs, hausse forte risque maladies (botrytis, oïdium), pollinisation moins efficace.";
-        advActions = "Activer la ventilation.";
-      }
-      break;
-    case "soilHumidity":
-      if (isTooLow) {
-        advMeaning = "Humidité du sol trop basse (sous seuil critique).";
-        advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent, risque nécrose apicale.";
-        advActions = "Activer la pompe/arrosage.";
-      } else {
-        advMeaning = "Humidité du sol trop haute (au-dessus seuil critique).";
-        advRisks = "Asphyxie racinaire (manque oxygène), jaunissement, maladies racinaires, baisse vigueur.";
-        advActions = "Réduire arrosage, améliorer drainage.";
-      }
-      break;
-    case "luminosity":
-      if (isTooLow) {
-        advMeaning = "Luminosité trop basse (sous seuil critique).";
-        advRisks = "Photosynthèse limitée, plants “filés”, floraison/production faible, maturation lente.";
-        advActions = "Allumer LED.";
-      } else {
-        advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
-        advRisks = "Stress lumineux + thermique, feuilles enroulées/brûlées, coups de soleil sur fruits.";
-        advActions = "Ombrer, surveiller température/arrosage.";
-      }
-      break;
-    default:
-      advMeaning = "Seuil critique dépassé.";
-      advRisks = "Vérifier capteur et configuration.";
-      advActions = "Contrôler matériel et seuils.";
-  }
 
-  title.textContent = `Conseils — ${ui.label} ${direction} (${valText})`;
-  meaning.textContent = advMeaning;
-  risks.textContent = advRisks;
-  actions.textContent = advActions;
+      title.textContent = `Conseils — ${ui.label} ${direction} (${valText})`;
+      meaning.textContent = advMeaning;
+      risks.textContent = advRisks;
+      actions.textContent = advActions;
 
-  overlay.style.display = "flex";
-}
-
+      overlay.style.display = "flex";
+    }
 
     function closeAdvice() {
       const overlay = document.getElementById("adviceOverlay");
@@ -715,41 +736,28 @@ function openAdvice(sensorKey, value) {
         box.onclick = () => openAdvice(sensorKey, value);
       }
     }
-    // ⭐ FONCTION MÉTÉO - AJOUTER ICI (nouvelle fonction complète)
+
     async function fetchWeather() {
       try {
-        // Date du jour
-const now = new Date();
-document.getElementById('currentDate').textContent = now.toLocaleDateString('fr-FR', {
-  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-});
-document.getElementById('currentDay').textContent = now.toLocaleDateString('fr-FR', {
-  weekday: 'long'
-});
-
         const weatherRes = await fetch(WEATHER_API_URL);
         const weatherData = await weatherRes.json();
         
-        // Données actuelles
         document.getElementById('weatherTemp').textContent = 
           Math.round(weatherData.main.temp) + ' °C';
         document.getElementById('weatherHumidity').textContent = 
           weatherData.main.humidity + ' %';
         document.getElementById('weatherWind').textContent = 
-          Math.round(weatherData.wind.speed * 3.6) + ' km/h'; // m/s → km/h
+          Math.round(weatherData.wind.speed * 3.6) + ' km/h';
         
-        // Description temp
         document.getElementById('weatherTempDesc').textContent = 
           weatherData.weather[0].description;
         document.getElementById('weatherWindDir').textContent = 
           weatherData.wind.deg ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg/45)]})` : '';
 
-        // Timestamp météo
         const weatherDate = new Date(weatherData.dt * 1000);
         document.getElementById('weatherForecastTime').textContent = 
           `Mis à jour: ${weatherDate.toLocaleString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
 
-        // Prévisions du jour (8 tranches de 3h)
         const forecastRes = await fetch(FORECAST_API_URL);
         const forecastData = await forecastRes.json();
         const today = new Date().toDateString();
@@ -761,18 +769,11 @@ document.getElementById('currentDay').textContent = now.toLocaleDateString('fr-F
           if (itemDate.toDateString() === today) {
             const icon = WEATHER_ICONS[item.weather[0].icon.slice(0, -1) + (itemDate.getHours() >= 18 ? 'n' : 'd')] || '🌤️';
             const div = document.createElement('div');
-            div.style.cssText = `
-              background: rgba(255,255,255,0.9);
-              padding: 15px 10px;
-              border-radius: 12px;
-              text-align: center;
-              min-width: 70px;
-              box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            `;
+            div.className = 'forecast-item';
             div.innerHTML = `
-              <div style="font-size: 2em;">${icon}</div>
-              <div style="font-weight: bold; font-size: 1.3em;">${Math.round(item.main.temp)}°</div>
-              <div style="font-size: 0.85em; opacity: 0.8;">${itemDate.getHours()}h</div>
+              <div class="forecast-icon">${icon}</div>
+              <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
+              <div class="forecast-hour">${itemDate.getHours()}h</div>
             `;
             forecastContainer.appendChild(div);
           }
@@ -791,19 +792,16 @@ document.getElementById('currentDay').textContent = now.toLocaleDateString('fr-F
       try {
         const response = await fetch(API_URL);
         const apiResponse = await response.json();
-        const data = JSON.parse(apiResponse.body); // { temperature, humidity, timestamp }
+        const data = JSON.parse(apiResponse.body);
 
-        // Pour l’instant, on n’a que DHT22 : température + humidité de l’air
         const temperature = typeof data.temperature === "number" ? data.temperature : null;
         const airHumidity = typeof data.humidity === "number" ? data.humidity : null;
 
-        // Capteurs futurs
         const soilHumidity = null;
         const luminosity = null;
 
         const values = { temperature, airHumidity, soilHumidity, luminosity };
 
-        // Affichage des valeurs brutes
         for (const k of Object.keys(SENSOR_UI)) {
           const ui = SENSOR_UI[k];
           const v = values[k];
@@ -817,8 +815,6 @@ document.getElementById('currentDay').textContent = now.toLocaleDateString('fr-F
           }
         }
 
-
-        // Statuts + couleurs + clic rouge
         for (const k of Object.keys(THRESHOLDS)) {
           const v = values[k];
           const status = classify(v, THRESHOLDS[k]);
@@ -827,30 +823,41 @@ document.getElementById('currentDay').textContent = now.toLocaleDateString('fr-F
         }
 
         const err = document.getElementById('error');
-        err.style.display = 'none';
-        err.textContent = '';
+        if (err) {
+          err.style.display = 'none';
+          err.textContent = '';
+        }
         
-        // ⭐ AJOUT MÉTÉO
         fetchWeather();
       } catch (error) {
         console.error('Erreur ESP32:', error);
         const err = document.getElementById('error');
-        err.textContent = 'Erreur capteur ESP32.';
-        err.style.display = 'block';
-        fetchWeather(); // Météo continue même si ESP32 HS
+        if (err) {
+          err.textContent = 'Erreur capteur ESP32.';
+          err.style.display = 'block';
+        }
+        fetchWeather();
       }
     }
 
-    // ⭐ LANCEMENT INITIAL
+    // Mise à jour du badge date au chargement
+    function updateDateBadge() {
+      const now = new Date();
+      document.getElementById('badgeDate').textContent =
+        now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      document.getElementById('badgeDay').textContent =
+        now.toLocaleDateString('fr-FR', { weekday: 'long' });
+    }
+
+    updateDateBadge();
     fetchData();
     fetchWeather();
     
-    // ⭐ UPDATE TOUT CHAQUE 10s
     setInterval(() => {
+      updateDateBadge();
       fetchData();
       fetchWeather();
     }, 10000);
-
   </script>
 
 </body>
