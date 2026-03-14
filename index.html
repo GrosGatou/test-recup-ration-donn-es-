@@ -767,11 +767,6 @@ async function fetchData() {
     const apiResponse = await response.json();
     const data = JSON.parse(apiResponse.body);
 
-    console.log("DATA API =", data);
-    console.log("temperature type =", typeof data.temperature, data.temperature);
-    console.log("humidity type =", typeof data.humidity, data.humidity);
-    console.log("timestamp =", data.timestamp);
-
     const temperature = data.temperature != null && !isNaN(Number(data.temperature))
       ? Number(data.temperature)
       : null;
@@ -786,18 +781,9 @@ async function fetchData() {
     const values = { temperature, airHumidity, soilHumidity, luminosity };
     const hasAnyValue = Object.values(values).some(v => v !== null);
 
-    let isFresh = false;
+    if (hasAnyValue) {
+      lastValidSensorTime = Date.now();
 
-    if (data.timestamp) {
-      const dataTime = new Date(data.timestamp).getTime();
-      if (!isNaN(dataTime)) {
-        const ageMs = Date.now() - dataTime;
-        console.log("ageMs =", ageMs);
-        isFresh = ageMs <= 30000;
-      }
-    }
-
-    if (hasAnyValue && isFresh) {
       for (const k of Object.keys(SENSOR_UI)) {
         const ui = SENSOR_UI[k];
         const v = values[k];
@@ -821,6 +807,32 @@ async function fetchData() {
 
       errorBanner.style.display = "none";
     } else {
+      const ageMs = Date.now() - lastValidSensorTime;
+
+      if (lastValidSensorTime === 0 || ageMs > 30000) {
+        for (const k of Object.keys(SENSOR_UI)) {
+          const ui = SENSOR_UI[k];
+          const el = document.getElementById(ui.valueId);
+          if (el) el.textContent = "--" + ui.unit;
+        }
+
+        for (const k of Object.keys(THRESHOLDS)) {
+          setBoxStatus(k, "unknown");
+          wireClick(k, "unknown", null);
+        }
+
+        errorText.textContent = "❌ Données capteur absentes depuis plus de 30 s. Vérifiez le DHT22 / câblage.";
+        errorBanner.style.display = "flex";
+      }
+    }
+
+    fetchWeather();
+  } catch (error) {
+    console.error('Erreur ESP32:', error);
+
+    const ageMs = Date.now() - lastValidSensorTime;
+
+    if (lastValidSensorTime === 0 || ageMs > 30000) {
       for (const k of Object.keys(SENSOR_UI)) {
         const ui = SENSOR_UI[k];
         const el = document.getElementById(ui.valueId);
@@ -832,31 +844,14 @@ async function fetchData() {
         wireClick(k, "unknown", null);
       }
 
-      errorText.textContent = "❌ Données capteur absentes depuis plus de 30 s. Vérifiez le DHT22 / câblage.";
+      errorText.textContent = "❌ ESP32 hors ligne (WiFi/alim/API). Vérifiez connexion.";
       errorBanner.style.display = "flex";
     }
 
     fetchWeather();
-  } catch (error) {
-    console.error('Erreur ESP32:', error);
-
-    for (const k of Object.keys(SENSOR_UI)) {
-      const ui = SENSOR_UI[k];
-      const el = document.getElementById(ui.valueId);
-      if (el) el.textContent = "--" + ui.unit;
-    }
-
-    for (const k of Object.keys(THRESHOLDS)) {
-      setBoxStatus(k, "unknown");
-      wireClick(k, "unknown", null);
-    }
-
-    errorText.textContent = "❌ ESP32 hors ligne (WiFi/alim/API). Vérifiez connexion.";
-    errorBanner.style.display = "flex";
-
-    fetchWeather();
   }
 }
+
     function updateDateBadge() {
       const now = new Date();
       document.getElementById('badgeDate').textContent =
@@ -1636,64 +1631,103 @@ async function fetchData() {
       }
     }
 
-    async function fetchData() {
-      const errorBanner = document.getElementById('sensorError');
-      const errorText   = document.getElementById('sensorErrorText');
+let lastValidSensorTime = 0;
 
-      /* remise à zéro visuelle pour éviter d'afficher des anciennes valeurs */
+async function fetchData() {
+  const errorBanner = document.getElementById('sensorError');
+  const errorText = document.getElementById('sensorErrorText');
+
+  try {
+    const response = await fetch(API_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+
+    const apiResponse = await response.json();
+    const data = JSON.parse(apiResponse.body);
+
+    const temperature = data.temperature != null && !isNaN(Number(data.temperature))
+      ? Number(data.temperature)
+      : null;
+
+    const airHumidity = data.humidity != null && !isNaN(Number(data.humidity))
+      ? Number(data.humidity)
+      : null;
+
+    const soilHumidity = null;
+    const luminosity = null;
+
+    const values = { temperature, airHumidity, soilHumidity, luminosity };
+    const hasAnyValue = Object.values(values).some(v => v !== null);
+
+    if (hasAnyValue) {
+      lastValidSensorTime = Date.now();
+
+      for (const k of Object.keys(SENSOR_UI)) {
+        const ui = SENSOR_UI[k];
+        const v = values[k];
+        const el = document.getElementById(ui.valueId);
+        if (!el) continue;
+
+        if (v != null) {
+          const decimals = (k === "luminosity") ? 0 : 1;
+          el.textContent = v.toFixed(decimals) + ui.unit;
+        } else {
+          el.textContent = "--" + ui.unit;
+        }
+      }
+
+      for (const k of Object.keys(THRESHOLDS)) {
+        const v = values[k];
+        const status = classify(v, THRESHOLDS[k]);
+        setBoxStatus(k, status);
+        wireClick(k, status, v);
+      }
+
+      errorBanner.style.display = "none";
+    } else {
+      const ageMs = Date.now() - lastValidSensorTime;
+
+      if (lastValidSensorTime === 0 || ageMs > 30000) {
+        for (const k of Object.keys(SENSOR_UI)) {
+          const ui = SENSOR_UI[k];
+          const el = document.getElementById(ui.valueId);
+          if (el) el.textContent = "--" + ui.unit;
+        }
+
+        for (const k of Object.keys(THRESHOLDS)) {
+          setBoxStatus(k, "unknown");
+          wireClick(k, "unknown", null);
+        }
+
+        errorText.textContent = "❌ Données capteur absentes depuis plus de 30 s. Vérifiez le DHT22 / câblage.";
+        errorBanner.style.display = "flex";
+      }
+    }
+
+    fetchWeather();
+  } catch (error) {
+    console.error('Erreur ESP32:', error);
+
+    const ageMs = Date.now() - lastValidSensorTime;
+
+    if (lastValidSensorTime === 0 || ageMs > 30000) {
       for (const k of Object.keys(SENSOR_UI)) {
         const ui = SENSOR_UI[k];
         const el = document.getElementById(ui.valueId);
         if (el) el.textContent = "--" + ui.unit;
       }
 
-      try {
-        const response = await fetch(API_URL, { cache: "no-store" });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        
-        const apiResponse = await response.json();
-        const data = JSON.parse(apiResponse.body);
-
-        const temperature = typeof data.temperature === "number" ? data.temperature : null;
-        const airHumidity = typeof data.humidity === "number" ? data.humidity : null;
-        const soilHumidity = null;
-        const luminosity = null;
-
-        const values = { temperature, airHumidity, soilHumidity, luminosity };
-        const hasAnyValue = Object.values(values).some(v => typeof v === 'number');
-
-        for (const k of Object.keys(SENSOR_UI)) {
-          const ui = SENSOR_UI[k];
-          const v = values[k];
-          const el = document.getElementById(ui.valueId);
-          if (el && v != null) {
-            const decimals = (k === "luminosity") ? 0 : 1;
-            el.textContent = v.toFixed(decimals) + ui.unit;
-          }
-        }
-
-        for (const k of Object.keys(THRESHOLDS)) {
-          const v = values[k];
-          const status = classify(v, THRESHOLDS[k]);
-          setBoxStatus(k, status);
-          wireClick(k, status, v);
-        }
-
-        if (!hasAnyValue) {
-          errorText.textContent = "❌ Capteur déconnecté (DHT22 ?). Vérifiez câblage/pins.";
-          errorBanner.style.display = "flex";
-        } else {
-          errorBanner.style.display = "none";
-        }
-
-        fetchWeather();
-      } catch (error) {
-        console.error('Erreur ESP32:', error);
-        errorText.textContent = "❌ ESP32 hors ligne (WiFi/alim). Vérifiez connexion.";
-        errorBanner.style.display = "flex";
-        fetchWeather();
+      for (const k of Object.keys(THRESHOLDS)) {
+        setBoxStatus(k, "unknown");
+        wireClick(k, "unknown", null);
       }
+
+      errorText.textContent = "❌ ESP32 hors ligne (WiFi/alim/API). Vérifiez connexion.";
+      errorBanner.style.display = "flex";
     }
+
+    fetchWeather();
+  }
+}
 
     function updateDateBadge() {
       const now = new Date();
