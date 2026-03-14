@@ -767,23 +767,34 @@ async function fetchData() {
     const apiResponse = await response.json();
     const data = JSON.parse(apiResponse.body);
 
-    console.log(data); // temporaire pour vérifier timestamp
+    console.log("DATA API =", data);
+    console.log("temperature type =", typeof data.temperature, data.temperature);
+    console.log("humidity type =", typeof data.humidity, data.humidity);
+    console.log("timestamp =", data.timestamp);
 
-    const temperature = typeof data.temperature === "number" ? data.temperature : null;
-    const airHumidity = typeof data.humidity === "number" ? data.humidity : null;
+    const temperature = data.temperature != null && !isNaN(Number(data.temperature))
+      ? Number(data.temperature)
+      : null;
+
+    const airHumidity = data.humidity != null && !isNaN(Number(data.humidity))
+      ? Number(data.humidity)
+      : null;
+
     const soilHumidity = null;
     const luminosity = null;
 
     const values = { temperature, airHumidity, soilHumidity, luminosity };
-    const hasAnyValue = Object.values(values).some(v => typeof v === 'number');
+    const hasAnyValue = Object.values(values).some(v => v !== null);
 
     let isFresh = false;
 
     if (data.timestamp) {
       const dataTime = new Date(data.timestamp).getTime();
-      const now = Date.now();
-      const ageMs = now - dataTime;
-      isFresh = ageMs <= 30000;
+      if (!isNaN(dataTime)) {
+        const ageMs = Date.now() - dataTime;
+        console.log("ageMs =", ageMs);
+        isFresh = ageMs <= 30000;
+      }
     }
 
     if (hasAnyValue && isFresh) {
