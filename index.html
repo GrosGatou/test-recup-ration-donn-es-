@@ -94,7 +94,6 @@
 
     /* Page Suivi des données */
 
-    /* Encadré global des capteurs, harmonisé avec station météo */
     .sensors-section {
       margin: 10px 0 30px 0;
       background: #e9f1fb;
@@ -114,7 +113,6 @@
       text-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
 
-    /* Petit encadré date en haut à droite */
     .date-badge {
       position: absolute;
       top: 15px;
@@ -172,20 +170,23 @@
       color: #666;
       font-style: italic;
     }
-    .timestamp {
-      margin-top: 20px;
-      font-size: 0.9em;
-      color: #666;
-      text-align: center;
+
+    .sensor-error-banner {
+      display: none;
+      margin-bottom: 15px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #ffe5e5;
+      border: 1px solid #e11d48;
+      color: #a00020;
+      font-size: 0.95em;
+      align-items: center;
+      gap: 8px;
     }
-    .error {
-      margin-top: 15px;
-      text-align: center;
-      color: #a00;
-      font-weight: bold;
+    .sensor-error-banner span.icon {
+      font-size: 1.2em;
     }
 
-    /* Couleurs de statut */
     .data-box.ok {
       background:#eaf7ee;
       border-color:#2e9e57;
@@ -208,7 +209,6 @@
       color:#b91c1c;
     }
 
-    /* ⭐ STATION MÉTÉO PRO - STYLE EXISTANT */
     .weather-section {
       margin: 40px 0;
       background: #e9f1fb;
@@ -342,7 +342,6 @@
       cursor:default;
     }
 
-    /* Overlay / Conseils */
     .overlay {
       position:fixed;
       inset:0;
@@ -445,14 +444,17 @@
 
   <!-- Onglet SUIVI DES DONNÉES -->
   <section id="suivi">
-    <!-- Bloc capteurs harmonisé -->
     <div class="sensors-section">
       <div class="sensors-title">Suivi des données du capteur</div>
 
-      <!-- Badge date -->
       <div class="date-badge">
         <span class="date-badge-main" id="badgeDate">--/--/----</span>
         <span class="date-badge-day" id="badgeDay">--</span>
+      </div>
+
+      <div id="sensorError" class="sensor-error-banner">
+        <span class="icon">⚠️</span>
+        <span id="sensorErrorText">Impossible de communiquer avec le capteur.</span>
       </div>
 
       <div class="grid-container" id="dataGrid">
@@ -479,7 +481,6 @@
       </div>
     </div>
 
-    <!-- ⭐ STATION MÉTÉO PRO -->
     <div class="weather-section">
       <h3 class="weather-title">🌤️ Station Météo</h3>
 
@@ -507,9 +508,7 @@
 
       <div class="forecast-section">
         <h4 class="forecast-title">📅 Prévisions du jour</h4>
-        <div class="forecast-grid" id="weatherForecast">
-          <!-- Généré par JS -->
-        </div>
+        <div class="forecast-grid" id="weatherForecast"></div>
         <div class="weather-timestamp" id="weatherForecastTime">--</div>
       </div>
     </div>
@@ -544,7 +543,6 @@
   </footer>
 
   <script>
-    // Gestion des onglets
     function showTab(tabId) {
       document.querySelectorAll('section').forEach(section =>
         section.classList.remove('active')
@@ -582,7 +580,6 @@
       luminosity:  { boxId: "luminosityBox", valueId: "luminosity", unit: " lx", label: "Luminosité" }
     };
 
-    //  CONFIG MÉTÉO 
     const WEATHER_API_KEY = '6ccbda539bcbb73fe70461c935ab77e1';
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
     const FORECAST_API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
@@ -593,29 +590,6 @@
       '09d': '🌦️', '09n': '🌦️', '10d': '🌧️', '10n': '🌧️',
       '11d': '⛈️', '11n': '⛈️', '13d': '❄️', '13n': '❄️',
       '50d': '🌫️', '50n': '🌫️'
-    };
-
-    const ADVICE = {
-      temperature: {
-        meaning: "Température en dehors de la plage critique définie.",
-        risks: "Si trop bas : ralentissement de croissance, mauvaise nouaison, dégâts de froid si prolongé. Si trop haut : stress thermique, baisse de nouaison, qualité des fruits en baisse.",
-        actions: "Trop bas : activer la résistance chauffante. Trop haut : activer la ventilation, ombrer si possible, surveiller l’arrosage."
-      },
-      airHumidity: {
-        meaning: "Humidité de l’air (RH) en dehors de l’intervalle critique.",
-        risks: "Trop bas : transpiration très forte, stress hydrique, flétrissement, bords des feuilles secs. Trop haut : condensation, risque élevé de maladies (botrytis, oïdium), pollinisation moins efficace.",
-        actions: "Trop bas : adapter la fréquence d’arrosage et surveiller le stress hydrique. Trop haut : activer la ventilation, limiter les sources d’humidité stagnante."
-      },
-      soilHumidity: {
-        meaning: "Humidité du sol en dehors de la plage critique.",
-        risks: "Trop bas : stress hydrique, croissance ralentie, avortement de fleurs, nécrose apicale favorisée par des à-coups d’arrosage. Trop haut : asphyxie racinaire, jaunissement, maladies racinaires.",
-        actions: "Trop bas : activer la pompe/arrosage. Trop haut : réduire l’arrosage, améliorer le drainage et l’aération du substrat."
-      },
-      luminosity: {
-        meaning: "Luminosité en dehors de la plage critique.",
-        risks: "Trop bas : photosynthèse limitée, plants filés, floraison/production plus faible, maturation plus lente. Trop haut : stress lumineux et souvent thermique, feuilles qui s’enroulent ou brûlent, coups de soleil sur fruits.",
-        actions: "Trop bas : allumer les LED ou augmenter l’éclairement. Trop haut : ombrer, surveiller température et arrosage."
-      }
     };
 
     function classify(value, ranges) {
@@ -633,11 +607,9 @@
       const box = document.getElementById(ui.boxId);
       if (!box) return;
       box.classList.remove("ok","warn","crit","clickable");
-      if (status === "ok")  box.classList.add("ok");
-      if (status === "warn")box.classList.add("warn");
-      if (status === "crit"){
-        box.classList.add("crit","clickable");
-      }
+      if (status === "ok") box.classList.add("ok");
+      if (status === "warn") box.classList.add("warn");
+      if (status === "crit") box.classList.add("crit","clickable");
     }
 
     function openAdvice(sensorKey, value) {
@@ -661,44 +633,44 @@
         case "temperature":
           if (isTooLow) {
             advMeaning = "Température trop basse (sous seuil critique).";
-            advRisks = "Ralentissement de croissance, mauvaise nouaison (pollinisation/fruit set), risques de dégâts de froid si prolongé.";
+            advRisks = "Ralentissement de croissance, mauvaise nouaison, risques de dégâts de froid si prolongé.";
             advActions = "Activer la résistance chauffante.";
           } else {
             advMeaning = "Température trop haute (au-dessus seuil critique).";
-            advRisks = "Stress thermique, baisse de nouaison (pollen moins viable), fruits de moins bonne qualité, transpiration forte.";
+            advRisks = "Stress thermique, baisse de nouaison, fruits de moins bonne qualité, transpiration forte.";
             advActions = "Activer la ventilation, ombrer, surveiller arrosage.";
           }
           break;
         case "airHumidity":
           if (isTooLow) {
             advMeaning = "Humidité de l’air trop basse (sous seuil critique).";
-            advRisks = "Transpiration qui explose (stress hydrique), flétrissement, bords de feuilles qui se dessèchent.";
+            advRisks = "Stress hydrique, flétrissement, bords de feuilles secs.";
             advActions = "Surveiller arrosage et évaporation.";
           } else {
             advMeaning = "Humidité de l’air trop haute (au-dessus seuil critique).";
-            advRisks = "Condensation sur feuilles/fleurs, hausse forte risque maladies (botrytis, oïdium), pollinisation moins efficace.";
+            advRisks = "Condensation, hausse du risque de maladies, pollinisation moins efficace.";
             advActions = "Activer la ventilation.";
           }
           break;
         case "soilHumidity":
           if (isTooLow) {
             advMeaning = "Humidité du sol trop basse (sous seuil critique).";
-            advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent, risque nécrose apicale.";
+            advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent.";
             advActions = "Activer la pompe/arrosage.";
           } else {
             advMeaning = "Humidité du sol trop haute (au-dessus seuil critique).";
-            advRisks = "Asphyxie racinaire (manque oxygène), jaunissement, maladies racinaires, baisse vigueur.";
+            advRisks = "Asphyxie racinaire, jaunissement, maladies racinaires.";
             advActions = "Réduire arrosage, améliorer drainage.";
           }
           break;
         case "luminosity":
           if (isTooLow) {
             advMeaning = "Luminosité trop basse (sous seuil critique).";
-            advRisks = "Photosynthèse limitée, plants “filés”, floraison/production faible, maturation lente.";
+            advRisks = "Photosynthèse limitée, production faible, maturation lente.";
             advActions = "Allumer LED.";
           } else {
             advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
-            advRisks = "Stress lumineux + thermique, feuilles enroulées/brûlées, coups de soleil sur fruits.";
+            advRisks = "Stress lumineux et thermique, feuilles brûlées.";
             advActions = "Ombrer, surveiller température/arrosage.";
           }
           break;
@@ -742,20 +714,16 @@
         const weatherRes = await fetch(WEATHER_API_URL);
         const weatherData = await weatherRes.json();
         
-        document.getElementById('weatherTemp').textContent = 
-          Math.round(weatherData.main.temp) + ' °C';
-        document.getElementById('weatherHumidity').textContent = 
-          weatherData.main.humidity + ' %';
-        document.getElementById('weatherWind').textContent = 
-          Math.round(weatherData.wind.speed * 3.6) + ' km/h';
+        document.getElementById('weatherTemp').textContent = Math.round(weatherData.main.temp) + ' °C';
+        document.getElementById('weatherHumidity').textContent = weatherData.main.humidity + ' %';
+        document.getElementById('weatherWind').textContent = Math.round(weatherData.wind.speed * 3.6) + ' km/h';
         
-        document.getElementById('weatherTempDesc').textContent = 
-          weatherData.weather[0].description;
-        document.getElementById('weatherWindDir').textContent = 
+        document.getElementById('weatherTempDesc').textContent = weatherData.weather[0].description;
+        document.getElementById('weatherWindDir').textContent =
           weatherData.wind.deg ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg/45)]})` : '';
 
         const weatherDate = new Date(weatherData.dt * 1000);
-        document.getElementById('weatherForecastTime').textContent = 
+        document.getElementById('weatherForecastTime').textContent =
           `Mis à jour: ${weatherDate.toLocaleString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
 
         const forecastRes = await fetch(FORECAST_API_URL);
@@ -789,29 +757,38 @@
     }
 
     async function fetchData() {
+      const errorBanner = document.getElementById('sensorError');
+      const errorText   = document.getElementById('sensorErrorText');
+
+      /* remise à zéro visuelle pour éviter d'afficher des anciennes valeurs */
+      for (const k of Object.keys(SENSOR_UI)) {
+        const ui = SENSOR_UI[k];
+        const el = document.getElementById(ui.valueId);
+        if (el) el.textContent = "--" + ui.unit;
+      }
+
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        
         const apiResponse = await response.json();
         const data = JSON.parse(apiResponse.body);
 
         const temperature = typeof data.temperature === "number" ? data.temperature : null;
         const airHumidity = typeof data.humidity === "number" ? data.humidity : null;
-
         const soilHumidity = null;
         const luminosity = null;
 
         const values = { temperature, airHumidity, soilHumidity, luminosity };
+        const hasAnyValue = Object.values(values).some(v => typeof v === 'number');
 
         for (const k of Object.keys(SENSOR_UI)) {
           const ui = SENSOR_UI[k];
           const v = values[k];
           const el = document.getElementById(ui.valueId);
-          if (!el) continue;
-          if (v != null) {
+          if (el && v != null) {
             const decimals = (k === "luminosity") ? 0 : 1;
             el.textContent = v.toFixed(decimals) + ui.unit;
-          } else {
-            el.textContent = "--" + ui.unit;
           }
         }
 
@@ -822,25 +799,860 @@
           wireClick(k, status, v);
         }
 
-        const err = document.getElementById('error');
-        if (err) {
-          err.style.display = 'none';
-          err.textContent = '';
+        if (!hasAnyValue) {
+          errorText.textContent = "❌ Capteur déconnecté (DHT22 ?). Vérifiez câblage/pins.";
+          errorBanner.style.display = "flex";
+        } else {
+          errorBanner.style.display = "none";
         }
-        
+
         fetchWeather();
       } catch (error) {
         console.error('Erreur ESP32:', error);
-        const err = document.getElementById('error');
-        if (err) {
-          err.textContent = 'Erreur capteur ESP32.';
-          err.style.display = 'block';
-        }
+        errorText.textContent = "❌ ESP32 hors ligne (WiFi/alim). Vérifiez connexion.";
+        errorBanner.style.display = "flex";
         fetchWeather();
       }
     }
 
-    // Mise à jour du badge date au chargement
+    function updateDateBadge() {
+      const now = new Date();
+      document.getElementById('badgeDate').textContent =
+        now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      document.getElementById('badgeDay').textContent =
+        now.toLocaleDateString('fr-FR', { weekday: 'long' });
+    }
+
+    updateDateBadge();
+    fetchData();
+    fetchWeather();
+    
+    setInterval(() => {
+      updateDateBadge();
+      fetchData();
+      fetchWeather();
+    }, 10000);
+  </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GreenOps - Projet ESP32</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    nav {
+      background-color: #005fa3;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    nav a:hover,
+    nav a.active {
+      background-color: #004d80;
+      text-decoration: underline;
+    }
+    section {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.12);
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    #menuTitle {
+      font-size: 2.4em;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #0077cc;
+      text-align: center;
+    }
+    #menuSubtitle {
+      font-size: 1em;
+      font-style: italic;
+      color: #005fa3;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #logoContainer {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    #logoContainer img {
+      max-width: 200px;
+      height: auto;
+    }
+    #presentationText {
+      white-space: pre-line;
+      line-height: 1.5em;
+      font-size: 1.1em;
+      color: #333;
+      padding: 0 20px;
+    }
+    .main-highlight {
+      font-weight: bold;
+      font-size: 1.4em;
+      margin-bottom: 15px;
+      color: #003366;
+    }
+    .bold-subtitle {
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 8px;
+      color: #005fa3;
+    }
+
+    /* Page Suivi des données */
+
+    .sensors-section {
+      margin: 10px 0 30px 0;
+      background: #e9f1fb;
+      border-radius: 12px;
+      padding: 25px 25px 30px 25px;
+      border: 3px solid #0077cc;
+      box-shadow: 0 4px 20px rgba(0,119,204,0.15);
+      position: relative;
+    }
+
+    .sensors-title {
+      text-align: center;
+      color: #0077cc;
+      font-size: 1.6em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .date-badge {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: white;
+      color: #005fa3;
+      border-radius: 8px;
+      padding: 6px 12px;
+      border: 1px solid #0077cc;
+      font-size: 0.9em;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .date-badge-main {
+      font-weight: bold;
+    }
+    .date-badge-day {
+      font-size: 0.8em;
+      opacity: 0.85;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 20px;
+    }
+    .data-box {
+      background: #e9f1fb;
+      border: 2px solid #0077cc;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+    }
+    .data-box:hover {
+      transform: scale(1.05);
+    }
+    .data-label {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      color: #005fa3;
+      font-weight: 600;
+    }
+    .data-value {
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 8px;
+    }
+    .data-interval {
+      font-size: 0.9em;
+      color: #666;
+      font-style: italic;
+    }
+
+    .sensor-error-banner {
+      display: none;
+      margin-bottom: 15px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #ffe5e5;
+      border: 1px solid #e11d48;
+      color: #a00020;
+      font-size: 0.95em;
+      align-items: center;
+      gap: 8px;
+    }
+    .sensor-error-banner span.icon {
+      font-size: 1.2em;
+    }
+
+    .data-box.ok {
+      background:#eaf7ee;
+      border-color:#2e9e57;
+    }
+    .data-box.ok .data-value {
+      color:#1f7a3a;
+    }
+    .data-box.warn {
+      background:#fff4e5;
+      border-color:#f59e0b;
+    }
+    .data-box.warn .data-value {
+      color:#b45309;
+    }
+    .data-box.crit {
+      background:#ffe7e7;
+      border-color:#e11d48;
+    }
+    .data-box.crit .data-value {
+      color:#b91c1c;
+    }
+
+    .weather-section {
+      margin: 40px 0;
+      background: #e9f1fb;
+      border-radius: 12px;
+      padding: 30px;
+      border: 3px solid #0077cc;
+      box-shadow: 0 4px 20px rgba(0,119,204,0.15);
+    }
+
+    .weather-title {
+      text-align: center;
+      color: #0077cc;
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .weather-box {
+      background: white;
+      border: 2px solid #0077cc;
+      border-radius: 12px;
+      padding: 25px 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,119,204,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .weather-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,119,204,0.2);
+    }
+
+    .weather-icon {
+      font-size: 3em;
+      margin-bottom: 12px;
+    }
+
+    .weather-label {
+      font-size: 1em;
+      color: #005fa3;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .weather-value {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 5px;
+    }
+
+    .weather-desc {
+      font-size: 0.95em;
+      color: #666;
+      font-style: italic;
+    }
+
+    .forecast-section {
+      background: linear-gradient(135deg, #e9f1fb, #d6eaf8);
+      border-radius: 12px;
+      padding: 25px;
+      border: 2px solid #0077cc;
+    }
+
+    .forecast-title {
+      text-align: center;
+      color: #0077cc;
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .forecast-grid {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .forecast-item {
+      background: white;
+      padding: 18px 12px;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 75px;
+      box-shadow: 0 3px 12px rgba(0,119,204,0.15);
+      transition: transform 0.2s;
+    }
+
+    .forecast-item:hover {
+      transform: scale(1.05);
+    }
+
+    .forecast-icon {
+      font-size: 2.2em;
+      margin-bottom: 8px;
+    }
+
+    .forecast-temp {
+      font-weight: bold;
+      font-size: 1.4em;
+      color: #003366;
+      margin-bottom: 4px;
+    }
+
+    .forecast-hour {
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    .weather-timestamp {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 0.95em;
+      color: #666;
+      font-style: italic;
+    }
+
+    .data-box.clickable {
+      cursor:pointer;
+    }
+    .data-box:not(.clickable) {
+      cursor:default;
+    }
+
+    .overlay {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+    }
+    .modal {
+      width:min(720px, 92vw);
+      background:white;
+      border-radius:12px;
+      padding:18px 18px 12px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    }
+    .advice-block {
+      margin-top:12px;
+      padding:12px;
+      border-radius:10px;
+      background:#f6f8fb;
+    }
+    .advice-h {
+      font-weight:700;
+      color:#003366;
+      margin-bottom:6px;
+    }
+    .modal-actions {
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:14px;
+    }
+    .modal-actions button {
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      background:#fff;
+      cursor:pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: #555;
+      background-color: #f9f9f9;
+      margin-top: 40px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1> GreenOps</h1>
+  </header>
+
+  <nav>
+    <a class="active" onclick="showTab('menu')">Menu principal</a>
+    <a onclick="showTab('suivi')">Suivi des données</a>
+  </nav>
+
+  <!-- Onglet MENU -->
+  <section id="menu" class="active">
+    <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
+
+    <div id="logoContainer">
+      <img src="image/logo.png" alt="logo.png" />
+    </div>
+
+    <div id="presentationText">
+      <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
+      Bienvenue sur GreenOps, votre solution d’agriculture intelligente.
+      Notre système vous permet de surveiller en temps réel l’état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
+      Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
+      Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
+      Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
+      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c’est nécessaire.
+
+      <div class="bold-subtitle">Pourquoi GreenOps ?</div>
+      Green : pour notre engagement dans une agriculture plus durable.
+      Ops : pour “operations”, car nous optimisons vos tâches quotidiennes.
+      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l’environnement.
+
+      <div class="bold-subtitle">Pourquoi ce projet ?</div>
+      Parce que l’agriculture d’aujourd’hui doit gérer un défi double :
+      Produire mieux et plus,
+      Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
+      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d’erreurs.
+      Notre objectif est simple : aider les agriculteurs, qu’ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple. 
+
+      <div class="bold-subtitle">GreenOps a été conçu pour :</div>
+      Réduire les tâches répétitives, grâce à une surveillance automatisée,
+      Limiter le gaspillage en eau et optimiser l’arrosage,
+      Améliorer la qualité des cultures en anticipant les besoins,
+      Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
+      En bref : nous voulons mettre la technologie au service d’une agriculture plus humaine, plus durable et plus intelligente.
+    </div>
+  </section>
+
+  <!-- Onglet SUIVI DES DONNÉES -->
+  <section id="suivi">
+    <div class="sensors-section">
+      <div class="sensors-title">Suivi des données du capteur</div>
+
+      <div class="date-badge">
+        <span class="date-badge-main" id="badgeDate">--/--/----</span>
+        <span class="date-badge-day" id="badgeDay">--</span>
+      </div>
+
+      <div id="sensorError" class="sensor-error-banner">
+        <span class="icon">⚠️</span>
+        <span id="sensorErrorText">Impossible de communiquer avec le capteur.</span>
+      </div>
+
+      <div class="grid-container" id="dataGrid">
+        <div class="data-box" id="airHumidityBox">
+          <div class="data-label">Humidité de l'air</div>
+          <div class="data-value" id="airHumidity">-- %</div>
+          <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
+        </div>
+        <div class="data-box" id="soilHumidityBox">
+          <div class="data-label">Humidité du sol</div>
+          <div class="data-value" id="soilHumidity">-- %</div>
+          <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
+        </div>
+        <div class="data-box" id="temperatureBox">
+          <div class="data-label">Température</div>
+          <div class="data-value" id="temperature">-- °C</div>
+          <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
+        </div>
+        <div class="data-box" id="luminosityBox">
+          <div class="data-label">Luminosité</div>
+          <div class="data-value" id="luminosity">-- lx</div>
+          <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="weather-section">
+      <h3 class="weather-title">🌤️ Station Météo</h3>
+
+      <div class="weather-grid">
+        <div class="weather-box" id="weatherTempBox">
+          <div class="weather-icon">🌡️</div>
+          <div class="weather-label">Température</div>
+          <div class="weather-value" id="weatherTemp">-- °C</div>
+          <div class="weather-desc" id="weatherTempDesc">--</div>
+        </div>
+        
+        <div class="weather-box" id="weatherHumidityBox">
+          <div class="weather-icon">💧</div>
+          <div class="weather-label">Humidité</div>
+          <div class="weather-value" id="weatherHumidity">-- %</div>
+        </div>
+        
+        <div class="weather-box" id="weatherWindBox">
+          <div class="weather-icon">💨</div>
+          <div class="weather-label">Vent</div>
+          <div class="weather-value" id="weatherWind">-- km/h</div>
+          <div class="weather-desc" id="weatherWindDir">--</div>
+        </div>
+      </div>
+
+      <div class="forecast-section">
+        <h4 class="forecast-title">📅 Prévisions du jour</h4>
+        <div class="forecast-grid" id="weatherForecast"></div>
+        <div class="weather-timestamp" id="weatherForecastTime">--</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overlay Conseils -->
+  <div id="adviceOverlay" class="overlay" style="display:none;">
+    <div class="modal">
+      <h3 id="adviceTitle">Conseils</h3>
+      <div class="advice-block">
+        <div class="advice-h">Ce que ça signifie</div>
+        <div id="adviceMeaning">--</div>
+      </div>
+      <div class="advice-block">
+        <div class="advice-h">Risques</div>
+        <div id="adviceRisks">--</div>
+      </div>
+      <div class="advice-block">
+        <div class="advice-h">Actions conseillées</div>
+        <div id="adviceActions">--</div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="ackBtn">J’ai compris / Accuser réception</button>
+        <button id="closeAdviceBtn">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 - Mon projet ESP32</p>
+  </footer>
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('section').forEach(section =>
+        section.classList.remove('active')
+      );
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('nav a').forEach(link =>
+        link.classList.remove('active')
+      );
+      document.querySelectorAll('nav a').forEach(link => {
+        const text = link.textContent.trim();
+        if (tabId === 'menu' && text === 'Menu principal') {
+          link.classList.add('active');
+        }
+        if (tabId === 'suivi' && text === 'Suivi des données') {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
+
+    const THRESHOLDS = {
+      temperature: { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
+      airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
+      soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
+      luminosity:   { target: [30000, 40000], acceptable: [20000, 50000], critLow: 20000, critHigh: 50000 }
+    };
+
+    const SENSOR_UI = {
+      temperature: { boxId: "temperatureBox", valueId: "temperature", unit: " °C", label: "Température" },
+      airHumidity: { boxId: "airHumidityBox", valueId: "airHumidity", unit: " %", label: "Humidité de l'air" },
+      soilHumidity:{ boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %", label: "Humidité du sol" },
+      luminosity:  { boxId: "luminosityBox", valueId: "luminosity", unit: " lx", label: "Luminosité" }
+    };
+
+    const WEATHER_API_KEY = '6ccbda539bcbb73fe70461c935ab77e1';
+    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
+    const FORECAST_API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
+
+    const WEATHER_ICONS = {
+      '01d': '☀️', '01n': '🌙', '02d': '⛅', '02n': '🌤️',
+      '03d': '☁️', '03n': '☁️', '04d': '🌥️', '04n': '🌥️',
+      '09d': '🌦️', '09n': '🌦️', '10d': '🌧️', '10n': '🌧️',
+      '11d': '⛈️', '11n': '⛈️', '13d': '❄️', '13n': '❄️',
+      '50d': '🌫️', '50n': '🌫️'
+    };
+
+    function classify(value, ranges) {
+      if (value == null || Number.isNaN(value)) return "unknown";
+      const [tMin, tMax] = ranges.target;
+      const [aMin, aMax] = ranges.acceptable;
+
+      if (value >= tMin && value <= tMax) return "ok";
+      if (value >= aMin && value <= aMax) return "warn";
+      return "crit";
+    }
+
+    function setBoxStatus(sensorKey, status) {
+      const ui = SENSOR_UI[sensorKey];
+      const box = document.getElementById(ui.boxId);
+      if (!box) return;
+      box.classList.remove("ok","warn","crit","clickable");
+      if (status === "ok") box.classList.add("ok");
+      if (status === "warn") box.classList.add("warn");
+      if (status === "crit") box.classList.add("crit","clickable");
+    }
+
+    function openAdvice(sensorKey, value) {
+      const overlay = document.getElementById("adviceOverlay");
+      const title = document.getElementById("adviceTitle");
+      const meaning = document.getElementById("adviceMeaning");
+      const risks = document.getElementById("adviceRisks");
+      const actions = document.getElementById("adviceActions");
+
+      const ui = SENSOR_UI[sensorKey];
+      const ranges = THRESHOLDS[sensorKey];
+      const unit = ui.unit || "";
+      const valText = (value != null) ? `${value}${unit}` : "--";
+
+      const isTooLow = value < ranges.critLow;
+      const isTooHigh = value > ranges.critHigh;
+      const direction = isTooLow ? "trop bas" : (isTooHigh ? "trop haut" : "hors limites");
+
+      let advMeaning, advRisks, advActions;
+      switch(sensorKey) {
+        case "temperature":
+          if (isTooLow) {
+            advMeaning = "Température trop basse (sous seuil critique).";
+            advRisks = "Ralentissement de croissance, mauvaise nouaison, risques de dégâts de froid si prolongé.";
+            advActions = "Activer la résistance chauffante.";
+          } else {
+            advMeaning = "Température trop haute (au-dessus seuil critique).";
+            advRisks = "Stress thermique, baisse de nouaison, fruits de moins bonne qualité, transpiration forte.";
+            advActions = "Activer la ventilation, ombrer, surveiller arrosage.";
+          }
+          break;
+        case "airHumidity":
+          if (isTooLow) {
+            advMeaning = "Humidité de l’air trop basse (sous seuil critique).";
+            advRisks = "Stress hydrique, flétrissement, bords de feuilles secs.";
+            advActions = "Surveiller arrosage et évaporation.";
+          } else {
+            advMeaning = "Humidité de l’air trop haute (au-dessus seuil critique).";
+            advRisks = "Condensation, hausse du risque de maladies, pollinisation moins efficace.";
+            advActions = "Activer la ventilation.";
+          }
+          break;
+        case "soilHumidity":
+          if (isTooLow) {
+            advMeaning = "Humidité du sol trop basse (sous seuil critique).";
+            advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent.";
+            advActions = "Activer la pompe/arrosage.";
+          } else {
+            advMeaning = "Humidité du sol trop haute (au-dessus seuil critique).";
+            advRisks = "Asphyxie racinaire, jaunissement, maladies racinaires.";
+            advActions = "Réduire arrosage, améliorer drainage.";
+          }
+          break;
+        case "luminosity":
+          if (isTooLow) {
+            advMeaning = "Luminosité trop basse (sous seuil critique).";
+            advRisks = "Photosynthèse limitée, production faible, maturation lente.";
+            advActions = "Allumer LED.";
+          } else {
+            advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
+            advRisks = "Stress lumineux et thermique, feuilles brûlées.";
+            advActions = "Ombrer, surveiller température/arrosage.";
+          }
+          break;
+        default:
+          advMeaning = "Seuil critique dépassé.";
+          advRisks = "Vérifier capteur et configuration.";
+          advActions = "Contrôler matériel et seuils.";
+      }
+
+      title.textContent = `Conseils — ${ui.label} ${direction} (${valText})`;
+      meaning.textContent = advMeaning;
+      risks.textContent = advRisks;
+      actions.textContent = advActions;
+
+      overlay.style.display = "flex";
+    }
+
+    function closeAdvice() {
+      const overlay = document.getElementById("adviceOverlay");
+      overlay.style.display = "none";
+    }
+
+    document.getElementById("closeAdviceBtn").addEventListener("click", closeAdvice);
+    document.getElementById("ackBtn").addEventListener("click", closeAdvice);
+    document.getElementById("adviceOverlay").addEventListener("click", (e) => {
+      if (e.target && e.target.id === "adviceOverlay") closeAdvice();
+    });
+
+    function wireClick(sensorKey, status, value) {
+      const ui = SENSOR_UI[sensorKey];
+      const box = document.getElementById(ui.boxId);
+      if (!box) return;
+      box.onclick = null;
+      if (status === "crit") {
+        box.onclick = () => openAdvice(sensorKey, value);
+      }
+    }
+
+    async function fetchWeather() {
+      try {
+        const weatherRes = await fetch(WEATHER_API_URL);
+        const weatherData = await weatherRes.json();
+        
+        document.getElementById('weatherTemp').textContent = Math.round(weatherData.main.temp) + ' °C';
+        document.getElementById('weatherHumidity').textContent = weatherData.main.humidity + ' %';
+        document.getElementById('weatherWind').textContent = Math.round(weatherData.wind.speed * 3.6) + ' km/h';
+        
+        document.getElementById('weatherTempDesc').textContent = weatherData.weather[0].description;
+        document.getElementById('weatherWindDir').textContent =
+          weatherData.wind.deg ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg/45)]})` : '';
+
+        const weatherDate = new Date(weatherData.dt * 1000);
+        document.getElementById('weatherForecastTime').textContent =
+          `Mis à jour: ${weatherDate.toLocaleString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
+
+        const forecastRes = await fetch(FORECAST_API_URL);
+        const forecastData = await forecastRes.json();
+        const today = new Date().toDateString();
+        const forecastContainer = document.getElementById('weatherForecast');
+        forecastContainer.innerHTML = '';
+        
+        forecastData.list.slice(0, 8).forEach(item => {
+          const itemDate = new Date(item.dt * 1000);
+          if (itemDate.toDateString() === today) {
+            const icon = WEATHER_ICONS[item.weather[0].icon.slice(0, -1) + (itemDate.getHours() >= 18 ? 'n' : 'd')] || '🌤️';
+            const div = document.createElement('div');
+            div.className = 'forecast-item';
+            div.innerHTML = `
+              <div class="forecast-icon">${icon}</div>
+              <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
+              <div class="forecast-hour">${itemDate.getHours()}h</div>
+            `;
+            forecastContainer.appendChild(div);
+          }
+        });
+
+      } catch (error) {
+        console.error('Erreur météo:', error);
+        document.getElementById('weatherTemp').textContent = '-- °C';
+        document.getElementById('weatherHumidity').textContent = '-- %';
+        document.getElementById('weatherWind').textContent = '-- km/h';
+        document.getElementById('weatherForecast').textContent = 'Météo indisponible';
+      }
+    }
+
+    async function fetchData() {
+      const errorBanner = document.getElementById('sensorError');
+      const errorText   = document.getElementById('sensorErrorText');
+
+      /* remise à zéro visuelle pour éviter d'afficher des anciennes valeurs */
+      for (const k of Object.keys(SENSOR_UI)) {
+        const ui = SENSOR_UI[k];
+        const el = document.getElementById(ui.valueId);
+        if (el) el.textContent = "--" + ui.unit;
+      }
+
+      try {
+        const response = await fetch(API_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        
+        const apiResponse = await response.json();
+        const data = JSON.parse(apiResponse.body);
+
+        const temperature = typeof data.temperature === "number" ? data.temperature : null;
+        const airHumidity = typeof data.humidity === "number" ? data.humidity : null;
+        const soilHumidity = null;
+        const luminosity = null;
+
+        const values = { temperature, airHumidity, soilHumidity, luminosity };
+        const hasAnyValue = Object.values(values).some(v => typeof v === 'number');
+
+        for (const k of Object.keys(SENSOR_UI)) {
+          const ui = SENSOR_UI[k];
+          const v = values[k];
+          const el = document.getElementById(ui.valueId);
+          if (el && v != null) {
+            const decimals = (k === "luminosity") ? 0 : 1;
+            el.textContent = v.toFixed(decimals) + ui.unit;
+          }
+        }
+
+        for (const k of Object.keys(THRESHOLDS)) {
+          const v = values[k];
+          const status = classify(v, THRESHOLDS[k]);
+          setBoxStatus(k, status);
+          wireClick(k, status, v);
+        }
+
+        if (!hasAnyValue) {
+          errorText.textContent = "❌ Capteur déconnecté (DHT22 ?). Vérifiez câblage/pins.";
+          errorBanner.style.display = "flex";
+        } else {
+          errorBanner.style.display = "none";
+        }
+
+        fetchWeather();
+      } catch (error) {
+        console.error('Erreur ESP32:', error);
+        errorText.textContent = "❌ ESP32 hors ligne (WiFi/alim). Vérifiez connexion.";
+        errorBanner.style.display = "flex";
+        fetchWeather();
+      }
+    }
+
     function updateDateBadge() {
       const now = new Date();
       document.getElementById('badgeDate').textContent =
