@@ -20,7 +20,6 @@
     .main-highlight { font-weight: bold; font-size: 1.4em; margin-bottom: 15px; color: #003366; }
     .bold-subtitle { font-weight: bold; margin-top: 15px; margin-bottom: 8px; color: #005fa3; }
 
-    /* Page Suivi des données */
     .sensors-section { margin: 10px 0 30px 0; background: #e9f1fb; border-radius: 12px; padding: 25px 25px 30px 25px; border: 3px solid #0077cc; box-shadow: 0 4px 20px rgba(0,119,204,0.15); position: relative; }
     .sensors-title { text-align: center; color: #0077cc; font-size: 1.6em; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.08); }
     .date-badge { position: absolute; top: 15px; right: 20px; background: white; color: #005fa3; border-radius: 8px; padding: 6px 12px; border: 1px solid #0077cc; font-size: 0.9em; display: inline-flex; flex-direction: column; align-items: flex-end; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
@@ -41,7 +40,6 @@
     .data-box.crit { background: #ffe7e7; border-color: #e11d48; }
     .data-box.crit .data-value { color: #b91c1c; }
 
-    /* Barre statut connexion DHT22 */
     .sensor-connection-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding: 11px 15px; border-radius: 10px; background: white; border: 1px solid #b9d8f3; box-shadow: 0 2px 8px rgba(0,119,204,0.08); }
     .sensor-dot { width: 12px; height: 12px; border-radius: 50%; background: #9ca3af; flex-shrink: 0; transition: background 0.3s, box-shadow 0.3s; }
     .sensor-dot.ok { background: #22c55e; box-shadow: 0 0 10px rgba(34,197,94,0.6); animation: dotPulse 1.8s infinite; }
@@ -78,7 +76,6 @@
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
     .modal-actions button { padding: 10px 12px; border-radius: 8px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
 
-    /* Page tomates */
     .tomato-section { max-width: 900px; margin: 0 auto; background: white; padding: 0; border-radius: 12px; }
     .tomato-hero { background: linear-gradient(135deg, #e8f7ec, #f4fbf5); border: 3px solid #2e9e57; border-radius: 14px; padding: 25px; margin-bottom: 25px; position: relative; box-shadow: 0 4px 20px rgba(46,158,87,0.12); }
     .tomato-title { text-align: center; color: #0077cc; font-size: 2em; font-weight: bold; margin-bottom: 8px; }
@@ -117,7 +114,6 @@
     <a onclick="showTab('tomates')">Cultiver des tomates</a>
   </nav>
 
-  <!-- Onglet MENU -->
   <section id="menu" class="active">
     <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
     <div id="logoContainer">
@@ -153,12 +149,10 @@
     </div>
   </section>
 
-  <!-- Onglet SUIVI DES DONNÉES -->
   <section id="suivi">
     <div class="sensors-section">
       <div class="sensors-title">Suivi des données du capteur</div>
 
-      <!-- ✅ BARRE CONNEXION DHT22 -->
       <div class="sensor-connection-bar" id="sensorBar">
         <div class="sensor-dot" id="sensorDot"></div>
         <div class="sensor-status-label" id="sensorLabel">En attente du DHT22…</div>
@@ -228,7 +222,6 @@
     </div>
   </section>
 
-  <!-- Onglet CULTIVER DES TOMATES -->
   <section id="tomates">
     <div class="tomato-section">
       <div class="tomato-hero">
@@ -334,7 +327,6 @@
     </div>
   </section>
 
-  <!-- Overlay Conseils -->
   <div id="adviceOverlay" class="overlay" style="display:none;">
     <div class="modal">
       <h3 id="adviceTitle">Conseils</h3>
@@ -411,60 +403,97 @@
     }
 
     function setBoxStatus(sensorKey, status) {
-      const ui  = SENSOR_UI[sensorKey];
+      const ui = SENSOR_UI[sensorKey];
       const box = document.getElementById(ui.boxId);
       if (!box) return;
       box.classList.remove("ok", "warn", "crit", "clickable");
-      if (status === "ok")   box.classList.add("ok");
+      if (status === "ok") box.classList.add("ok");
       if (status === "warn") box.classList.add("warn");
       if (status === "crit") box.classList.add("crit", "clickable");
     }
 
     function openAdvice(sensorKey, value) {
-      const overlay  = document.getElementById("adviceOverlay");
-      const title    = document.getElementById("adviceTitle");
-      const meaning  = document.getElementById("adviceMeaning");
-      const risks    = document.getElementById("adviceRisks");
-      const actions  = document.getElementById("adviceActions");
-      const ui       = SENSOR_UI[sensorKey];
-      const ranges   = THRESHOLDS[sensorKey];
-      const unit     = ui.unit || "";
-      const valText  = (value != null) ? `${value}${unit}` : "--";
-      const isTooLow  = value < ranges.critLow;
+      const overlay = document.getElementById("adviceOverlay");
+      const title = document.getElementById("adviceTitle");
+      const meaning = document.getElementById("adviceMeaning");
+      const risks = document.getElementById("adviceRisks");
+      const actions = document.getElementById("adviceActions");
+      const ui = SENSOR_UI[sensorKey];
+      const ranges = THRESHOLDS[sensorKey];
+      const unit = ui.unit || "";
+      const valText = (value != null) ? `${value}${unit}` : "--";
+      const isTooLow = value < ranges.critLow;
       const isTooHigh = value > ranges.critHigh;
       const direction = isTooLow ? "trop bas" : (isTooHigh ? "trop haut" : "hors limites");
+
       let advMeaning, advRisks, advActions;
-      switch(sensorKey) {
+      switch (sensorKey) {
         case "temperature":
-          if (isTooLow) { advMeaning = "Température trop basse (sous seuil critique)."; advRisks = "Ralentissement de croissance, mauvaise nouaison, risques de dégâts de froid si prolongé."; advActions = "Activer la résistance chauffante."; }
-          else          { advMeaning = "Température trop haute (au-dessus seuil critique)."; advRisks = "Stress thermique, baisse de nouaison, fruits de moins bonne qualité, transpiration forte."; advActions = "Activer la ventilation, ombrer, surveiller arrosage."; }
+          if (isTooLow) {
+            advMeaning = "Température trop basse (sous seuil critique).";
+            advRisks = "Ralentissement de croissance, mauvaise nouaison, risques de dégâts de froid si prolongé.";
+            advActions = "Activer la résistance chauffante.";
+          } else {
+            advMeaning = "Température trop haute (au-dessus seuil critique).";
+            advRisks = "Stress thermique, baisse de nouaison, fruits de moins bonne qualité, transpiration forte.";
+            advActions = "Activer la ventilation, ombrer, surveiller arrosage.";
+          }
           break;
         case "airHumidity":
-          if (isTooLow) { advMeaning = "Humidité de l'air trop basse (sous seuil critique)."; advRisks = "Stress hydrique, flétrissement, bords de feuilles secs."; advActions = "Surveiller arrosage et évaporation."; }
-          else          { advMeaning = "Humidité de l'air trop haute (au-dessus seuil critique)."; advRisks = "Condensation, hausse du risque de maladies, pollinisation moins efficace."; advActions = "Activer la ventilation."; }
+          if (isTooLow) {
+            advMeaning = "Humidité de l'air trop basse (sous seuil critique).";
+            advRisks = "Stress hydrique, flétrissement, bords de feuilles secs.";
+            advActions = "Surveiller arrosage et évaporation.";
+          } else {
+            advMeaning = "Humidité de l'air trop haute (au-dessus seuil critique).";
+            advRisks = "Condensation, hausse du risque de maladies, pollinisation moins efficace.";
+            advActions = "Activer la ventilation.";
+          }
           break;
         case "soilHumidity":
-          if (isTooLow) { advMeaning = "Humidité du sol trop basse (sous seuil critique)."; advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent."; advActions = "Activer la pompe/arrosage."; }
-          else          { advMeaning = "Humidité du sol trop haute (au-dessus seuil critique)."; advRisks = "Asphyxie racinaire, jaunissement, maladies racinaires."; advActions = "Réduire arrosage, améliorer drainage."; }
+          if (isTooLow) {
+            advMeaning = "Humidité du sol trop basse (sous seuil critique).";
+            advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent.";
+            advActions = "Activer la pompe/arrosage.";
+          } else {
+            advMeaning = "Humidité du sol trop haute (au-dessus seuil critique).";
+            advRisks = "Asphyxie racinaire, jaunissement, maladies racinaires.";
+            advActions = "Réduire arrosage, améliorer drainage.";
+          }
           break;
         case "luminosity":
-          if (isTooLow) { advMeaning = "Luminosité trop basse (sous seuil critique)."; advRisks = "Photosynthèse limitée, production faible, maturation lente."; advActions = "Allumer LED."; }
-          else          { advMeaning = "Luminosité trop haute (au-dessus seuil critique)."; advRisks = "Stress lumineux et thermique, feuilles brûlées."; advActions = "Ombrer, surveiller température/arrosage."; }
+          if (isTooLow) {
+            advMeaning = "Luminosité trop basse (sous seuil critique).";
+            advRisks = "Photosynthèse limitée, production faible, maturation lente.";
+            advActions = "Allumer LED.";
+          } else {
+            advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
+            advRisks = "Stress lumineux et thermique, feuilles brûlées.";
+            advActions = "Ombrer, surveiller température/arrosage.";
+          }
           break;
         default:
-          advMeaning = "Seuil critique dépassé."; advRisks = "Vérifier capteur et configuration."; advActions = "Contrôler matériel et seuils.";
+          advMeaning = "Seuil critique dépassé.";
+          advRisks = "Vérifier capteur et configuration.";
+          advActions = "Contrôler matériel et seuils.";
       }
-      title.textContent   = `Conseils — ${ui.label} ${direction} (${valText})`;
+
+      title.textContent = `Conseils — ${ui.label} ${direction} (${valText})`;
       meaning.textContent = advMeaning;
-      risks.textContent   = advRisks;
+      risks.textContent = advRisks;
       actions.textContent = advActions;
       overlay.style.display = "flex";
     }
 
-    function closeAdvice() { document.getElementById("adviceOverlay").style.display = "none"; }
+    function closeAdvice() {
+      document.getElementById("adviceOverlay").style.display = "none";
+    }
+
     document.getElementById("closeAdviceBtn").addEventListener("click", closeAdvice);
     document.getElementById("ackBtn").addEventListener("click", closeAdvice);
-    document.getElementById("adviceOverlay").addEventListener("click", e => { if (e.target.id === "adviceOverlay") closeAdvice(); });
+    document.getElementById("adviceOverlay").addEventListener("click", e => {
+      if (e.target.id === "adviceOverlay") closeAdvice();
+    });
 
     function wireClick(sensorKey, status, value) {
       const box = document.getElementById(SENSOR_UI[sensorKey].boxId);
@@ -474,25 +503,33 @@
 
     async function fetchWeather() {
       try {
-        const weatherRes  = await fetch(WEATHER_API_URL);
+        const weatherRes = await fetch(WEATHER_API_URL);
         const weatherData = await weatherRes.json();
-        document.getElementById('weatherTemp').textContent     = Math.round(weatherData.main.temp) + ' °C';
+
+        document.getElementById('weatherTemp').textContent = Math.round(weatherData.main.temp) + ' °C';
         document.getElementById('weatherHumidity').textContent = weatherData.main.humidity + ' %';
-        document.getElementById('weatherWind').textContent     = Math.round(weatherData.wind.speed * 3.6) + ' km/h';
+        document.getElementById('weatherWind').textContent = Math.round(weatherData.wind.speed * 3.6) + ' km/h';
         document.getElementById('weatherTempDesc').textContent = weatherData.weather[0].description;
-        document.getElementById('weatherWindDir').textContent  = weatherData.wind.deg ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg / 45)]})` : '';
+        document.getElementById('weatherWindDir').textContent =
+          weatherData.wind.deg != null
+            ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg / 45) % 8]})`
+            : '';
+
         const weatherDate = new Date(weatherData.dt * 1000);
-        document.getElementById('weatherForecastTime').textContent = `Mis à jour : ${weatherDate.toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
-        const forecastRes  = await fetch(FORECAST_API_URL);
+        document.getElementById('weatherForecastTime').textContent =
+          `Mis à jour : ${weatherDate.toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+
+        const forecastRes = await fetch(FORECAST_API_URL);
         const forecastData = await forecastRes.json();
         const today = new Date().toDateString();
         const forecastContainer = document.getElementById('weatherForecast');
         forecastContainer.innerHTML = '';
+
         forecastData.list.slice(0, 8).forEach(item => {
           const itemDate = new Date(item.dt * 1000);
           if (itemDate.toDateString() === today) {
             const icon = WEATHER_ICONS[item.weather[0].icon] || '🌤️';
-            const div  = document.createElement('div');
+            const div = document.createElement('div');
             div.className = 'forecast-item';
             div.innerHTML = `<div class="forecast-icon">${icon}</div><div class="forecast-temp">${Math.round(item.main.temp)}°</div><div class="forecast-hour">${itemDate.getHours()}h</div>`;
             forecastContainer.appendChild(div);
@@ -500,117 +537,165 @@
         });
       } catch (error) {
         console.error('Erreur météo:', error);
-        document.getElementById('weatherTemp').textContent     = '-- °C';
+        document.getElementById('weatherTemp').textContent = '-- °C';
         document.getElementById('weatherHumidity').textContent = '-- %';
-        document.getElementById('weatherWind').textContent     = '-- km/h';
+        document.getElementById('weatherWind').textContent = '-- km/h';
         document.getElementById('weatherForecast').textContent = 'Météo indisponible';
       }
     }
 
-    // ── Helpers statut DHT22 ──────────────────────────────────────────
     function nowLabel() {
-      return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      return new Date().toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
     }
 
     function setSensorStatus(state, msg, time) {
-      const dot   = document.getElementById('sensorDot');
+      const dot = document.getElementById('sensorDot');
       const label = document.getElementById('sensorLabel');
-      const t     = document.getElementById('sensorTime');
-      if (!dot) return;
+      const t = document.getElementById('sensorTime');
+      if (!dot || !label || !t) return;
       dot.className = 'sensor-dot' + (state === 'ok' ? ' ok' : state === 'error' ? ' error' : '');
-      label.innerHTML   = msg;
-      t.textContent     = time || '--';
+      label.innerHTML = msg;
+      t.textContent = time || '--';
     }
-    // ─────────────────────────────────────────────────────────────────
-
-    let lastValidSensorTime = 0;
 
     async function fetchData() {
       const errorBanner = document.getElementById('sensorError');
-      const errorText   = document.getElementById('sensorErrorText');
+      const errorText = document.getElementById('sensorErrorText');
 
       try {
-        const response = await fetch(API_URL, { cache: "no-store" });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const response = await fetch(API_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const apiResponse = await response.json();
-        const data        = JSON.parse(apiResponse.body);
+        const data = JSON.parse(apiResponse.body);
 
-        const temperature = data.temperature != null && !isNaN(Number(data.temperature)) ? Number(data.temperature) : null;
-        const airHumidity = data.humidity    != null && !isNaN(Number(data.humidity))    ? Number(data.humidity)    : null;
+        const isStale = data.is_stale === true;
+        const temperature = data.temperature != null && !isNaN(Number(data.temperature))
+          ? Number(data.temperature)
+          : null;
+        const airHumidity = data.humidity != null && !isNaN(Number(data.humidity))
+          ? Number(data.humidity)
+          : null;
+
         const soilHumidity = null;
-        const luminosity   = null;
+        const luminosity = null;
 
-        const values      = { temperature, airHumidity, soilHumidity, luminosity };
-        const hasAnyValue = temperature !== null || airHumidity !== null;
-
-        if (hasAnyValue) {
-          lastValidSensorTime = Date.now();
+        if (!isStale) {
+          const values = { temperature, airHumidity, soilHumidity, luminosity };
 
           for (const k of Object.keys(SENSOR_UI)) {
             const ui = SENSOR_UI[k];
-            const v  = values[k];
+            const v = values[k];
             const el = document.getElementById(ui.valueId);
             if (!el) continue;
-            el.textContent = (v != null) ? v.toFixed(k === "luminosity" ? 0 : 1) + ui.unit : "--" + ui.unit;
+
+            if (v != null) {
+              const decimals = k === 'luminosity' ? 0 : 1;
+              el.textContent = v.toFixed(decimals) + ui.unit;
+            } else {
+              el.textContent = '--' + ui.unit;
+            }
           }
 
           for (const k of Object.keys(THRESHOLDS)) {
-            const v = values[k];
+            const v = ({ temperature, airHumidity, soilHumidity, luminosity })[k];
             const status = classify(v, THRESHOLDS[k]);
             setBoxStatus(k, status);
             wireClick(k, status, v);
           }
 
-          // ✅ POINT VERT — DHT22 connecté
-          setSensorStatus('ok', 'Connecté au DHT22', 'Mis à jour : ' + nowLabel());
-          errorBanner.style.display = "none";
+          setSensorStatus(
+            'ok',
+            'Capteur DHT22 : <strong>connecté</strong>',
+            `Mesure récente • ${nowLabel()}`
+          );
 
+          errorBanner.style.display = 'none';
         } else {
-          const ageMs = Date.now() - lastValidSensorTime;
-          if (lastValidSensorTime === 0 || ageMs > 30000) {
-            for (const k of Object.keys(SENSOR_UI)) {
-              const el = document.getElementById(SENSOR_UI[k].valueId);
-              if (el) el.textContent = "--" + SENSOR_UI[k].unit;
-            }
-            for (const k of Object.keys(THRESHOLDS)) { setBoxStatus(k, "unknown"); wireClick(k, "unknown", null); }
-
-            // 🔴 POINT ROUGE — données absentes >30s
-            setSensorStatus('error', 'Déconnexion du DHT22', '--');
-            errorText.textContent     = "❌ Données capteur absentes depuis plus de 30 s. Vérifiez le DHT22 / câblage.";
-            errorBanner.style.display = "flex";
-          }
-        }
-
-        fetchWeather();
-
-      } catch (error) {
-        console.error('Erreur ESP32:', error);
-        const ageMs = Date.now() - lastValidSensorTime;
-        if (lastValidSensorTime === 0 || ageMs > 30000) {
           for (const k of Object.keys(SENSOR_UI)) {
-            const el = document.getElementById(SENSOR_UI[k].valueId);
-            if (el) el.textContent = "--" + SENSOR_UI[k].unit;
+            const ui = SENSOR_UI[k];
+            const el = document.getElementById(ui.valueId);
+            if (el) el.textContent = '--' + ui.unit;
           }
-          for (const k of Object.keys(THRESHOLDS)) { setBoxStatus(k, "unknown"); wireClick(k, "unknown", null); }
 
-          // 🔴 POINT ROUGE — ESP32 hors ligne
-          setSensorStatus('error', 'Déconnexion du DHT22', '--');
-          errorText.textContent     = "❌ ESP32 hors ligne (WiFi/alim/API). Vérifiez connexion.";
-          errorBanner.style.display = "flex";
+          for (const k of Object.keys(THRESHOLDS)) {
+            setBoxStatus(k, 'unknown');
+            wireClick(k, 'unknown', null);
+          }
+
+          const ageText =
+            data.age_seconds != null
+              ? `Dernière mesure reçue il y a ${Math.round(data.age_seconds)} s.`
+              : 'Dernière mesure trop ancienne.';
+
+          errorText.textContent =
+            'Données capteur absentes ou trop anciennes (> 30 s). Vérifiez le DHT22, l’ESP32 ou la connexion Wi-Fi. ' + ageText;
+
+          setSensorStatus(
+            'error',
+            'Capteur DHT22 : <strong>déconnecté</strong>',
+            `Statut vérifié • ${nowLabel()}`
+          );
+
+          errorBanner.style.display = 'flex';
         }
-        fetchWeather();
+      } catch (error) {
+        console.error('Erreur ESP32/API', error);
+
+        for (const k of Object.keys(SENSOR_UI)) {
+          const ui = SENSOR_UI[k];
+          const el = document.getElementById(ui.valueId);
+          if (el) el.textContent = '--' + ui.unit;
+        }
+
+        for (const k of Object.keys(THRESHOLDS)) {
+          setBoxStatus(k, 'unknown');
+          wireClick(k, 'unknown', null);
+        }
+
+        errorText.textContent = 'ESP32/API indisponible. Vérifiez le Wi-Fi, l’alimentation ou AWS.';
+
+        setSensorStatus(
+          'error',
+          'Capteur DHT22 : <strong>indisponible</strong>',
+          `Erreur API • ${nowLabel()}`
+        );
+
+        errorBanner.style.display = 'flex';
       }
     }
 
     function updateDateBadge() {
       const now = new Date();
-      document.getElementById('badgeDate').textContent = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      document.getElementById('badgeDay').textContent  = now.toLocaleDateString('fr-FR', { weekday: 'long' });
+      document.getElementById('badgeDate').textContent = now.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      document.getElementById('badgeDay').textContent = now.toLocaleDateString('fr-FR', {
+        weekday: 'long'
+      });
+
       const tomatoDate = document.getElementById('tomatoBadgeDate');
-      const tomatoDay  = document.getElementById('tomatoBadgeDay');
-      if (tomatoDate) tomatoDate.textContent = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      if (tomatoDay)  tomatoDay.textContent  = now.toLocaleDateString('fr-FR', { weekday: 'long' });
+      const tomatoDay = document.getElementById('tomatoBadgeDay');
+
+      if (tomatoDate) {
+        tomatoDate.textContent = now.toLocaleDateString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+      }
+
+      if (tomatoDay) {
+        tomatoDay.textContent = now.toLocaleDateString('fr-FR', {
+          weekday: 'long'
+        });
+      }
     }
 
     updateDateBadge();
