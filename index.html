@@ -31,8 +31,6 @@
     .data-label { font-size: 1.1em; margin-bottom: 10px; color: #005fa3; font-weight: 600; }
     .data-value { font-size: 2.2em; font-weight: bold; color: #003366; margin-bottom: 8px; }
     .data-interval { font-size: 0.9em; color: #666; font-style: italic; }
-    .sensor-error-banner { display: none; margin-bottom: 15px; padding: 10px 12px; border-radius: 8px; background: #ffe5e5; border: 1px solid #e11d48; color: #a00020; font-size: 0.95em; align-items: center; gap: 8px; }
-    .sensor-error-banner span.icon { font-size: 1.2em; }
     .data-box.ok { background: #eaf7ee; border-color: #2e9e57; }
     .data-box.ok .data-value { color: #1f7a3a; }
     .data-box.warn { background: #fff4e5; border-color: #f59e0b; }
@@ -162,11 +160,6 @@
       <div class="date-badge">
         <span class="date-badge-main" id="badgeDate">--/--/----</span>
         <span class="date-badge-day" id="badgeDay">--</span>
-      </div>
-
-      <div id="sensorError" class="sensor-error-banner">
-        <span class="icon">⚠️</span>
-        <span id="sensorErrorText">Impossible de communiquer avec le capteur.</span>
       </div>
 
       <div class="grid-container" id="dataGrid">
@@ -361,8 +354,8 @@
       document.querySelectorAll('nav a').forEach(link => {
         link.classList.remove('active');
         const text = link.textContent.trim();
-        if (tabId === 'menu'    && text === 'Menu principal')       link.classList.add('active');
-        if (tabId === 'suivi'   && text === 'Suivi des données')    link.classList.add('active');
+        if (tabId === 'menu' && text === 'Menu principal') link.classList.add('active');
+        if (tabId === 'suivi' && text === 'Suivi des données') link.classList.add('active');
         if (tabId === 'tomates' && text === 'Cultiver des tomates') link.classList.add('active');
       });
     }
@@ -563,9 +556,6 @@
     }
 
     async function fetchData() {
-      const errorBanner = document.getElementById('sensorError');
-      const errorText = document.getElementById('sensorErrorText');
-
       try {
         const response = await fetch(API_URL, { cache: 'no-store' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -613,8 +603,6 @@
             'Capteur DHT22 : <strong>connecté</strong>',
             `Mesure récente • ${nowLabel()}`
           );
-
-          errorBanner.style.display = 'none';
         } else {
           for (const k of Object.keys(SENSOR_UI)) {
             const ui = SENSOR_UI[k];
@@ -627,21 +615,11 @@
             wireClick(k, 'unknown', null);
           }
 
-          const ageText =
-            data.age_seconds != null
-              ? `Dernière mesure reçue il y a ${Math.round(data.age_seconds)} s.`
-              : 'Dernière mesure trop ancienne.';
-
-          errorText.textContent =
-            'Données capteur absentes ou trop anciennes (> 30 s). Vérifiez le DHT22, l’ESP32 ou la connexion Wi-Fi. ' + ageText;
-
           setSensorStatus(
             'error',
             'Capteur DHT22 : <strong>déconnecté</strong>',
             `Statut vérifié • ${nowLabel()}`
           );
-
-          errorBanner.style.display = 'flex';
         }
       } catch (error) {
         console.error('Erreur ESP32/API', error);
@@ -657,15 +635,11 @@
           wireClick(k, 'unknown', null);
         }
 
-        errorText.textContent = 'ESP32/API indisponible. Vérifiez le Wi-Fi, l’alimentation ou AWS.';
-
         setSensorStatus(
           'error',
           'Capteur DHT22 : <strong>indisponible</strong>',
           `Erreur API • ${nowLabel()}`
         );
-
-        errorBanner.style.display = 'flex';
       }
     }
 
