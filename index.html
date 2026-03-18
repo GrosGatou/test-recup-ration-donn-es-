@@ -181,7 +181,7 @@
         <div class="data-box" id="luminosityBox">
           <div class="data-label">Luminosité</div>
           <div class="data-value" id="luminosity">-- lx</div>
-          <div class="data-interval">Intervalle tolérable : 20000 - 50000 lx (cible 30000 - 40000 lx)</div>
+          <div class="data-interval">Intervalle tolérable : 40 - 90 % (cible 60 - 80 %)</div>
         </div>
       </div>
     </div>
@@ -366,7 +366,8 @@
       temperature:  { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
       airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
       soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
-      luminosity:   { target: [30000, 40000], acceptable: [20000, 50000], critLow: 20000, critHigh: 50000 }
+      luminosity:   { target: [60, 80], acceptable: [40, 90], critLow: 40, critHigh: 90 }
+
     };
 
     const SENSOR_UI = {
