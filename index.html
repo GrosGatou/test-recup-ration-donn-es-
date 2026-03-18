@@ -571,8 +571,9 @@
           ? Number(data.humidity)
           : null;
 
-        const soilHumidity = null;
-        const luminosity = null;
+        const soilHumidity = data.humSol != null && !isNaN(Number(data.humSol)) ? Number(data.humSol) : null;
+        const luminosity = data.lumiere != null && !isNaN(Number(data.lumiere)) ? Number(data.lumiere) : null;
+
 
         if (!isStale) {
           const values = { temperature, airHumidity, soilHumidity, luminosity };
