@@ -50,9 +50,7 @@
       font-family: Arial, sans-serif;
     }
 
-    body {
-      min-height: 100vh;
-    }
+    body { min-height: 100vh; }
 
     header {
       background: linear-gradient(135deg, var(--header), #d8f3dc);
@@ -177,7 +175,6 @@
 
     .sensors-section,
     .weather-section {
-      margin: 0;
       background: linear-gradient(135deg, var(--surface-green), var(--surface-green-2));
       border-radius: 24px;
       padding: 26px 26px 30px 26px;
@@ -398,7 +395,7 @@
       height: 6px;
       background: #6b7280;
       border-radius: 999px;
-      overflow: hidden;
+      overflow: visible;
       margin-bottom: 8px;
       width: 100%;
     }
@@ -412,6 +409,26 @@
 
     .range-zone.tolerable { background: #f59e0b; }
     .range-zone.good { background: #22c55e; }
+
+    .range-thumb {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--accent);
+      box-shadow: 0 4px 12px rgba(47, 93, 56, 0.18);
+      transform: translate(-50%, -50%);
+      transition: left .35s ease, border-color .25s ease, opacity .25s ease;
+      z-index: 3;
+      opacity: 0.35;
+    }
+
+    .data-box.ok .range-thumb   { border-color: var(--ok-border); }
+    .data-box.warn .range-thumb { border-color: var(--warn-border); }
+    .data-box.crit .range-thumb { border-color: var(--crit-border); }
 
     .range-ends {
       display: flex;
@@ -459,6 +476,52 @@
       color: var(--muted);
       font-size: 0.95rem;
       margin-bottom: 0;
+    }
+
+    .history-summary {
+      display: grid;
+      grid-template-columns: 1.15fr repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: stretch;
+    }
+
+    .history-summary-select {
+      width: 100%;
+      border: 1px solid #d7e6da;
+      background: #ffffff;
+      color: var(--accent-dark);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 700;
+      outline: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .history-stat {
+      background: #ffffff;
+      border: 1px solid #d7e6da;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 66px;
+      text-align: center;
+    }
+
+    .history-stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .history-stat-value {
+      font-size: 1.05rem;
+      color: var(--accent-dark);
+      font-weight: 800;
     }
 
     .chart-controls {
@@ -530,6 +593,18 @@
     .refresh-btn:active {
       transform: translateY(0);
       opacity: .92;
+    }
+
+    .weather-insight {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid #d6e9da;
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: var(--accent-dark);
+      line-height: 1.5;
+      box-shadow: var(--shadow-sm);
     }
 
     .forecast-section {
@@ -776,6 +851,10 @@
       .chart-controls {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+
+      .history-summary {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
     @media (max-width: 780px) {
@@ -806,6 +885,10 @@
 
       .grid-container,
       .weather-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .history-summary {
         grid-template-columns: 1fr;
       }
 
@@ -928,6 +1011,7 @@
                   <div class="range-track">
                     <span class="range-zone tolerable" style="left:50%; width:35%;"></span>
                     <span class="range-zone good" style="left:60%; width:10%;"></span>
+                    <span class="range-thumb" id="airHumidityThumb"></span>
                   </div>
                   <div class="range-ends">
                     <span>0%</span>
@@ -951,6 +1035,7 @@
                   <div class="range-track">
                     <span class="range-zone tolerable" style="left:55%; width:30%;"></span>
                     <span class="range-zone good" style="left:60%; width:15%;"></span>
+                    <span class="range-thumb" id="soilHumidityThumb"></span>
                   </div>
                   <div class="range-ends">
                     <span>0%</span>
@@ -974,6 +1059,7 @@
                   <div class="range-track">
                     <span class="range-zone tolerable" style="left:43.33%; width:20%;"></span>
                     <span class="range-zone good" style="left:50%; width:10%;"></span>
+                    <span class="range-thumb" id="temperatureThumb"></span>
                   </div>
                   <div class="range-ends">
                     <span>-10°C</span>
@@ -997,6 +1083,7 @@
                   <div class="range-track">
                     <span class="range-zone tolerable" style="left:40%; width:50%;"></span>
                     <span class="range-zone good" style="left:60%; width:20%;"></span>
+                    <span class="range-thumb" id="luminosityThumb"></span>
                   </div>
                   <div class="range-ends">
                     <span>0%</span>
@@ -1014,6 +1101,30 @@
                     <div class="history-subtitle">Le bouton remet uniquement le graphique à zéro.</div>
                   </div>
                   <button class="refresh-btn" onclick="resetChartHistory()">Actualiser maintenant</button>
+                </div>
+
+                <div class="history-summary">
+                  <select id="summaryMetric" class="history-summary-select">
+                    <option value="temperature">Résumé température</option>
+                    <option value="airHumidity">Résumé humidité air</option>
+                    <option value="soilHumidity">Résumé humidité sol</option>
+                    <option value="luminosity">Résumé luminosité</option>
+                  </select>
+
+                  <div class="history-stat">
+                    <span class="history-stat-label">Min aujourd'hui</span>
+                    <span class="history-stat-value" id="summaryMin">--</span>
+                  </div>
+
+                  <div class="history-stat">
+                    <span class="history-stat-label">Max aujourd'hui</span>
+                    <span class="history-stat-value" id="summaryMax">--</span>
+                  </div>
+
+                  <div class="history-stat">
+                    <span class="history-stat-label">Moyenne</span>
+                    <span class="history-stat-value" id="summaryAvg">--</span>
+                  </div>
                 </div>
 
                 <div class="chart-controls">
@@ -1080,6 +1191,10 @@
                 <div class="weather-value" id="weatherFeelsLike">-- °C</div>
                 <div class="weather-desc">Température ressentie</div>
               </div>
+            </div>
+
+            <div class="weather-insight" id="weatherInsight">
+              Analyse croisée météo / serre en attente...
             </div>
 
             <div class="forecast-section">
@@ -1241,7 +1356,7 @@
   </div>
 
   <footer>
-    <p>© 2026 - Mon projet ESP32</p>
+    <p>© 2026 - ESME Sudria</p>
   </footer>
 
   <script>
@@ -1273,10 +1388,30 @@
     };
 
     const SENSOR_UI = {
-      temperature:  { boxId: "temperatureBox",  valueId: "temperature",  unit: " °C", label: "Température" },
-      airHumidity:  { boxId: "airHumidityBox",  valueId: "airHumidity",  unit: " %",  label: "Humidité de l'air" },
-      soilHumidity: { boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %",  label: "Humidité du sol" },
-      luminosity:   { boxId: "luminosityBox",   valueId: "luminosity",   unit: " %",  label: "Luminosité" }
+      temperature:  { boxId: 'temperatureBox',  valueId: 'temperature',  unit: ' °C', label: 'Température' },
+      airHumidity:  { boxId: 'airHumidityBox',  valueId: 'airHumidity',  unit: ' %',  label: "Humidité de l'air" },
+      soilHumidity: { boxId: 'soilHumidityBox', valueId: 'soilHumidity', unit: ' %',  label: 'Humidité du sol' },
+      luminosity:   { boxId: 'luminosityBox',   valueId: 'luminosity',   unit: ' %',  label: 'Luminosité' }
+    };
+
+    const RANGE_VISUAL = {
+      temperature:  { min: -10, max: 50,  unit: '°C', decimals: 1, thumbId: 'temperatureThumb' },
+      airHumidity:  { min: 0,   max: 100, unit: '%',  decimals: 1, thumbId: 'airHumidityThumb' },
+      soilHumidity: { min: 0,   max: 100, unit: '%',  decimals: 1, thumbId: 'soilHumidityThumb' },
+      luminosity:   { min: 0,   max: 100, unit: '%',  decimals: 0, thumbId: 'luminosityThumb' }
+    };
+
+    const latestSensorValues = {
+      temperature: null,
+      airHumidity: null,
+      soilHumidity: null,
+      luminosity: null
+    };
+
+    const latestWeatherValues = {
+      temp: null,
+      humidity: null,
+      wind: null
     };
 
     const WEATHER_API_KEY  = '6ccbda539bcbb73fe70461c935ab77e1';
@@ -1331,117 +1466,121 @@
       });
     }
 
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
     function classify(value, ranges) {
-      if (value == null || Number.isNaN(value)) return "unknown";
+      if (value == null || Number.isNaN(value)) return 'unknown';
       const [tMin, tMax] = ranges.target;
       const [aMin, aMax] = ranges.acceptable;
-      if (value >= tMin && value <= tMax) return "ok";
-      if (value >= aMin && value <= aMax) return "warn";
-      return "crit";
+      if (value >= tMin && value <= tMax) return 'ok';
+      if (value >= aMin && value <= aMax) return 'warn';
+      return 'crit';
     }
 
     function setBoxStatus(sensorKey, status) {
       const ui = SENSOR_UI[sensorKey];
       const box = document.getElementById(ui.boxId);
       if (!box) return;
-      box.classList.remove("ok", "warn", "crit", "clickable");
-      if (status === "ok") box.classList.add("ok");
-      if (status === "warn") box.classList.add("warn");
-      if (status === "crit") box.classList.add("crit", "clickable");
+      box.classList.remove('ok', 'warn', 'crit', 'clickable');
+      if (status === 'ok') box.classList.add('ok');
+      if (status === 'warn') box.classList.add('warn');
+      if (status === 'crit') box.classList.add('crit', 'clickable');
     }
 
     function openAdvice(sensorKey, value) {
-      const overlay = document.getElementById("adviceOverlay");
-      const title = document.getElementById("adviceTitle");
-      const meaning = document.getElementById("adviceMeaning");
-      const risks = document.getElementById("adviceRisks");
-      const actions = document.getElementById("adviceActions");
+      const overlay = document.getElementById('adviceOverlay');
+      const title = document.getElementById('adviceTitle');
+      const meaning = document.getElementById('adviceMeaning');
+      const risks = document.getElementById('adviceRisks');
+      const actions = document.getElementById('adviceActions');
       const ui = SENSOR_UI[sensorKey];
       const ranges = THRESHOLDS[sensorKey];
-      const unit = ui.unit || "";
-      const valText = (value != null) ? `${value}${unit}` : "--";
+      const unit = ui.unit || '';
+      const valText = (value != null) ? `${value}${unit}` : '--';
       const isTooLow = value < ranges.critLow;
       const isTooHigh = value > ranges.critHigh;
-      const direction = isTooLow ? "trop bas" : (isTooHigh ? "trop haut" : "hors limites");
+      const direction = isTooLow ? 'trop bas' : (isTooHigh ? 'trop haut' : 'hors limites');
 
       let advMeaning, advRisks, advActions;
 
       switch (sensorKey) {
-        case "temperature":
+        case 'temperature':
           if (isTooLow) {
-            advMeaning = "Température trop basse.";
-            advRisks = "Ralentissement de croissance et dégâts possibles liés au froid.";
-            advActions = "Activer la résistance chauffante.";
+            advMeaning = 'Température trop basse.';
+            advRisks = 'Ralentissement de croissance et dégâts possibles liés au froid.';
+            advActions = 'Activer la résistance chauffante.';
           } else {
-            advMeaning = "Température trop haute.";
-            advRisks = "Stress thermique et baisse de qualité des fruits.";
-            advActions = "Ventiler et surveiller l'arrosage.";
+            advMeaning = 'Température trop haute.';
+            advRisks = 'Stress thermique et baisse de qualité des fruits.';
+            advActions = 'Ventiler et surveiller l\'arrosage.';
           }
           break;
 
-        case "airHumidity":
+        case 'airHumidity':
           if (isTooLow) {
-            advMeaning = "Humidité de l'air trop basse.";
-            advRisks = "Stress hydrique et dessèchement.";
-            advActions = "Surveiller l'arrosage et l'ambiance de la serre.";
+            advMeaning = 'Humidité de l\'air trop basse.';
+            advRisks = 'Stress hydrique et dessèchement.';
+            advActions = 'Surveiller l\'arrosage et l\'ambiance de la serre.';
           } else {
-            advMeaning = "Humidité de l'air trop haute.";
-            advRisks = "Condensation et hausse du risque de maladies.";
-            advActions = "Activer la ventilation.";
+            advMeaning = 'Humidité de l\'air trop haute.';
+            advRisks = 'Condensation et hausse du risque de maladies.';
+            advActions = 'Activer la ventilation.';
           }
           break;
 
-        case "soilHumidity":
+        case 'soilHumidity':
           if (isTooLow) {
-            advMeaning = "Humidité du sol trop basse.";
-            advRisks = "Stress hydrique et croissance ralentie.";
-            advActions = "Activer la pompe ou arroser.";
+            advMeaning = 'Humidité du sol trop basse.';
+            advRisks = 'Stress hydrique et croissance ralentie.';
+            advActions = 'Activer la pompe ou arroser.';
           } else {
-            advMeaning = "Humidité du sol trop haute.";
-            advRisks = "Asphyxie racinaire et maladies.";
-            advActions = "Réduire l'arrosage et améliorer le drainage.";
+            advMeaning = 'Humidité du sol trop haute.';
+            advRisks = 'Asphyxie racinaire et maladies.';
+            advActions = 'Réduire l\'arrosage et améliorer le drainage.';
           }
           break;
 
-        case "luminosity":
+        case 'luminosity':
           if (isTooLow) {
-            advMeaning = "Luminosité trop faible.";
-            advRisks = "Photosynthèse limitée et croissance plus lente.";
-            advActions = "Allumer un complément lumineux.";
+            advMeaning = 'Luminosité trop faible.';
+            advRisks = 'Photosynthèse limitée et croissance plus lente.';
+            advActions = 'Allumer un complément lumineux.';
           } else {
-            advMeaning = "Luminosité trop forte.";
-            advRisks = "Stress lumineux et thermique.";
-            advActions = "Ombrer si nécessaire et surveiller la température.";
+            advMeaning = 'Luminosité trop forte.';
+            advRisks = 'Stress lumineux et thermique.';
+            advActions = 'Ombrer si nécessaire et surveiller la température.';
           }
           break;
 
         default:
-          advMeaning = "Seuil critique dépassé.";
-          advRisks = "Vérifier capteur et configuration.";
-          advActions = "Contrôler matériel et seuils.";
+          advMeaning = 'Seuil critique dépassé.';
+          advRisks = 'Vérifier capteur et configuration.';
+          advActions = 'Contrôler matériel et seuils.';
       }
 
       title.textContent = `Conseils — ${ui.label} ${direction} (${valText})`;
       meaning.textContent = advMeaning;
       risks.textContent = advRisks;
       actions.textContent = advActions;
-      overlay.style.display = "flex";
+      overlay.style.display = 'flex';
     }
 
     function closeAdvice() {
-      document.getElementById("adviceOverlay").style.display = "none";
+      document.getElementById('adviceOverlay').style.display = 'none';
     }
 
-    document.getElementById("closeAdviceBtn").addEventListener("click", closeAdvice);
-    document.getElementById("ackBtn").addEventListener("click", closeAdvice);
-    document.getElementById("adviceOverlay").addEventListener("click", e => {
-      if (e.target.id === "adviceOverlay") closeAdvice();
+    document.getElementById('closeAdviceBtn').addEventListener('click', closeAdvice);
+    document.getElementById('ackBtn').addEventListener('click', closeAdvice);
+    document.getElementById('adviceOverlay').addEventListener('click', e => {
+      if (e.target.id === 'adviceOverlay') closeAdvice();
     });
 
     function wireClick(sensorKey, status, value) {
       const box = document.getElementById(SENSOR_UI[sensorKey].boxId);
       if (!box) return;
-      box.onclick = (status === "crit") ? () => openAdvice(sensorKey, value) : null;
+      box.onclick = (status === 'crit') ? () => openAdvice(sensorKey, value) : null;
     }
 
     function setSensorStatus(state, msg, time) {
@@ -1452,6 +1591,106 @@
       dot.className = 'sensor-dot' + (state === 'ok' ? ' ok' : state === 'error' ? ' error' : '');
       label.innerHTML = msg;
       t.textContent = time || '--';
+    }
+
+    function updateRangeThumb(sensorKey, value) {
+      const cfg = RANGE_VISUAL[sensorKey];
+      const thumb = document.getElementById(cfg.thumbId);
+      if (!thumb) return;
+
+      if (value == null || Number.isNaN(value)) {
+        thumb.style.left = '0%';
+        thumb.style.opacity = '0.35';
+        return;
+      }
+
+      const pct = ((clamp(value, cfg.min, cfg.max) - cfg.min) / (cfg.max - cfg.min)) * 100;
+      thumb.style.left = pct + '%';
+      thumb.style.opacity = '1';
+    }
+
+    function getSeriesByKey(sensorKey) {
+      if (sensorKey === 'temperature') return historyTemperature;
+      if (sensorKey === 'airHumidity') return historyAirHumidity;
+      if (sensorKey === 'soilHumidity') return historySoilHumidity;
+      return historyLuminosity;
+    }
+
+    function formatSummaryValue(sensorKey, value) {
+      const cfg = RANGE_VISUAL[sensorKey];
+      if (value == null || Number.isNaN(value)) return '--';
+      return value.toFixed(cfg.decimals) + ' ' + cfg.unit;
+    }
+
+    function updateHistorySummary() {
+      const select = document.getElementById('summaryMetric');
+      if (!select) return;
+
+      const sensorKey = select.value;
+      const series = getSeriesByKey(sensorKey).filter(v => typeof v === 'number' && !Number.isNaN(v));
+
+      const minEl = document.getElementById('summaryMin');
+      const maxEl = document.getElementById('summaryMax');
+      const avgEl = document.getElementById('summaryAvg');
+
+      if (!series.length) {
+        minEl.textContent = '--';
+        maxEl.textContent = '--';
+        avgEl.textContent = '--';
+        return;
+      }
+
+      const min = Math.min(...series);
+      const max = Math.max(...series);
+      const avg = series.reduce((a, b) => a + b, 0) / series.length;
+
+      minEl.textContent = formatSummaryValue(sensorKey, min);
+      maxEl.textContent = formatSummaryValue(sensorKey, max);
+      avgEl.textContent = formatSummaryValue(sensorKey, avg);
+    }
+
+    function bindHistorySummary() {
+      const select = document.getElementById('summaryMetric');
+      if (!select) return;
+      select.addEventListener('change', updateHistorySummary);
+    }
+
+    function updateWeatherInsight() {
+      const el = document.getElementById('weatherInsight');
+      if (!el) return;
+
+      const extHumidity = latestWeatherValues.humidity;
+      const wind = latestWeatherValues.wind;
+      const airHumidity = latestSensorValues.airHumidity;
+      const soilHumidity = latestSensorValues.soilHumidity;
+      const temp = latestSensorValues.temperature;
+
+      if (extHumidity == null && wind == null) {
+        el.textContent = 'Analyse croisée météo / serre en attente...';
+        return;
+      }
+
+      if (extHumidity >= 80 && airHumidity != null && airHumidity >= 70) {
+        el.textContent = "Air extérieur humide : surveiller la condensation dans la serre et ventiler si l'humidité intérieure continue de monter.";
+        return;
+      }
+
+      if (extHumidity <= 40 && airHumidity != null && airHumidity <= 55) {
+        el.textContent = "Air extérieur sec : surveiller le dessèchement de l'air dans la serre et vérifier l'arrosage.";
+        return;
+      }
+
+      if (wind >= 25 && temp != null && temp >= 26) {
+        el.textContent = 'Vent extérieur utile : la ventilation peut aider à faire redescendre la chaleur dans la serre.';
+        return;
+      }
+
+      if (soilHumidity != null && soilHumidity < 60 && extHumidity != null && extHumidity <= 45) {
+        el.textContent = 'Extérieur sec et sol en baisse : prévoir un arrosage progressif pour éviter un stress hydrique.';
+        return;
+      }
+
+      el.textContent = 'Conditions extérieures assez stables : continue à surveiller l\'écart entre météo extérieure et ambiance de la serre.';
     }
 
     function pushHistoryPoint(temperature, airHumidity, soilHumidity, luminosity) {
@@ -1477,6 +1716,7 @@
       historySoilHumidity.length = 0;
       historyLuminosity.length = 0;
       drawClimateChart();
+      updateHistorySummary();
     }
 
     function getVisibleSeries() {
@@ -1626,9 +1866,7 @@
     function bindChartToggles() {
       Object.values(CHART_SERIES).forEach(series => {
         const checkbox = document.getElementById(series.checkboxId);
-        if (checkbox) {
-          checkbox.addEventListener('change', drawClimateChart);
-        }
+        if (checkbox) checkbox.addEventListener('change', drawClimateChart);
       });
     }
 
@@ -1646,6 +1884,10 @@
           weatherData.wind.deg != null
             ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg / 45) % 8]})`
             : '';
+
+        latestWeatherValues.temp = weatherData.main.temp;
+        latestWeatherValues.humidity = weatherData.main.humidity;
+        latestWeatherValues.wind = Math.round(weatherData.wind.speed * 3.6);
 
         const weatherDate = new Date(weatherData.dt * 1000);
         document.getElementById('weatherForecastTime').textContent =
@@ -1667,6 +1909,8 @@
             forecastContainer.appendChild(div);
           }
         });
+
+        updateWeatherInsight();
       } catch (error) {
         console.error('Erreur météo:', error);
         document.getElementById('weatherTemp').textContent = '-- °C';
@@ -1674,6 +1918,10 @@
         document.getElementById('weatherWind').textContent = '-- km/h';
         document.getElementById('weatherFeelsLike').textContent = '-- °C';
         document.getElementById('weatherForecast').textContent = 'Météo indisponible';
+        latestWeatherValues.temp = null;
+        latestWeatherValues.humidity = null;
+        latestWeatherValues.wind = null;
+        updateWeatherInsight();
       }
     }
 
@@ -1700,6 +1948,11 @@
           : null;
 
         if (!isStale) {
+          latestSensorValues.temperature = temperature;
+          latestSensorValues.airHumidity = airHumidity;
+          latestSensorValues.soilHumidity = soilHumidity;
+          latestSensorValues.luminosity = luminosity;
+
           const values = { temperature, airHumidity, soilHumidity, luminosity };
 
           for (const k of Object.keys(SENSOR_UI)) {
@@ -1716,6 +1969,11 @@
             }
           }
 
+          updateRangeThumb('temperature', temperature);
+          updateRangeThumb('airHumidity', airHumidity);
+          updateRangeThumb('soilHumidity', soilHumidity);
+          updateRangeThumb('luminosity', luminosity);
+
           for (const k of Object.keys(THRESHOLDS)) {
             const v = ({ temperature, airHumidity, soilHumidity, luminosity })[k];
             const status = classify(v, THRESHOLDS[k]);
@@ -1725,111 +1983,74 @@
 
           pushHistoryPoint(temperature, airHumidity, soilHumidity, luminosity);
           drawClimateChart();
+          updateHistorySummary();
+          updateWeatherInsight();
 
-          setSensorStatus(
-            'ok',
-            'Capteur : <strong>connecté</strong>',
-            `Mesure récente • ${nowLabel()}`
-          );
+          setSensorStatus('ok', 'Capteur : <strong>connecté</strong>', `Mesure récente • ${nowLabel()}`);
         } else {
+          latestSensorValues.temperature = null;
+          latestSensorValues.airHumidity = null;
+          latestSensorValues.soilHumidity = null;
+          latestSensorValues.luminosity = null;
+
           for (const k of Object.keys(SENSOR_UI)) {
             const ui = SENSOR_UI[k];
             const el = document.getElementById(ui.valueId);
             if (el) el.textContent = '--' + ui.unit;
           }
 
-          for (const k of Object.keys(THRESHOLDS)) {
-            setBoxStatus(k, 'unknown');
-            wireClick(k, 'unknown', null);
+          updateRangeThumb('temperature', null);
+          updateRangeThumb('airHumidity', null);
+          updateRangeThumb('soilHumidity', null);
+          updateRangeThumb('luminosity', null);
+
+          for (const k of Object.keys(SENSOR_UI)) {
+            const box = document.getElementById(SENSOR_UI[k].boxId);
+            if (box) {
+              box.classList.remove('ok', 'warn', 'crit', 'clickable');
+              box.onclick = null;
+            }
           }
 
-          drawClimateChart();
-
-          setSensorStatus(
-            'error',
-            'Capteur : <strong>déconnecté</strong>',
-            `Statut vérifié • ${nowLabel()}`
-          );
+          setSensorStatus('error', 'Capteur : <strong>données trop anciennes</strong>', `Dernière vérification • ${nowLabel()}`);
         }
       } catch (error) {
-        console.error('Erreur ESP32/API', error);
-
-        for (const k of Object.keys(SENSOR_UI)) {
-          const ui = SENSOR_UI[k];
-          const el = document.getElementById(ui.valueId);
-          if (el) el.textContent = '--' + ui.unit;
-        }
-
-        for (const k of Object.keys(THRESHOLDS)) {
-          setBoxStatus(k, 'unknown');
-          wireClick(k, 'unknown', null);
-        }
-
-        drawClimateChart();
-
-        setSensorStatus(
-          'error',
-          'Capteur DHT22 : <strong>indisponible</strong>',
-          `Erreur API • ${nowLabel()}`
-        );
+        console.error('Erreur capteurs:', error);
+        setSensorStatus('error', 'Capteur : <strong>déconnecté</strong>', `Erreur • ${nowLabel()}`);
       }
     }
 
-    function updateDateBadge() {
+    function updateDateBadges() {
       const now = new Date();
+      const date = now.toLocaleDateString('fr-FR');
+      const day = now.toLocaleDateString('fr-FR', { weekday: 'long' });
 
-      document.getElementById('badgeDate').textContent = now.toLocaleDateString('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
+      const badgeDate = document.getElementById('badgeDate');
+      const badgeDay = document.getElementById('badgeDay');
+      const tomatoBadgeDate = document.getElementById('tomatoBadgeDate');
+      const tomatoBadgeDay = document.getElementById('tomatoBadgeDay');
 
-      document.getElementById('badgeDay').textContent = now.toLocaleDateString('fr-FR', {
-        weekday: 'long'
-      });
-
-      const tomatoDate = document.getElementById('tomatoBadgeDate');
-      const tomatoDay = document.getElementById('tomatoBadgeDay');
-
-      if (tomatoDate) {
-        tomatoDate.textContent = now.toLocaleDateString('fr-FR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-        });
-      }
-
-      if (tomatoDay) {
-        tomatoDay.textContent = now.toLocaleDateString('fr-FR', {
-          weekday: 'long'
-        });
-      }
+      if (badgeDate) badgeDate.textContent = date;
+      if (badgeDay) badgeDay.textContent = day;
+      if (tomatoBadgeDate) tomatoBadgeDate.textContent = date;
+      if (tomatoBadgeDay) tomatoBadgeDay.textContent = day;
     }
 
-    function manualRefresh() {
-      updateDateBadge();
+    window.addEventListener('resize', drawClimateChart);
+
+    window.addEventListener('load', () => {
+      updateDateBadges();
+      bindHistorySummary();
+      bindChartToggles();
+      updateHistorySummary();
+      drawClimateChart();
       fetchData();
       fetchWeather();
-    }
 
-    window.addEventListener('resize', () => {
-      if (document.getElementById('suivi').classList.contains('active')) {
-        drawClimateChart();
-      }
+      setInterval(fetchData, 5000);
+      setInterval(fetchWeather, 600000);
+      setInterval(updateDateBadges, 60000);
     });
-
-    updateDateBadge();
-    bindChartToggles();
-    fetchData();
-    fetchWeather();
-    drawClimateChart();
-
-    setInterval(() => {
-      updateDateBadge();
-      fetchData();
-      fetchWeather();
-    }, 10000);
   </script>
-
 </body>
 </html>
