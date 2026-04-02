@@ -6,52 +6,60 @@
   <title>GreenOps - Projet ESP32</title>
   <style>
     :root{
-      --bg: #f4fbf4;
-      --surface: #ffffff;
-      --surface-soft: #eef8ef;
+      --bg: #edf7ee;
+      --bg-soft: #e4f2e6;
+      --surface: rgba(255,255,255,0.72);
+      --surface-strong: rgba(255,255,255,0.9);
       --surface-green: #dcefe0;
       --surface-green-2: #cfe8d2;
       --header: #b7e4c7;
       --nav: #7fbf90;
       --nav-hover: #5f9f70;
-      --text: #263326;
-      --muted: #5f6f60;
-      --line: #c9dccd;
+      --text: #243224;
+      --muted: #617062;
       --accent: #4f8a5b;
       --accent-dark: #2f5d38;
+      --line: #c9dccd;
+      --shadow-sm: 0 4px 12px rgba(48, 78, 56, 0.06);
+      --shadow-md: 0 10px 28px rgba(48, 78, 56, 0.10);
+
       --ok-bg: #eaf7ee;
       --ok-border: #2e9e57;
       --ok-text: #1f7a3a;
+
       --warn-bg: #fff4e5;
       --warn-border: #f59e0b;
       --warn-text: #b45309;
+
       --crit-bg: #ffe7e7;
       --crit-border: #e11d48;
       --crit-text: #b91c1c;
-      --shadow: 0 10px 30px rgba(48, 78, 56, 0.10);
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 10px;
     }
 
     * { box-sizing: border-box; }
 
-    body {
-      font-family: Arial, sans-serif;
+    html, body {
       margin: 0;
+      padding: 0;
       background:
-        radial-gradient(circle at top left, rgba(183,228,199,.35), transparent 30%),
-        linear-gradient(180deg, #f7fcf7 0%, #eff8f0 100%);
+        radial-gradient(circle at top left, rgba(183,228,199,.28), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(127,191,144,.14), transparent 24%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
       color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
     }
 
     header {
       background: linear-gradient(135deg, var(--header), #d8f3dc);
       color: var(--accent-dark);
-      padding: 18px 20px;
+      padding: 20px 24px;
       text-align: center;
       border-bottom: 1px solid #a9d7b0;
-      box-shadow: 0 4px 18px rgba(79,138,91,.10);
+      box-shadow: 0 4px 18px rgba(79,138,91,.08);
     }
 
     header h1 {
@@ -61,16 +69,17 @@
     }
 
     nav {
-      background: var(--nav);
+      background: rgba(127,191,144,0.96);
       display: flex;
       justify-content: center;
       gap: 16px;
-      padding: 12px;
+      padding: 12px 18px;
       flex-wrap: wrap;
-      box-shadow: 0 4px 16px rgba(79,138,91,.12);
+      box-shadow: 0 4px 12px rgba(79,138,91,.10);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
+      backdrop-filter: blur(10px);
     }
 
     nav a {
@@ -86,30 +95,27 @@
     nav a:hover,
     nav a.active {
       background-color: var(--nav-hover);
-      text-decoration: none;
       transform: translateY(-1px);
     }
 
     section {
-      max-width: 1100px;
-      margin: 28px auto;
-      background-color: rgba(255,255,255,0.88);
-      backdrop-filter: blur(3px);
-      padding: 26px;
-      border-radius: 22px;
-      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      background: transparent;
+      padding: 28px 34px 34px 34px;
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
       display: none;
-      border: 1px solid rgba(79,138,91,.10);
     }
 
     section.active { display: block; }
 
-    #menuTitle {
-      font-size: 2.4em;
-      font-weight: bold;
-      margin-bottom: 4px;
-      color: var(--accent);
-      text-align: center;
+    .content-wrap {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
     }
 
     #menuSubtitle {
@@ -120,8 +126,15 @@
       margin-bottom: 20px;
     }
 
-    #logoContainer { text-align: center; margin-bottom: 30px; }
-    #logoContainer img { max-width: 220px; height: auto; }
+    #logoContainer {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    #logoContainer img {
+      max-width: 220px;
+      height: auto;
+    }
 
     #presentationText {
       white-space: pre-line;
@@ -145,20 +158,29 @@
       color: var(--accent);
     }
 
+    .menu-block {
+      background: rgba(255,255,255,0.56);
+      border: 1px solid rgba(79,138,91,0.10);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(6px);
+    }
+
     .sensors-section {
-      margin: 10px 0 26px 0;
+      margin: 0 0 26px 0;
       background: linear-gradient(135deg, var(--surface-green), var(--surface-green-2));
-      border-radius: 22px;
+      border-radius: 24px;
       padding: 26px 26px 30px 26px;
-      border: 2px solid #9fceb0;
-      box-shadow: 0 10px 24px rgba(79,138,91,0.12);
+      border: 1px solid rgba(79,138,91,0.14);
+      box-shadow: var(--shadow-md);
       position: relative;
     }
 
     .sensors-title {
       text-align: center;
       color: var(--accent-dark);
-      font-size: 1.7em;
+      font-size: 1.75em;
       font-weight: bold;
       margin-bottom: 18px;
       letter-spacing: -0.01em;
@@ -168,7 +190,7 @@
       position: absolute;
       top: 18px;
       right: 20px;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.88);
       color: var(--accent-dark);
       border-radius: 12px;
       padding: 8px 13px;
@@ -177,7 +199,7 @@
       display: inline-flex;
       flex-direction: column;
       align-items: flex-end;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      box-shadow: var(--shadow-sm);
     }
 
     .date-badge-main { font-weight: bold; }
@@ -198,9 +220,9 @@
       gap: 10px;
       padding: 12px 16px;
       border-radius: 14px;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.88);
       border: 1px solid #bed9c4;
-      box-shadow: 0 2px 10px rgba(79,138,91,0.08);
+      box-shadow: var(--shadow-sm);
       flex: 1 1 520px;
     }
 
@@ -263,7 +285,7 @@
 
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px,1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
       gap: 18px;
     }
 
@@ -273,7 +295,7 @@
       border-radius: 18px;
       padding: 22px 18px;
       text-align: center;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      box-shadow: var(--shadow-sm);
       transition: transform 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
 
@@ -317,11 +339,12 @@
 
     .history-section {
       margin-top: 24px;
-      background: rgba(255,255,255,0.88);
-      border: 1px solid #bed9c4;
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: 0 8px 20px rgba(79,138,91,0.08);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(79,138,91,0.12);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(5px);
     }
 
     .history-title {
@@ -337,8 +360,43 @@
       margin-bottom: 14px;
     }
 
+    .chart-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .chart-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f0f7f1;
+      border: 1px solid #d7e6da;
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      color: var(--accent-dark);
+      font-size: 0.95rem;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    .chart-toggle input {
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .toggle-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
+    }
+
     .history-card {
-      background: #f7fcf7;
+      background: rgba(247,252,247,0.95);
       border: 1px solid #d4e7d7;
       border-radius: 18px;
       padding: 14px;
@@ -351,39 +409,13 @@
       border-radius: 12px;
     }
 
-    .chart-legend {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #f0f7f1;
-      border: 1px solid #d7e6da;
-      border-radius: 999px;
-      padding: 6px 10px;
-    }
-
-    .legend-line {
-      width: 18px;
-      height: 4px;
-      border-radius: 999px;
-      display: inline-block;
-    }
-
     .weather-section {
-      margin: 40px 0;
+      margin: 0;
       background: linear-gradient(135deg, #eef8ef, #dcefe0);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 30px;
-      border: 2px solid #a8cfb1;
-      box-shadow: 0 10px 24px rgba(79,138,91,0.10);
+      border: 1px solid rgba(79,138,91,0.14);
+      box-shadow: var(--shadow-md);
     }
 
     .weather-title {
@@ -403,11 +435,11 @@
 
     .weather-box {
       background: rgba(255,255,255,0.92);
-      border: 2px solid #a7cfb0;
-      border-radius: 16px;
+      border: 1px solid rgba(79,138,91,0.12);
+      border-radius: 18px;
       padding: 24px 20px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(79,138,91,0.09);
+      box-shadow: var(--shadow-sm);
       transition: all 0.3s ease;
     }
 
@@ -422,10 +454,10 @@
     .weather-desc { font-size: 0.95em; color: #677467; font-style: italic; }
 
     .forecast-section {
-      background: linear-gradient(135deg, #f6fcf6, #e3f2e6);
-      border-radius: 16px;
+      background: rgba(255,255,255,0.70);
+      border-radius: 18px;
       padding: 25px;
-      border: 1px solid #b7d8be;
+      border: 1px solid rgba(79,138,91,0.10);
     }
 
     .forecast-title {
@@ -449,7 +481,7 @@
       border-radius: 12px;
       text-align: center;
       min-width: 78px;
-      box-shadow: 0 3px 12px rgba(79,138,91,0.12);
+      box-shadow: var(--shadow-sm);
       transition: transform 0.2s;
       border: 1px solid #d6e9da;
     }
@@ -459,6 +491,13 @@
     .forecast-temp { font-weight: bold; font-size: 1.4em; color: var(--accent-dark); margin-bottom: 4px; }
     .forecast-hour { font-size: 0.85em; color: #687668; }
     .weather-timestamp { text-align: center; margin-top: 25px; font-size: 0.95em; color: #667366; font-style: italic; }
+
+    .suivi-layout {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
 
     .overlay {
       position: fixed;
@@ -510,21 +549,19 @@
     }
 
     .tomato-section {
-      max-width: 900px;
-      margin: 0 auto;
-      background: white;
+      background: transparent;
       padding: 0;
-      border-radius: 12px;
+      border-radius: 0;
     }
 
     .tomato-hero {
       background: linear-gradient(135deg, #e8f7ec, #f4fbf5);
-      border: 3px solid #2e9e57;
-      border-radius: 14px;
+      border: 1px solid rgba(46,158,87,0.16);
+      border-radius: 24px;
       padding: 25px;
       margin-bottom: 25px;
       position: relative;
-      box-shadow: 0 4px 20px rgba(46,158,87,0.12);
+      box-shadow: var(--shadow-md);
     }
 
     .tomato-title {
@@ -548,14 +585,14 @@
       right: 20px;
       background: white;
       color: var(--accent-dark);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 6px 12px;
-      border: 1px solid #2e9e57;
+      border: 1px solid #cfe0d2;
       font-size: 0.9em;
       display: inline-flex;
       flex-direction: column;
       align-items: flex-end;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: var(--shadow-sm);
     }
 
     .tomato-date-main { font-weight: bold; }
@@ -569,12 +606,13 @@
     }
 
     .tomato-card {
-      background: #f9fcff;
-      border: 2px solid #d4e8d9;
-      border-radius: 12px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(79,138,91,0.12);
+      border-radius: 20px;
       padding: 20px;
-      box-shadow: 0 4px 12px rgba(79,138,91,0.06);
+      box-shadow: var(--shadow-sm);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(4px);
     }
 
     .tomato-card:hover {
@@ -589,10 +627,14 @@
       font-size: 1.2em;
     }
 
-    .tomato-card p { line-height: 1.55em; margin-bottom: 12px; color: #334133; }
+    .tomato-card p {
+      line-height: 1.55em;
+      margin-bottom: 12px;
+      color: #334133;
+    }
 
     .tomato-mini-box {
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 14px 15px;
       margin-top: 14px;
       line-height: 1.5em;
@@ -605,24 +647,25 @@
     .tomato-action h4 { color: #1f7a3a; }
 
     .tomato-highlight {
-      background: #eef8ef;
+      background: rgba(255,255,255,0.78);
       border-left: 5px solid var(--accent);
-      border-radius: 10px;
+      border-radius: 16px;
       padding: 16px 18px;
       margin: 20px 0;
+      box-shadow: var(--shadow-sm);
     }
 
     .tomato-highlight h3 { margin-top: 0; color: var(--accent-dark); }
     .tomato-list { margin: 0; padding-left: 18px; line-height: 1.6em; }
     .tomato-list li { margin-bottom: 8px; }
-    .tomato-practice { background: #f5f8fc; border-left: 5px solid var(--accent-dark); }
+    .tomato-practice { background: rgba(255,255,255,0.82); border-left: 5px solid var(--accent-dark); }
 
     footer {
       text-align: center;
-      padding: 15px;
+      padding: 16px;
       color: #556355;
-      background-color: #f7faf7;
-      margin-top: 40px;
+      background-color: rgba(247,250,247,0.7);
+      margin-top: 10px;
       font-size: 0.9em;
       border-top: 1px solid #dde9df;
     }
@@ -632,16 +675,51 @@
       50% { opacity:.4; }
     }
 
+    @media (max-width: 1100px) {
+      .suivi-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 780px) {
-      section { margin: 18px 14px; padding: 18px; }
-      .date-badge, .tomato-date-badge {
+      section {
+        margin: 0;
+        padding: 18px 16px 24px 16px;
+      }
+
+      .content-wrap {
+        max-width: none;
+      }
+
+      .date-badge,
+      .tomato-date-badge {
         position: static;
         margin: 0 auto 16px auto;
         align-items: center;
       }
-      .sensor-toolbar { flex-direction: column; align-items: stretch; }
-      .sensor-connection-bar { min-width: 0; }
-      #climateChart { height: 300px; }
+
+      .sensor-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sensor-connection-bar {
+        min-width: 0;
+      }
+
+      #climateChart {
+        height: 300px;
+      }
+
+      .weather-section,
+      .sensors-section,
+      .tomato-hero,
+      .menu-block,
+      .history-section,
+      .tomato-card,
+      .tomato-highlight {
+        border-radius: 18px;
+      }
     }
   </style>
 </head>
@@ -658,227 +736,262 @@
   </nav>
 
   <section id="menu" class="active">
-    <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
-    <div id="logoContainer">
-      <img src="image/logo.png" alt="logo.png" />
-    </div>
-    <div id="presentationText">
-      <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
-      Bienvenue sur GreenOps, votre solution d'agriculture intelligente.
-      Notre système vous permet de surveiller en temps réel l'état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
-      Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
-      Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
-      Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
-      Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c'est nécessaire.
+    <div class="content-wrap">
+      <div class="menu-block">
+        <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
+        <div id="logoContainer">
+          <img src="image/logo.png" alt="logo.png" />
+        </div>
+        <div id="presentationText">
+          <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
+          Bienvenue sur GreenOps, votre solution d'agriculture intelligente.
+          Notre système vous permet de surveiller en temps réel l'état de vos cultures : température, humidité, luminosité… tout est centralisé, automatisé et accessible depuis votre téléphone ou ordinateur.
+          Mais GreenOps ne se contente pas de vous informer : certaines actions de régulation sont directement automatisées.
+          Par exemple, si la température dépasse un seuil défini, le système peut activer automatiquement une résistance chauffante ou adapter le comportement de vos équipements pour maintenir des conditions optimales.
+          Vous gardez toujours le contrôle, mais GreenOps agit pour vous, au bon moment.
+          Plus besoin de passer des heures à vérifier vos parcelles : GreenOps observe, analyse, régule et vous envoie les alertes importantes, pour que vous puissiez agir avec précision lorsque c'est nécessaire.
 
-      <div class="bold-subtitle">Pourquoi GreenOps ?</div>
-      Green : pour notre engagement dans une agriculture plus durable.
-      Ops : pour "operations", car nous optimisons vos tâches quotidiennes.
-      Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l'environnement.
+          <div class="bold-subtitle">Pourquoi GreenOps ?</div>
+          Green : pour notre engagement dans une agriculture plus durable.
+          Ops : pour "operations", car nous optimisons vos tâches quotidiennes.
+          Ensemble, cela donne GreenOps, un système né pour rendre vos opérations agricoles plus simples, plus efficaces et plus respectueuses de l'environnement.
 
-      <div class="bold-subtitle">Pourquoi ce projet ?</div>
-      Parce que l'agriculture d'aujourd'hui doit gérer un défi double :
-      Produire mieux et plus,
-      Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
-      Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d'erreurs.
-      Notre objectif est simple : aider les agriculteurs, qu'ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple.
+          <div class="bold-subtitle">Pourquoi ce projet ?</div>
+          Parce que l'agriculture d'aujourd'hui doit gérer un défi double :
+          Produire mieux et plus,
+          Avec moins de temps, moins de ressources, et des conditions toujours plus incertaines.
+          Surveiller manuellement ses cultures peut vite devenir fastidieux, chronophage et source d'erreurs.
+          Notre objectif est simple : aider les agriculteurs, qu'ils soient débutants ou expérimentés, à gagner en tranquillité, en efficacité et en performance pour pouvoir se concentrer sur leurs cultures et privilégier le bio par exemple.
 
-      <div class="bold-subtitle">GreenOps a été conçu pour :</div>
-      Réduire les tâches répétitives, grâce à une surveillance automatisée,
-      Limiter le gaspillage en eau et optimiser l'arrosage,
-      Améliorer la qualité des cultures en anticipant les besoins,
-      Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
-      En bref : nous voulons mettre la technologie au service d'une agriculture plus humaine, plus durable et plus intelligente.
+          <div class="bold-subtitle">GreenOps a été conçu pour :</div>
+          Réduire les tâches répétitives, grâce à une surveillance automatisée,
+          Limiter le gaspillage en eau et optimiser l'arrosage,
+          Améliorer la qualité des cultures en anticipant les besoins,
+          Encourager une consommation plus responsable, en produisant mieux, sans surconsommer.
+          En bref : nous voulons mettre la technologie au service d'une agriculture plus humaine, plus durable et plus intelligente.
+        </div>
+      </div>
     </div>
   </section>
 
   <section id="suivi">
-    <div class="sensors-section">
-      <div class="sensors-title">Suivi des données du capteur</div>
+    <div class="content-wrap">
+      <div class="suivi-layout">
+        <div>
+          <div class="sensors-section">
+            <div class="sensors-title">Suivi des données du capteur</div>
 
-      <div class="date-badge">
-        <span class="date-badge-main" id="badgeDate">--/--/----</span>
-        <span class="date-badge-day" id="badgeDay">--</span>
-      </div>
+            <div class="date-badge">
+              <span class="date-badge-main" id="badgeDate">--/--/----</span>
+              <span class="date-badge-day" id="badgeDay">--</span>
+            </div>
 
-      <div class="sensor-toolbar">
-        <div class="sensor-connection-bar" id="sensorBar">
-          <div class="sensor-dot" id="sensorDot"></div>
-          <div class="sensor-status-label" id="sensorLabel">En attente du DHT22…</div>
-          <div class="sensor-status-time" id="sensorTime">--</div>
+            <div class="sensor-toolbar">
+              <div class="sensor-connection-bar" id="sensorBar">
+                <div class="sensor-dot" id="sensorDot"></div>
+                <div class="sensor-status-label" id="sensorLabel">En attente du DHT22…</div>
+                <div class="sensor-status-time" id="sensorTime">--</div>
+              </div>
+
+              <button class="refresh-btn" onclick="manualRefresh()">Actualiser maintenant</button>
+            </div>
+
+            <div class="grid-container" id="dataGrid">
+              <div class="data-box" id="airHumidityBox">
+                <div class="data-label">Humidité de l'air</div>
+                <div class="data-value" id="airHumidity">-- %</div>
+                <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
+              </div>
+              <div class="data-box" id="soilHumidityBox">
+                <div class="data-label">Humidité du sol</div>
+                <div class="data-value" id="soilHumidity">-- %</div>
+                <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
+              </div>
+              <div class="data-box" id="temperatureBox">
+                <div class="data-label">Température</div>
+                <div class="data-value" id="temperature">-- °C</div>
+                <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
+              </div>
+              <div class="data-box" id="luminosityBox">
+                <div class="data-label">Luminosité</div>
+                <div class="data-value" id="luminosity">-- %</div>
+                <div class="data-interval">Intervalle tolérable : 40 - 90 % (cible 60 - 80 %)</div>
+              </div>
+            </div>
+
+            <div class="history-section">
+              <div class="history-title">Historique des mesures</div>
+              <div class="history-subtitle">Sélectionnez les variables à afficher sur le graphique.</div>
+
+              <div class="chart-controls">
+                <label class="chart-toggle">
+                  <input type="checkbox" id="toggleTemperature" checked>
+                  <span class="toggle-dot" style="background:#2f7d32;"></span>
+                  Température
+                </label>
+
+                <label class="chart-toggle">
+                  <input type="checkbox" id="toggleAirHumidity" checked>
+                  <span class="toggle-dot" style="background:#1d4ed8;"></span>
+                  Humidité air
+                </label>
+
+                <label class="chart-toggle">
+                  <input type="checkbox" id="toggleSoilHumidity" checked>
+                  <span class="toggle-dot" style="background:#a16207;"></span>
+                  Humidité sol
+                </label>
+
+                <label class="chart-toggle">
+                  <input type="checkbox" id="toggleLuminosity" checked>
+                  <span class="toggle-dot" style="background:#c026d3;"></span>
+                  Luminosité
+                </label>
+              </div>
+
+              <div class="history-card">
+                <canvas id="climateChart" width="980" height="360"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <button class="refresh-btn" onclick="manualRefresh()">Actualiser maintenant</button>
-      </div>
-
-      <div class="grid-container" id="dataGrid">
-        <div class="data-box" id="airHumidityBox">
-          <div class="data-label">Humidité de l'air</div>
-          <div class="data-value" id="airHumidity">-- %</div>
-          <div class="data-interval">Intervalle tolérable : 50 - 85 % (cible 60 - 70 %)</div>
+        <div>
+          <div class="weather-section">
+            <h3 class="weather-title">🌤️ Station Météo</h3>
+            <div class="weather-grid">
+              <div class="weather-box" id="weatherTempBox">
+                <div class="weather-icon">🌡️</div>
+                <div class="weather-label">Température</div>
+                <div class="weather-value" id="weatherTemp">-- °C</div>
+                <div class="weather-desc" id="weatherTempDesc">--</div>
+              </div>
+              <div class="weather-box" id="weatherHumidityBox">
+                <div class="weather-icon">💧</div>
+                <div class="weather-label">Humidité</div>
+                <div class="weather-value" id="weatherHumidity">-- %</div>
+              </div>
+              <div class="weather-box" id="weatherWindBox">
+                <div class="weather-icon">💨</div>
+                <div class="weather-label">Vent</div>
+                <div class="weather-value" id="weatherWind">-- km/h</div>
+                <div class="weather-desc" id="weatherWindDir">--</div>
+              </div>
+            </div>
+            <div class="forecast-section">
+              <h4 class="forecast-title">📅 Prévisions du jour</h4>
+              <div class="forecast-grid" id="weatherForecast"></div>
+              <div class="weather-timestamp" id="weatherForecastTime">--</div>
+            </div>
+          </div>
         </div>
-        <div class="data-box" id="soilHumidityBox">
-          <div class="data-label">Humidité du sol</div>
-          <div class="data-value" id="soilHumidity">-- %</div>
-          <div class="data-interval">Intervalle tolérable : 55 - 85 % (cible 60 - 75 %)</div>
-        </div>
-        <div class="data-box" id="temperatureBox">
-          <div class="data-label">Température</div>
-          <div class="data-value" id="temperature">-- °C</div>
-          <div class="data-interval">Intervalle tolérable : 16 - 28 °C (cible 20 - 26 °C)</div>
-        </div>
-        <div class="data-box" id="luminosityBox">
-          <div class="data-label">Luminosité</div>
-          <div class="data-value" id="luminosity">-- %</div>
-          <div class="data-interval">Intervalle tolérable : 40 - 90 % (cible 60 - 80 %)</div>
-        </div>
-      </div>
-
-      <div class="history-section">
-        <div class="history-title">Historique des mesures</div>
-        <div class="history-subtitle">Courbes en temps réel pour la température, l’humidité de l’air, l’humidité du sol et la luminosité.</div>
-        <div class="history-card">
-          <canvas id="climateChart" width="980" height="360"></canvas>
-        </div>
-        <div class="chart-legend">
-          <span class="legend-item"><span class="legend-line" style="background:#2f7d32;"></span>Température</span>
-          <span class="legend-item"><span class="legend-line" style="background:#1d4ed8;"></span>Humidité air</span>
-          <span class="legend-item"><span class="legend-line" style="background:#a16207;"></span>Humidité sol</span>
-          <span class="legend-item"><span class="legend-line" style="background:#c026d3;"></span>Luminosité</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="weather-section">
-      <h3 class="weather-title">🌤️ Station Météo</h3>
-      <div class="weather-grid">
-        <div class="weather-box" id="weatherTempBox">
-          <div class="weather-icon">🌡️</div>
-          <div class="weather-label">Température</div>
-          <div class="weather-value" id="weatherTemp">-- °C</div>
-          <div class="weather-desc" id="weatherTempDesc">--</div>
-        </div>
-        <div class="weather-box" id="weatherHumidityBox">
-          <div class="weather-icon">💧</div>
-          <div class="weather-label">Humidité</div>
-          <div class="weather-value" id="weatherHumidity">-- %</div>
-        </div>
-        <div class="weather-box" id="weatherWindBox">
-          <div class="weather-icon">💨</div>
-          <div class="weather-label">Vent</div>
-          <div class="weather-value" id="weatherWind">-- km/h</div>
-          <div class="weather-desc" id="weatherWindDir">--</div>
-        </div>
-      </div>
-      <div class="forecast-section">
-        <h4 class="forecast-title">📅 Prévisions du jour</h4>
-        <div class="forecast-grid" id="weatherForecast"></div>
-        <div class="weather-timestamp" id="weatherForecastTime">--</div>
       </div>
     </div>
   </section>
 
   <section id="tomates">
-    <div class="tomato-section">
-      <div class="tomato-hero">
-        <div class="tomato-date-badge">
-          <span class="tomato-date-main" id="tomatoBadgeDate">--/--/----</span>
-          <span class="tomato-date-day" id="tomatoBadgeDay">--</span>
-        </div>
-        <div class="tomato-title">Bien-être de votre serre</div>
-        <div class="tomato-subtitle">Conseils pour cultiver des tomates dans de bonnes conditions</div>
-        <div id="presentationText">
-          <div class="main-highlight">Une bonne culture de tomates repose sur l'équilibre entre température, humidité, eau et lumière.</div>
-          Quand un de ces paramètres s'éloigne trop de la zone idéale, la plante ralentit, se fatigue ou devient plus sensible aux maladies.
-          Cette page vous aide à comprendre les principaux déséquilibres possibles et les bons réflexes à adopter pour garder une serre saine et productive.
-        </div>
-      </div>
-
-      <div class="tomato-grid">
-        <div class="tomato-card">
-          <h3>Conseils sur le bien-être de la serre</h3>
-          <p>Le plus important dans une serre à tomates est la stabilité. Une plante supporte souvent mieux une légère imperfection régulière qu'une succession de changements brusques dans la journée.</p>
-          <p>Un bon suivi permet d'agir avant que le stress ne s'installe. Température, humidité, arrosage et lumière doivent être surveillés ensemble, car ils influencent tous la vigueur de la plante.</p>
-        </div>
-        <div class="tomato-card">
-          <h3>Conseils champs de tomates</h3>
-          <p>Un plant de tomate en bonne santé se reconnaît à sa vigueur, à des feuilles équilibrées, à une floraison régulière et à une croissance homogène. Dès que la plante montre un flétrissement, un jaunissement, une chute des fleurs ou un ralentissement inhabituel, il faut vérifier les conditions de culture.</p>
-          <p>La culture de tomate réagit vite aux excès comme aux manques. L'objectif n'est pas seulement d'éviter le pire, mais de maintenir une ambiance favorable sur la durée.</p>
-        </div>
-        <div class="tomato-card">
-          <h3>Conseils pratiques</h3>
-          <p>Observez les plants chaque jour, surtout en période chaude ou très humide. Un contrôle visuel régulier complète très bien les mesures des capteurs.</p>
-          <p>Aérez quand l'ambiance devient lourde, évitez les gros à-coups d'arrosage, et corrigez les écarts progressivement pour ne pas ajouter un stress supplémentaire à la culture.</p>
-        </div>
-      </div>
-
-      <div class="tomato-grid">
-        <div class="tomato-card">
-          <h3>Température ambiante</h3>
-          <p>La température influence directement la croissance, la floraison et la qualité des fruits. Une ambiance trop froide ou trop chaude fatigue rapidement les tomates et peut perturber leur développement.</p>
-          <div class="tomato-mini-box tomato-problem">
-            <h4>Problèmes possibles</h4>
-            <p><strong>Trop froid :</strong> la croissance ralentit, la plante devient moins active, la nouaison peut être perturbée et des dégâts de froid peuvent apparaître si la situation dure.</p>
-            <p><strong>Trop chaud :</strong> le stress thermique augmente, la transpiration devient forte, le pollen devient moins viable et la qualité des fruits peut baisser.</p>
+    <div class="content-wrap">
+      <div class="tomato-section">
+        <div class="tomato-hero">
+          <div class="tomato-date-badge">
+            <span class="tomato-date-main" id="tomatoBadgeDate">--/--/----</span>
+            <span class="tomato-date-day" id="tomatoBadgeDay">--</span>
           </div>
-          <div class="tomato-mini-box tomato-action">
-            <h4>Bonne réaction</h4>
-            <p>Garder une ambiance la plus stable possible. Chauffer si la température devient trop basse, et en cas de chaleur excessive ventiler, ombrer et surveiller l'arrosage pour éviter que la plante ne s'épuise.</p>
+          <div class="tomato-title">Bien-être de votre serre</div>
+          <div class="tomato-subtitle">Conseils pour cultiver des tomates dans de bonnes conditions</div>
+          <div id="presentationText">
+            <div class="main-highlight">Une bonne culture de tomates repose sur l'équilibre entre température, humidité, eau et lumière.</div>
+            Quand un de ces paramètres s'éloigne trop de la zone idéale, la plante ralentit, se fatigue ou devient plus sensible aux maladies.
+            Cette page vous aide à comprendre les principaux déséquilibres possibles et les bons réflexes à adopter pour garder une serre saine et productive.
           </div>
         </div>
 
-        <div class="tomato-card">
-          <h3>Humidité de l'air</h3>
-          <p>L'humidité de l'air agit sur la transpiration de la plante, la santé du feuillage et la qualité de la pollinisation. Un air trop sec ou trop humide peut vite déséquilibrer la culture.</p>
-          <div class="tomato-mini-box tomato-problem">
-            <h4>Problèmes possibles</h4>
-            <p><strong>Air trop sec :</strong> la plante perd beaucoup d'eau, peut flétrir si l'arrosage ne suit pas, et les bords des feuilles peuvent se dessécher.</p>
-            <p><strong>Air trop humide :</strong> la condensation augmente, le risque de maladies comme le botrytis ou l'oïdium devient plus fort, et la pollinisation peut être moins efficace.</p>
+        <div class="tomato-grid">
+          <div class="tomato-card">
+            <h3>Conseils sur le bien-être de la serre</h3>
+            <p>Le plus important dans une serre à tomates est la stabilité. Une plante supporte souvent mieux une légère imperfection régulière qu'une succession de changements brusques dans la journée.</p>
+            <p>Un bon suivi permet d'agir avant que le stress ne s'installe. Température, humidité, arrosage et lumière doivent être surveillés ensemble, car ils influencent tous la vigueur de la plante.</p>
           </div>
-          <div class="tomato-mini-box tomato-action">
-            <h4>Bonne réaction</h4>
-            <p>Assurer une bonne circulation d'air dans la serre. Si l'air est trop humide, ventiler davantage. Si l'air est trop sec, surveiller plus finement les besoins en eau et éviter que la plante ne manque d'arrosage pendant les heures chaudes.</p>
+          <div class="tomato-card">
+            <h3>Conseils champs de tomates</h3>
+            <p>Un plant de tomate en bonne santé se reconnaît à sa vigueur, à des feuilles équilibrées, à une floraison régulière et à une croissance homogène. Dès que la plante montre un flétrissement, un jaunissement, une chute des fleurs ou un ralentissement inhabituel, il faut vérifier les conditions de culture.</p>
+            <p>La culture de tomate réagit vite aux excès comme aux manques. L'objectif n'est pas seulement d'éviter le pire, mais de maintenir une ambiance favorable sur la durée.</p>
           </div>
-        </div>
-
-        <div class="tomato-card">
-          <h3>Humidité du sol</h3>
-          <p>L'eau disponible dans le sol conditionne directement la vigueur des racines, la croissance du plant et la régularité de la production. Les tomates supportent mal les alternances brutales entre sol trop sec et sol détrempé.</p>
-          <div class="tomato-mini-box tomato-problem">
-            <h4>Problèmes possibles</h4>
-            <p><strong>Sol trop sec :</strong> stress de la plante, croissance ralentie, fleurs qui peuvent avorter et plus grand risque de déséquilibres sur les fruits, notamment en cas d'arrosage irrégulier.</p>
-            <p><strong>Sol trop humide :</strong> les racines manquent d'oxygène, fonctionnent moins bien, la plante peut jaunir et le risque de maladies racinaires augmente.</p>
-          </div>
-          <div class="tomato-mini-box tomato-action">
-            <h4>Bonne réaction</h4>
-            <p>Maintenir un arrosage régulier et éviter les excès. Si le sol est trop sec, arroser sans attendre trop longtemps. S'il est trop humide, réduire les apports d'eau et améliorer le drainage pour redonner de l'air aux racines.</p>
+          <div class="tomato-card">
+            <h3>Conseils pratiques</h3>
+            <p>Observez les plants chaque jour, surtout en période chaude ou très humide. Un contrôle visuel régulier complète très bien les mesures des capteurs.</p>
+            <p>Aérez quand l'ambiance devient lourde, évitez les gros à-coups d'arrosage, et corrigez les écarts progressivement pour ne pas ajouter un stress supplémentaire à la culture.</p>
           </div>
         </div>
 
-        <div class="tomato-card">
-          <h3>Luminosité</h3>
-          <p>La lumière permet à la tomate de produire son énergie. Si elle est insuffisante, la plante s'étiole. Si elle est trop agressive, surtout avec de la chaleur, elle augmente fortement la demande en eau et le niveau de stress.</p>
-          <div class="tomato-mini-box tomato-problem">
-            <h4>Problèmes possibles</h4>
-            <p><strong>Pas assez de lumière :</strong> photosynthèse limitée, plants qui filent, croissance moins compacte, floraison plus faible et maturation plus lente.</p>
-            <p><strong>Trop de lumière :</strong> stress lumineux souvent associé à un stress thermique, feuilles qui peuvent s'enrouler ou se marquer, et demande en eau plus élevée.</p>
+        <div class="tomato-grid">
+          <div class="tomato-card">
+            <h3>Température ambiante</h3>
+            <p>La température influence directement la croissance, la floraison et la qualité des fruits. Une ambiance trop froide ou trop chaude fatigue rapidement les tomates et peut perturber leur développement.</p>
+            <div class="tomato-mini-box tomato-problem">
+              <h4>Problèmes possibles</h4>
+              <p><strong>Trop froid :</strong> la croissance ralentit, la plante devient moins active, la nouaison peut être perturbée et des dégâts de froid peuvent apparaître si la situation dure.</p>
+              <p><strong>Trop chaud :</strong> le stress thermique augmente, la transpiration devient forte, le pollen devient moins viable et la qualité des fruits peut baisser.</p>
+            </div>
+            <div class="tomato-mini-box tomato-action">
+              <h4>Bonne réaction</h4>
+              <p>Garder une ambiance la plus stable possible. Chauffer si la température devient trop basse, et en cas de chaleur excessive ventiler, ombrer et surveiller l'arrosage pour éviter que la plante ne s'épuise.</p>
+            </div>
           </div>
-          <div class="tomato-mini-box tomato-action">
-            <h4>Bonne réaction</h4>
-            <p>Apporter un complément lumineux quand la luminosité devient trop faible. En cas d'excès, limiter l'exposition directe par ombrage si besoin et surveiller en même temps la température et l'eau disponible pour la plante.</p>
+
+          <div class="tomato-card">
+            <h3>Humidité de l'air</h3>
+            <p>L'humidité de l'air agit sur la transpiration de la plante, la santé du feuillage et la qualité de la pollinisation. Un air trop sec ou trop humide peut vite déséquilibrer la culture.</p>
+            <div class="tomato-mini-box tomato-problem">
+              <h4>Problèmes possibles</h4>
+              <p><strong>Air trop sec :</strong> la plante perd beaucoup d'eau, peut flétrir si l'arrosage ne suit pas, et les bords des feuilles peuvent se dessécher.</p>
+              <p><strong>Air trop humide :</strong> la condensation augmente, le risque de maladies comme le botrytis ou l'oïdium devient plus fort, et la pollinisation peut être moins efficace.</p>
+            </div>
+            <div class="tomato-mini-box tomato-action">
+              <h4>Bonne réaction</h4>
+              <p>Assurer une bonne circulation d'air dans la serre. Si l'air est trop humide, ventiler davantage. Si l'air est trop sec, surveiller plus finement les besoins en eau et éviter que la plante ne manque d'arrosage pendant les heures chaudes.</p>
+            </div>
+          </div>
+
+          <div class="tomato-card">
+            <h3>Humidité du sol</h3>
+            <p>L'eau disponible dans le sol conditionne directement la vigueur des racines, la croissance du plant et la régularité de la production. Les tomates supportent mal les alternances brutales entre sol trop sec et sol détrempé.</p>
+            <div class="tomato-mini-box tomato-problem">
+              <h4>Problèmes possibles</h4>
+              <p><strong>Sol trop sec :</strong> stress de la plante, croissance ralentie, fleurs qui peuvent avorter et plus grand risque de déséquilibres sur les fruits, notamment en cas d'arrosage irrégulier.</p>
+              <p><strong>Sol trop humide :</strong> les racines manquent d'oxygène, fonctionnent moins bien, la plante peut jaunir et le risque de maladies racinaires augmente.</p>
+            </div>
+            <div class="tomato-mini-box tomato-action">
+              <h4>Bonne réaction</h4>
+              <p>Maintenir un arrosage régulier et éviter les excès. Si le sol est trop sec, arroser sans attendre trop longtemps. S'il est trop humide, réduire les apports d'eau et améliorer le drainage pour redonner de l'air aux racines.</p>
+            </div>
+          </div>
+
+          <div class="tomato-card">
+            <h3>Luminosité</h3>
+            <p>La lumière permet à la tomate de produire son énergie. Si elle est insuffisante, la plante s'étiole. Si elle est trop agressive, surtout avec de la chaleur, elle augmente fortement la demande en eau et le niveau de stress.</p>
+            <div class="tomato-mini-box tomato-problem">
+              <h4>Problèmes possibles</h4>
+              <p><strong>Pas assez de lumière :</strong> photosynthèse limitée, plants qui filent, croissance moins compacte, floraison plus faible et maturation plus lente.</p>
+              <p><strong>Trop de lumière :</strong> stress lumineux souvent associé à un stress thermique, feuilles qui peuvent s'enrouler ou se marquer, et demande en eau plus élevée.</p>
+            </div>
+            <div class="tomato-mini-box tomato-action">
+              <h4>Bonne réaction</h4>
+              <p>Apporter un complément lumineux quand la luminosité devient trop faible. En cas d'excès, limiter l'exposition directe par ombrage si besoin et surveiller en même temps la température et l'eau disponible pour la plante.</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="tomato-highlight tomato-practice">
-        <h3>Bonnes pratiques à retenir</h3>
-        <ul class="tomato-list">
-          <li>Observer les feuilles, les fleurs et les fruits chaque jour pour détecter rapidement un déséquilibre.</li>
-          <li>Réagir tôt, avec des corrections progressives, plutôt que d'attendre une dégradation importante.</li>
-          <li>Éviter les changements brusques de température ou d'arrosage.</li>
-          <li>Maintenir une bonne ventilation pour limiter l'excès d'humidité stagnante.</li>
-          <li>Compléter les capteurs par une observation visuelle réelle des plants.</li>
-        </ul>
+        <div class="tomato-highlight tomato-practice">
+          <h3>Bonnes pratiques à retenir</h3>
+          <ul class="tomato-list">
+            <li>Observer les feuilles, les fleurs et les fruits chaque jour pour détecter rapidement un déséquilibre.</li>
+            <li>Réagir tôt, avec des corrections progressives, plutôt que d'attendre une dégradation importante.</li>
+            <li>Éviter les changements brusques de température ou d'arrosage.</li>
+            <li>Maintenir une bonne ventilation pour limiter l'excès d'humidité stagnante.</li>
+            <li>Compléter les capteurs par une observation visuelle réelle des plants.</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -960,6 +1073,33 @@
     const historySoilHumidity = [];
     const historyLuminosity = [];
     const MAX_HISTORY = 24;
+
+    const CHART_SERIES = {
+      temperature: {
+        label: 'Température',
+        color: '#2f7d32',
+        data: historyTemperature,
+        checkboxId: 'toggleTemperature'
+      },
+      airHumidity: {
+        label: 'Humidité air',
+        color: '#1d4ed8',
+        data: historyAirHumidity,
+        checkboxId: 'toggleAirHumidity'
+      },
+      soilHumidity: {
+        label: 'Humidité sol',
+        color: '#a16207',
+        data: historySoilHumidity,
+        checkboxId: 'toggleSoilHumidity'
+      },
+      luminosity: {
+        label: 'Luminosité',
+        color: '#c026d3',
+        data: historyLuminosity,
+        checkboxId: 'toggleLuminosity'
+      }
+    };
 
     function nowLabel() {
       return new Date().toLocaleTimeString('fr-FR', {
@@ -1103,6 +1243,13 @@
       }
     }
 
+    function getVisibleSeries() {
+      return Object.values(CHART_SERIES).filter(series => {
+        const checkbox = document.getElementById(series.checkboxId);
+        return checkbox && checkbox.checked;
+      });
+    }
+
     function getNumericSeries(series) {
       return series.filter(v => typeof v === 'number' && !Number.isNaN(v));
     }
@@ -1158,10 +1305,19 @@
       ctx.fillStyle = '#f7fcf7';
       ctx.fillRect(0, 0, cssWidth, cssHeight);
 
+      const visibleSeries = getVisibleSeries();
+
       if (historyTime.length < 2) {
         ctx.fillStyle = '#6b7a6c';
         ctx.font = '14px Arial';
         ctx.fillText('En attente de plusieurs mesures pour afficher les courbes...', 20, 30);
+        return;
+      }
+
+      if (visibleSeries.length === 0) {
+        ctx.fillStyle = '#6b7a6c';
+        ctx.font = '14px Arial';
+        ctx.fillText('Cochez au moins une variable pour afficher le graphique.', 20, 30);
         return;
       }
 
@@ -1193,15 +1349,11 @@
         }
       }
 
-      const tempVals = getNumericSeries(historyTemperature);
-      const airVals = getNumericSeries(historyAirHumidity);
-      const soilVals = getNumericSeries(historySoilHumidity);
-      const lightVals = getNumericSeries(historyLuminosity);
-      const allVals = [...tempVals, ...airVals, ...soilVals, ...lightVals];
+      const allVals = visibleSeries.flatMap(series => getNumericSeries(series.data));
 
       if (allVals.length < 2) {
         ctx.fillStyle = '#6b7a6c';
-        ctx.fillText('Pas assez de données valides pour tracer les courbes.', 20, 30);
+        ctx.fillText('Pas assez de données valides pour tracer les courbes sélectionnées.', 20, 30);
         return;
       }
 
@@ -1225,15 +1377,23 @@
         ctx.fillText(value.toFixed(0), left - 8, y);
       }
 
-      drawLine(ctx, historyTemperature, historyTime, minVal, maxVal, '#2f7d32', chartArea);
-      drawLine(ctx, historyAirHumidity, historyTime, minVal, maxVal, '#1d4ed8', chartArea);
-      drawLine(ctx, historySoilHumidity, historyTime, minVal, maxVal, '#a16207', chartArea);
-      drawLine(ctx, historyLuminosity, historyTime, minVal, maxVal, '#c026d3', chartArea);
+      visibleSeries.forEach(series => {
+        drawLine(ctx, series.data, historyTime, minVal, maxVal, series.color, chartArea);
+      });
 
       ctx.fillStyle = '#27402b';
       ctx.font = 'bold 14px Arial';
       ctx.textAlign = 'left';
       ctx.fillText('Évolution des capteurs', left, 16);
+    }
+
+    function bindChartToggles() {
+      Object.values(CHART_SERIES).forEach(series => {
+        const checkbox = document.getElementById(series.checkboxId);
+        if (checkbox) {
+          checkbox.addEventListener('change', drawClimateChart);
+        }
+      });
     }
 
     async function fetchWeather() {
@@ -1421,6 +1581,7 @@
     });
 
     updateDateBadge();
+    bindChartToggles();
     fetchData();
     fetchWeather();
     drawClimateChart();
