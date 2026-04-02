@@ -261,28 +261,6 @@
       font-style: italic;
     }
 
-    .refresh-btn {
-      border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      color: white;
-      font-weight: bold;
-      border-radius: 999px;
-      padding: 12px 18px;
-      cursor: pointer;
-      box-shadow: 0 8px 18px rgba(79,138,91,0.20);
-      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-    }
-
-    .refresh-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 22px rgba(79,138,91,0.25);
-    }
-
-    .refresh-btn:active {
-      transform: translateY(0);
-      opacity: .92;
-    }
-
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
@@ -347,17 +325,33 @@
       backdrop-filter: blur(5px);
     }
 
+    .history-card {
+      background: rgba(247,252,247,0.95);
+      border: 1px solid #d4e7d7;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .history-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
     .history-title {
       color: var(--accent-dark);
       font-size: 1.25rem;
       font-weight: bold;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .history-subtitle {
       color: var(--muted);
       font-size: 0.95rem;
-      margin-bottom: 14px;
+      margin-bottom: 0;
     }
 
     .chart-controls {
@@ -395,18 +389,34 @@
       box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
     }
 
-    .history-card {
-      background: rgba(247,252,247,0.95);
-      border: 1px solid #d4e7d7;
-      border-radius: 18px;
-      padding: 14px;
-    }
-
     #climateChart {
       width: 100%;
       height: 360px;
       display: block;
       border-radius: 12px;
+    }
+
+    .refresh-btn {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: white;
+      font-weight: bold;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(79,138,91,0.20);
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .refresh-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(79,138,91,0.24);
+    }
+
+    .refresh-btn:active {
+      transform: translateY(0);
+      opacity: .92;
     }
 
     .weather-section {
@@ -720,6 +730,11 @@
       .tomato-highlight {
         border-radius: 18px;
       }
+
+      .history-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
@@ -792,8 +807,6 @@
                 <div class="sensor-status-label" id="sensorLabel">En attente du DHT22…</div>
                 <div class="sensor-status-time" id="sensorTime">--</div>
               </div>
-
-              <button class="refresh-btn" onclick="manualRefresh()">Actualiser maintenant</button>
             </div>
 
             <div class="grid-container" id="dataGrid">
@@ -820,36 +833,41 @@
             </div>
 
             <div class="history-section">
-              <div class="history-title">Historique des mesures</div>
-              <div class="history-subtitle">Sélectionnez les variables à afficher sur le graphique.</div>
-
-              <div class="chart-controls">
-                <label class="chart-toggle">
-                  <input type="checkbox" id="toggleTemperature" checked>
-                  <span class="toggle-dot" style="background:#2f7d32;"></span>
-                  Température
-                </label>
-
-                <label class="chart-toggle">
-                  <input type="checkbox" id="toggleAirHumidity" checked>
-                  <span class="toggle-dot" style="background:#1d4ed8;"></span>
-                  Humidité air
-                </label>
-
-                <label class="chart-toggle">
-                  <input type="checkbox" id="toggleSoilHumidity" checked>
-                  <span class="toggle-dot" style="background:#a16207;"></span>
-                  Humidité sol
-                </label>
-
-                <label class="chart-toggle">
-                  <input type="checkbox" id="toggleLuminosity" checked>
-                  <span class="toggle-dot" style="background:#c026d3;"></span>
-                  Luminosité
-                </label>
-              </div>
-
               <div class="history-card">
+                <div class="history-top">
+                  <div>
+                    <div class="history-title">Historique des mesures</div>
+                    <div class="history-subtitle">Coche les variables à afficher. Le bouton remet uniquement le graphique à zéro.</div>
+                  </div>
+                  <button class="refresh-btn" onclick="resetChartHistory()">Actualiser maintenant</button>
+                </div>
+
+                <div class="chart-controls">
+                  <label class="chart-toggle">
+                    <input type="checkbox" id="toggleTemperature" checked>
+                    <span class="toggle-dot" style="background:#2f7d32;"></span>
+                    Température
+                  </label>
+
+                  <label class="chart-toggle">
+                    <input type="checkbox" id="toggleAirHumidity" checked>
+                    <span class="toggle-dot" style="background:#1d4ed8;"></span>
+                    Humidité air
+                  </label>
+
+                  <label class="chart-toggle">
+                    <input type="checkbox" id="toggleSoilHumidity" checked>
+                    <span class="toggle-dot" style="background:#a16207;"></span>
+                    Humidité sol
+                  </label>
+
+                  <label class="chart-toggle">
+                    <input type="checkbox" id="toggleLuminosity" checked>
+                    <span class="toggle-dot" style="background:#c026d3;"></span>
+                    Luminosité
+                  </label>
+                </div>
+
                 <canvas id="climateChart" width="980" height="360"></canvas>
               </div>
             </div>
@@ -878,6 +896,7 @@
                 <div class="weather-desc" id="weatherWindDir">--</div>
               </div>
             </div>
+
             <div class="forecast-section">
               <h4 class="forecast-title">📅 Prévisions du jour</h4>
               <div class="forecast-grid" id="weatherForecast"></div>
@@ -912,11 +931,13 @@
             <p>Le plus important dans une serre à tomates est la stabilité. Une plante supporte souvent mieux une légère imperfection régulière qu'une succession de changements brusques dans la journée.</p>
             <p>Un bon suivi permet d'agir avant que le stress ne s'installe. Température, humidité, arrosage et lumière doivent être surveillés ensemble, car ils influencent tous la vigueur de la plante.</p>
           </div>
+
           <div class="tomato-card">
             <h3>Conseils champs de tomates</h3>
             <p>Un plant de tomate en bonne santé se reconnaît à sa vigueur, à des feuilles équilibrées, à une floraison régulière et à une croissance homogène. Dès que la plante montre un flétrissement, un jaunissement, une chute des fleurs ou un ralentissement inhabituel, il faut vérifier les conditions de culture.</p>
             <p>La culture de tomate réagit vite aux excès comme aux manques. L'objectif n'est pas seulement d'éviter le pire, mais de maintenir une ambiance favorable sur la durée.</p>
           </div>
+
           <div class="tomato-card">
             <h3>Conseils pratiques</h3>
             <p>Observez les plants chaque jour, surtout en période chaude ou très humide. Un contrôle visuel régulier complète très bien les mesures des capteurs.</p>
@@ -930,12 +951,12 @@
             <p>La température influence directement la croissance, la floraison et la qualité des fruits. Une ambiance trop froide ou trop chaude fatigue rapidement les tomates et peut perturber leur développement.</p>
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
-              <p><strong>Trop froid :</strong> la croissance ralentit, la plante devient moins active, la nouaison peut être perturbée et des dégâts de froid peuvent apparaître si la situation dure.</p>
-              <p><strong>Trop chaud :</strong> le stress thermique augmente, la transpiration devient forte, le pollen devient moins viable et la qualité des fruits peut baisser.</p>
+              <p><strong>Trop froid :</strong> la croissance ralentit, la nouaison peut être perturbée et des dégâts de froid peuvent apparaître si la situation dure.</p>
+              <p><strong>Trop chaud :</strong> le stress thermique augmente, le pollen devient moins viable et la qualité des fruits peut baisser.</p>
             </div>
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
-              <p>Garder une ambiance la plus stable possible. Chauffer si la température devient trop basse, et en cas de chaleur excessive ventiler, ombrer et surveiller l'arrosage pour éviter que la plante ne s'épuise.</p>
+              <p>Garder une ambiance la plus stable possible. Chauffer si la température devient trop basse, et en cas de chaleur excessive ventiler, ombrer et surveiller l'arrosage.</p>
             </div>
           </div>
 
@@ -945,11 +966,11 @@
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
               <p><strong>Air trop sec :</strong> la plante perd beaucoup d'eau, peut flétrir si l'arrosage ne suit pas, et les bords des feuilles peuvent se dessécher.</p>
-              <p><strong>Air trop humide :</strong> la condensation augmente, le risque de maladies comme le botrytis ou l'oïdium devient plus fort, et la pollinisation peut être moins efficace.</p>
+              <p><strong>Air trop humide :</strong> la condensation augmente et le risque de maladies devient plus fort.</p>
             </div>
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
-              <p>Assurer une bonne circulation d'air dans la serre. Si l'air est trop humide, ventiler davantage. Si l'air est trop sec, surveiller plus finement les besoins en eau et éviter que la plante ne manque d'arrosage pendant les heures chaudes.</p>
+              <p>Assurer une bonne circulation d'air dans la serre. Si l'air est trop humide, ventiler davantage. Si l'air est trop sec, surveiller plus finement les besoins en eau.</p>
             </div>
           </div>
 
@@ -958,26 +979,26 @@
             <p>L'eau disponible dans le sol conditionne directement la vigueur des racines, la croissance du plant et la régularité de la production. Les tomates supportent mal les alternances brutales entre sol trop sec et sol détrempé.</p>
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
-              <p><strong>Sol trop sec :</strong> stress de la plante, croissance ralentie, fleurs qui peuvent avorter et plus grand risque de déséquilibres sur les fruits, notamment en cas d'arrosage irrégulier.</p>
-              <p><strong>Sol trop humide :</strong> les racines manquent d'oxygène, fonctionnent moins bien, la plante peut jaunir et le risque de maladies racinaires augmente.</p>
+              <p><strong>Sol trop sec :</strong> stress de la plante, croissance ralentie et fleurs qui peuvent avorter.</p>
+              <p><strong>Sol trop humide :</strong> les racines manquent d'oxygène et le risque de maladies racinaires augmente.</p>
             </div>
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
-              <p>Maintenir un arrosage régulier et éviter les excès. Si le sol est trop sec, arroser sans attendre trop longtemps. S'il est trop humide, réduire les apports d'eau et améliorer le drainage pour redonner de l'air aux racines.</p>
+              <p>Maintenir un arrosage régulier et éviter les excès. Si le sol est trop sec, arroser. S'il est trop humide, réduire les apports d'eau et améliorer le drainage.</p>
             </div>
           </div>
 
           <div class="tomato-card">
             <h3>Luminosité</h3>
-            <p>La lumière permet à la tomate de produire son énergie. Si elle est insuffisante, la plante s'étiole. Si elle est trop agressive, surtout avec de la chaleur, elle augmente fortement la demande en eau et le niveau de stress.</p>
+            <p>La lumière permet à la tomate de produire son énergie. Si elle est insuffisante, la plante s'étiole. Si elle est trop agressive, elle augmente la demande en eau et le stress.</p>
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
-              <p><strong>Pas assez de lumière :</strong> photosynthèse limitée, plants qui filent, croissance moins compacte, floraison plus faible et maturation plus lente.</p>
-              <p><strong>Trop de lumière :</strong> stress lumineux souvent associé à un stress thermique, feuilles qui peuvent s'enrouler ou se marquer, et demande en eau plus élevée.</p>
+              <p><strong>Pas assez de lumière :</strong> photosynthèse limitée, croissance moins compacte et maturation plus lente.</p>
+              <p><strong>Trop de lumière :</strong> stress lumineux souvent associé à un stress thermique.</p>
             </div>
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
-              <p>Apporter un complément lumineux quand la luminosité devient trop faible. En cas d'excès, limiter l'exposition directe par ombrage si besoin et surveiller en même temps la température et l'eau disponible pour la plante.</p>
+              <p>Apporter un complément lumineux quand la luminosité devient trop faible. En cas d'excès, limiter l'exposition directe par ombrage si besoin.</p>
             </div>
           </div>
         </div>
@@ -985,10 +1006,10 @@
         <div class="tomato-highlight tomato-practice">
           <h3>Bonnes pratiques à retenir</h3>
           <ul class="tomato-list">
-            <li>Observer les feuilles, les fleurs et les fruits chaque jour pour détecter rapidement un déséquilibre.</li>
-            <li>Réagir tôt, avec des corrections progressives, plutôt que d'attendre une dégradation importante.</li>
+            <li>Observer les feuilles, les fleurs et les fruits chaque jour.</li>
+            <li>Réagir tôt, avec des corrections progressives.</li>
             <li>Éviter les changements brusques de température ou d'arrosage.</li>
-            <li>Maintenir une bonne ventilation pour limiter l'excès d'humidité stagnante.</li>
+            <li>Maintenir une bonne ventilation.</li>
             <li>Compléter les capteurs par une observation visuelle réelle des plants.</li>
           </ul>
         </div>
@@ -1143,51 +1164,56 @@
       const direction = isTooLow ? "trop bas" : (isTooHigh ? "trop haut" : "hors limites");
 
       let advMeaning, advRisks, advActions;
+
       switch (sensorKey) {
         case "temperature":
           if (isTooLow) {
-            advMeaning = "Température trop basse (sous seuil critique).";
-            advRisks = "Ralentissement de croissance, mauvaise nouaison, risques de dégâts de froid si prolongé.";
+            advMeaning = "Température trop basse.";
+            advRisks = "Ralentissement de croissance et dégâts possibles liés au froid.";
             advActions = "Activer la résistance chauffante.";
           } else {
-            advMeaning = "Température trop haute (au-dessus seuil critique).";
-            advRisks = "Stress thermique, baisse de nouaison, fruits de moins bonne qualité, transpiration forte.";
-            advActions = "Activer la ventilation, ombrer, surveiller arrosage.";
+            advMeaning = "Température trop haute.";
+            advRisks = "Stress thermique et baisse de qualité des fruits.";
+            advActions = "Ventiler et surveiller l'arrosage.";
           }
           break;
+
         case "airHumidity":
           if (isTooLow) {
-            advMeaning = "Humidité de l'air trop basse (sous seuil critique).";
-            advRisks = "Stress hydrique, flétrissement, bords de feuilles secs.";
-            advActions = "Surveiller arrosage et évaporation.";
+            advMeaning = "Humidité de l'air trop basse.";
+            advRisks = "Stress hydrique et dessèchement.";
+            advActions = "Surveiller l'arrosage et l'ambiance de la serre.";
           } else {
-            advMeaning = "Humidité de l'air trop haute (au-dessus seuil critique).";
-            advRisks = "Condensation, hausse du risque de maladies, pollinisation moins efficace.";
+            advMeaning = "Humidité de l'air trop haute.";
+            advRisks = "Condensation et hausse du risque de maladies.";
             advActions = "Activer la ventilation.";
           }
           break;
+
         case "soilHumidity":
           if (isTooLow) {
-            advMeaning = "Humidité du sol trop basse (sous seuil critique).";
-            advRisks = "Stress hydrique, croissance ralentie, fleurs qui avortent.";
-            advActions = "Activer la pompe/arrosage.";
+            advMeaning = "Humidité du sol trop basse.";
+            advRisks = "Stress hydrique et croissance ralentie.";
+            advActions = "Activer la pompe ou arroser.";
           } else {
-            advMeaning = "Humidité du sol trop haute (au-dessus seuil critique).";
-            advRisks = "Asphyxie racinaire, jaunissement, maladies racinaires.";
-            advActions = "Réduire arrosage, améliorer drainage.";
+            advMeaning = "Humidité du sol trop haute.";
+            advRisks = "Asphyxie racinaire et maladies.";
+            advActions = "Réduire l'arrosage et améliorer le drainage.";
           }
           break;
+
         case "luminosity":
           if (isTooLow) {
-            advMeaning = "Luminosité trop basse (sous seuil critique).";
-            advRisks = "Photosynthèse limitée, production faible, maturation lente.";
-            advActions = "Allumer LED.";
+            advMeaning = "Luminosité trop faible.";
+            advRisks = "Photosynthèse limitée et croissance plus lente.";
+            advActions = "Allumer un complément lumineux.";
           } else {
-            advMeaning = "Luminosité trop haute (au-dessus seuil critique).";
-            advRisks = "Stress lumineux et thermique, feuilles brûlées.";
-            advActions = "Ombrer, surveiller température/arrosage.";
+            advMeaning = "Luminosité trop forte.";
+            advRisks = "Stress lumineux et thermique.";
+            advActions = "Ombrer si nécessaire et surveiller la température.";
           }
           break;
+
         default:
           advMeaning = "Seuil critique dépassé.";
           advRisks = "Vérifier capteur et configuration.";
@@ -1241,6 +1267,15 @@
         historySoilHumidity.shift();
         historyLuminosity.shift();
       }
+    }
+
+    function resetChartHistory() {
+      historyTime.length = 0;
+      historyTemperature.length = 0;
+      historyAirHumidity.length = 0;
+      historySoilHumidity.length = 0;
+      historyLuminosity.length = 0;
+      drawClimateChart();
     }
 
     function getVisibleSeries() {
@@ -1310,14 +1345,14 @@
       if (historyTime.length < 2) {
         ctx.fillStyle = '#6b7a6c';
         ctx.font = '14px Arial';
-        ctx.fillText('En attente de plusieurs mesures pour afficher les courbes...', 20, 30);
+        ctx.fillText('Graphique remis à zéro ou en attente de nouvelles mesures...', 20, 30);
         return;
       }
 
       if (visibleSeries.length === 0) {
         ctx.fillStyle = '#6b7a6c';
         ctx.font = '14px Arial';
-        ctx.fillText('Cochez au moins une variable pour afficher le graphique.', 20, 30);
+        ctx.fillText('Coche au moins une variable pour afficher le graphique.', 20, 30);
         return;
       }
 
