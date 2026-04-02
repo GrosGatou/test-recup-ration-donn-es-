@@ -1801,39 +1801,39 @@
   </footer>
 
   <script>
-    function showTab(tabId) {
-      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      const target = document.getElementById(tabId);
-      if (target) target.classList.add('active');
+  function showTab(tabId) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(tabId);
+    if (target) target.classList.add('active');
 
-      document.querySelectorAll('nav a').forEach(link => {
-        link.classList.remove('active');
-        const text = link.textContent.trim();
-        if (tabId === 'menu' && text === 'Menu principal') link.classList.add('active');
-        if (tabId === 'suivi' && text === 'Suivi des données') link.classList.add('active');
-        if (tabId === 'tomates' && text === 'Cultiver des tomates') link.classList.add('active');
-      });
+    document.querySelectorAll('nav a').forEach(link => {
+      link.classList.remove('active');
+      const text = link.textContent.trim();
+      if (tabId === 'menu' && text === 'Menu principal') link.classList.add('active');
+      if (tabId === 'suivi' && text === 'Suivi des données') link.classList.add('active');
+      if (tabId === 'tomates' && text === 'Cultiver des tomates') link.classList.add('active');
+    });
 
-      if (tabId === 'suivi') {
-        setTimeout(drawClimateChart, 50);
-      }
+    if (tabId === 'suivi') {
+      setTimeout(drawClimateChart, 50);
     }
+  }
 
-    const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
+  const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
 
-    const THRESHOLDS = {
-      temperature:  { target:, acceptable:, critLow: 16, critHigh: 28 },[1][2]
-      airHumidity:  { target:, acceptable:, critLow: 50, critHigh: 85 },[3][4][5][6]
-      soilHumidity: { target:, acceptable:, critLow: 55, critHigh: 85 },[6][7][8][3]
-      luminosity:   { target:, acceptable:, critLow: 40, critHigh: 90 }[9][10][11][3]
-    };
+  const THRESHOLDS = {
+    temperature:  { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
+    airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
+    soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
+    luminosity:   { target: [60, 80], acceptable: [40, 90], critLow: 40, critHigh: 90 }
+  };
 
-    const SENSOR_UI = {
-      temperature:  { boxId: "temperatureBox",  valueId: "temperature",  unit: " °C", label: "Température" },
-      airHumidity:  { boxId: "airHumidityBox",  valueId: "airHumidity",  unit: " %",  label: "Humidité de l'air" },
-      soilHumidity: { boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %",  label: "Humidité du sol" },
-      luminosity:   { boxId: "luminosityBox",   valueId: "luminosity",   unit: " %",  label: "Luminosité" }
-    };
+  const SENSOR_UI = {
+    temperature:  { boxId: "temperatureBox",  valueId: "temperature",  unit: " °C", label: "Température" },
+    airHumidity:  { boxId: "airHumidityBox",  valueId: "airHumidity",  unit: " %",  label: "Humidité de l'air" },
+    soilHumidity: { boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %",  label: "Humidité du sol" },
+    luminosity:   { boxId: "luminosityBox",   valueId: "luminosity",   unit: " %",  label: "Luminosité" }
+  };
 
     const WEATHER_API_KEY  = '6ccbda539bcbb73fe70461c935ab77e1';
     const WEATHER_API_URL  = `https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
