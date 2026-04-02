@@ -4,620 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GreenOps - Projet ESP32</title>
-  <style>
-    :root{
-      --bg: #edf7ee;
-      --bg-soft: #e4f2e6;
-      --surface: rgba(255,255,255,0.72);
-      --surface-strong: rgba(255,255,255,0.9);
-      --surface-green: #dcefe0;
-      --surface-green-2: #cfe8d2;
-      --header: #b7e4c7;
-      --nav: #7fbf90;
-      --nav-hover: #5f9f70;
-      --text: #243224;
-      --muted: #617062;
-      --accent: #4f8a5b;
-      --accent-dark: #2f5d38;
-      --line: #c9dccd;
-      --shadow-sm: 0 4px 12px rgba(48, 78, 56, 0.06);
-      --shadow-md: 0 10px 28px rgba(48, 78, 56, 0.10);
 
-      --ok-bg: #eaf7ee;
-      --ok-border: #2e9e57;
-      --ok-text: #1f7a3a;
-
-      --warn-bg: #fff4e5;
-      --warn-border: #f59e0b;
-      --warn-text: #b45309;
-
-      --crit-bg: #ffe7e7;
-      --crit-border: #e11d48;
-      --crit-text: #b91c1c;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      background:
-        radial-gradient(circle at top left, rgba(183,228,199,.28), transparent 26%),
-        radial-gradient(circle at bottom right, rgba(127,191,144,.14), transparent 24%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
-      color: var(--text);
-      font-family: Arial, sans-serif;
-    }
-
-    body { min-height: 100vh; }
-
-    header {
-      background: linear-gradient(135deg, var(--header), #d8f3dc);
-      color: var(--accent-dark);
-      padding: 20px 24px;
-      text-align: center;
-      border-bottom: 1px solid #a9d7b0;
-      box-shadow: 0 4px 18px rgba(79,138,91,.08);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-      letter-spacing: -0.02em;
-    }
-
-    nav {
-      background: rgba(127,191,144,0.96);
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      padding: 12px 18px;
-      flex-wrap: wrap;
-      box-shadow: 0 4px 12px rgba(79,138,91,.10);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(10px);
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-      padding: 10px 16px;
-      border-radius: 999px;
-      transition: background-color 0.25s, transform 0.2s;
-    }
-
-    nav a:hover,
-    nav a.active {
-      background-color: var(--nav-hover);
-      transform: translateY(-1px);
-    }
-
-    section {
-      width: 100%;
-      max-width: none;
-      margin: 0;
-      background: transparent;
-      padding: 28px 34px 34px 34px;
-      border-radius: 0;
-      box-shadow: none;
-      border: none;
-      display: none;
-    }
-
-    section.active { display: block; }
-
-    .content-wrap {
-      width: 100%;
-      max-width: 1320px;
-      margin: 0 auto;
-    }
-
-    #menuSubtitle {
-      font-size: 1em;
-      font-style: italic;
-      color: var(--accent-dark);
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    #logoContainer {
-      text-align: center;
-      margin-bottom: 26px;
-    }
-
-    #logoContainer img {
-      max-width: 220px;
-      height: auto;
-    }
-
-    #presentationText {
-      white-space: pre-line;
-      line-height: 1.65em;
-      font-size: 1.05em;
-      color: #334133;
-      padding: 0 8px;
-    }
-
-    .main-highlight {
-      font-weight: bold;
-      font-size: 1.35em;
-      margin-bottom: 15px;
-      color: var(--accent-dark);
-    }
-
-    .bold-subtitle {
-      font-weight: bold;
-      margin-top: 15px;
-      margin-bottom: 8px;
-      color: var(--accent);
-    }
-
-    .menu-block {
-      background: rgba(255,255,255,0.56);
-      border: 1px solid rgba(79,138,91,0.10);
-      border-radius: 24px;
-      padding: 26px;
-      box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(6px);
-    }
-
-    .suivi-layout {
-      display: grid;
-      grid-template-columns: 1.45fr 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    .sensors-section,
-    .weather-section {
-      background: linear-gradient(135deg, var(--surface-green), var(--surface-green-2));
-      border-radius: 24px;
-      padding: 26px 26px 30px 26px;
-      border: 1px solid rgba(79,138,91,0.14);
-      box-shadow: var(--shadow-md);
-      position: relative;
-    }
-
-    .sensors-title,
-    .weather-title {
-      text-align: center;
-      color: var(--accent-dark);
-      font-size: 1.75em;
-      font-weight: bold;
-      margin-bottom: 18px;
-      letter-spacing: -0.01em;
-    }
-
-    .date-badge {
-      position: absolute;
-      top: 18px;
-      right: 20px;
-      background: rgba(255,255,255,0.88);
-      color: var(--accent-dark);
-      border-radius: 12px;
-      padding: 8px 13px;
-      border: 1px solid #a8cdb1;
-      font-size: 0.9em;
-      display: inline-flex;
-      flex-direction: column;
-      align-items: flex-end;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .date-badge-main { font-weight: bold; }
-    .date-badge-day { font-size: 0.8em; opacity: 0.85; }
-
-    .sensor-toolbar {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    .sensor-connection-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.88);
-      border: 1px solid #bed9c4;
-      box-shadow: var(--shadow-sm);
-      flex: 1 1 520px;
-    }
-
-    .sensor-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #9ca3af;
-      flex-shrink: 0;
-      transition: background 0.3s, box-shadow 0.3s;
-    }
-
-    .sensor-dot.ok {
-      background: #22c55e;
-      box-shadow: 0 0 10px rgba(34,197,94,0.6);
-      animation: dotPulse 1.8s infinite;
-    }
-
-    .sensor-dot.error {
-      background: #e11d48;
-      box-shadow: 0 0 10px rgba(225,29,72,0.35);
-    }
-
-    .sensor-status-label {
-      font-size: 0.96em;
-      font-weight: 600;
-      color: var(--accent-dark);
-    }
-
-    .sensor-status-label strong { color: var(--accent); }
-
-    .sensor-status-time {
-      margin-left: auto;
-      font-size: 0.82em;
-      color: #6f7c70;
-      font-style: italic;
-    }
-
-    .grid-container,
-    .weather-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      align-items: stretch;
-    }
-
-    .data-box,
-    .weather-box {
-      background: rgba(255,255,255,0.90);
-      border-radius: 18px;
-      box-shadow: var(--shadow-sm);
-      min-height: 220px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .data-box {
-      border: 2px solid #aad0b3;
-      padding: 22px 18px 18px 18px;
-      text-align: center;
-      transition: transform 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .weather-box {
-      border: 1px solid rgba(79,138,91,0.12);
-      padding: 24px 20px;
-      text-align: center;
-      transition: all 0.3s ease;
-      justify-content: center;
-    }
-
-    .data-box:hover,
-    .weather-box:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 22px rgba(79,138,91,0.14);
-    }
-
-    .data-label,
-    .weather-label {
-      font-size: 1em;
-      margin-bottom: 10px;
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    .data-value,
-    .weather-value {
-      font-size: 2.2em;
-      font-weight: bold;
-      color: var(--accent-dark);
-      margin-bottom: 8px;
-    }
-
-    .weather-icon {
-      font-size: 3em;
-      margin-bottom: 12px;
-    }
-
-    .weather-desc {
-      font-size: 0.95em;
-      color: #677467;
-      font-style: italic;
-      min-height: 20px;
-    }
-
-    .data-box.ok { background: var(--ok-bg); border-color: var(--ok-border); }
-    .data-box.ok .data-value { color: var(--ok-text); }
-
-    .data-box.warn { background: var(--warn-bg); border-color: var(--warn-border); }
-    .data-box.warn .data-value { color: var(--warn-text); }
-
-    .data-box.crit { background: var(--crit-bg); border-color: var(--crit-border); }
-    .data-box.crit .data-value { color: var(--crit-text); }
-
-    .data-box.clickable { cursor: pointer; }
-    .data-box:not(.clickable) { cursor: default; }
-
-    .sensor-range {
-      margin-top: 12px;
-    }
-
-    .range-labels {
-      position: relative;
-      height: 18px;
-      margin-bottom: 4px;
-    }
-
-    .range-mark {
-      position: absolute;
-      top: 0;
-      transform: translateX(-50%);
-      font-size: 0.78rem;
-      font-weight: 700;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .range-mark.tolerable { color: #f59e0b; }
-    .range-mark.good { color: #22c55e; }
-
-    .range-track {
-      position: relative;
-      height: 6px;
-      background: #6b7280;
-      border-radius: 999px;
-      margin-bottom: 8px;
-      overflow: hidden;
-    }
-
-    .range-zone {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      border-radius: 999px;
-    }
-
-    .range-zone.tolerable { background: #f59e0b; }
-    .range-zone.good { background: #22c55e; }
-
-    .range-ends {
-      display: flex;
-      justify-content: space-between;
-      color: #7b8794;
-      font-size: 0.78rem;
-      margin-top: 2px;
-    }
-
-    .history-section {
-      margin-top: 24px;
-      background: rgba(255,255,255,0.78);
-      border: 1px solid rgba(79,138,91,0.12);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(5px);
-    }
-
-    .history-card {
-      background: rgba(247,252,247,0.95);
-      border: 1px solid #d4e7d7;
-      border-radius: 18px;
-      padding: 14px;
-    }
-
-    .history-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-
-    .history-title {
-      color: var(--accent-dark);
-      font-size: 1.25rem;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .history-subtitle {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-bottom: 0;
-    }
-
-    .chart-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      margin-bottom: 14px;
-      padding-bottom: 4px;
-    }
-
-    .chart-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #f0f7f1;
-      border: 1px solid #d7e6da;
-      border-radius: 999px;
-      padding: 8px 12px;
-      cursor: pointer;
-      color: var(--accent-dark);
-      font-size: 0.92rem;
-      font-weight: 600;
-      user-select: none;
-      white-space: nowrap;
-      flex: 0 0 auto;
-    }
-
-    .chart-toggle input {
-      cursor: pointer;
-      accent-color: var(--accent);
-    }
-
-    .toggle-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
-    }
-
-    #climateChart {
-      width: 100%;
-      height: 360px;
-      display: block;
-      border-radius: 12px;
-    }
-
-    .refresh-btn {
-      border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-      color: white;
-      font-weight: bold;
-      border-radius: 999px;
-      padding: 10px 16px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(79,138,91,0.20);
-      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-      white-space: nowrap;
-    }
-
-    .refresh-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(79,138,91,0.24);
-    }
-
-    .forecast-section {
-      background: rgba(255,255,255,0.70);
-      border-radius: 18px;
-      padding: 25px;
-      border: 1px solid rgba(79,138,91,0.10);
-      margin-top: 22px;
-    }
-
-    .forecast-title {
-      text-align: center;
-      color: var(--accent-dark);
-      font-size: 1.3em;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-
-    .forecast-grid {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .forecast-item {
-      background: white;
-      padding: 18px 12px;
-      border-radius: 12px;
-      text-align: center;
-      min-width: 78px;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.2s;
-      border: 1px solid #d6e9da;
-    }
-
-    .forecast-item:hover { transform: scale(1.05); }
-
-    .forecast-icon { font-size: 2.2em; margin-bottom: 8px; }
-    .forecast-temp { font-weight: bold; font-size: 1.4em; color: var(--accent-dark); margin-bottom: 4px; }
-    .forecast-hour { font-size: 0.85em; color: #687668; }
-    .weather-timestamp { text-align: center; margin-top: 25px; font-size: 0.95em; color: #667366; font-style: italic; }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(36,55,40,0.40);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    .modal {
-      width: min(720px, 92vw);
-      background: white;
-      border-radius: 16px;
-      padding: 18px 18px 12px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.22);
-      border: 1px solid #dce9de;
-    }
-
-    .advice-block {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #f6faf6;
-      border: 1px solid #e0ece2;
-    }
-
-    .advice-h {
-      font-weight: 700;
-      color: var(--accent-dark);
-      margin-bottom: 6px;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .modal-actions button {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #cfd9d1;
-      background: #fff;
-      cursor: pointer;
-    }
-
-    .tomato-section {
-      background: transparent;
-      padding: 0;
-      border-radius: 0;
-    }
-
-    .tomato-hero {
-      background: linear-gradient(135deg, #e8f7ec, #f4fbf5);
-      border: 1px solid rgba(46,158,87,0.16);
-      border-radius: 24px;
-      padding: 25px;
-      margin-bottom: 25px;
-      position: relative;
-      box-shadowOui — voici le **`index.html` complet** avec tes dernières modifs intégrées :  
-- les **4 cases capteurs** bien alignées,  
-- les **4 cases météo** bien alignées aussi,  
-- les **cases météo avec le même fond que les cases de suivi des données**,  
-- les **intervalles remplacés par des barres visuelles colorées**,  
-- et les **4 checkbox du graphique sur une seule ligne** pour que ce soit cohérent. [cite:20]
-
-```html
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GreenOps - Projet ESP32</title>
   <style>
     :root{
       --bg: #edf7ee;
@@ -895,16 +282,39 @@
     .data-box,
     .weather-box {
       background: rgba(255,255,255,0.86);
-      border: 2px solid #aad0b3;
       border-radius: 18px;
-      padding: 22px 18px 18px 18px;
-      text-align: center;
       box-shadow: var(--shadow-sm);
       transition: transform 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .data-box {
+      border: 2px solid #aad0b3;
+      padding: 22px 18px 18px 18px;
+      text-align: center;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .data-box > div:first-child {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .weather-box {
+      border: 1px solid rgba(79,138,91,0.12);
+      padding: 24px 20px;
+      text-align: center;
       min-height: 220px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
     }
 
     .data-box:hover,
@@ -919,14 +329,19 @@
       margin-bottom: 10px;
       color: var(--accent);
       font-weight: 700;
+      text-align: center;
+      width: 100%;
     }
 
     .data-value,
     .weather-value {
-      font-size: 2.2em;
+      font-size: 2.35em;
       font-weight: bold;
       color: var(--accent-dark);
-      margin-bottom: 8px;
+      margin-bottom: 0;
+      line-height: 1.1;
+      text-align: center;
+      width: 100%;
     }
 
     .weather-icon {
@@ -954,13 +369,15 @@
     .data-box:not(.clickable) { cursor: default; }
 
     .sensor-range {
-      margin-top: 12px;
+      width: min(100%, 280px);
+      margin-top: 2px;
     }
 
     .range-labels {
       position: relative;
       height: 18px;
       margin-bottom: 4px;
+      width: 100%;
     }
 
     .range-mark {
@@ -973,13 +390,8 @@
       white-space: nowrap;
     }
 
-    .range-mark.tolerable {
-      color: #f59e0b;
-    }
-
-    .range-mark.good {
-      color: #22c55e;
-    }
+    .range-mark.tolerable { color: #f59e0b; }
+    .range-mark.good { color: #22c55e; }
 
     .range-track {
       position: relative;
@@ -988,6 +400,7 @@
       border-radius: 999px;
       overflow: hidden;
       margin-bottom: 8px;
+      width: 100%;
     }
 
     .range-zone {
@@ -997,13 +410,8 @@
       border-radius: 999px;
     }
 
-    .range-zone.tolerable {
-      background: #f59e0b;
-    }
-
-    .range-zone.good {
-      background: #22c55e;
-    }
+    .range-zone.tolerable { background: #f59e0b; }
+    .range-zone.good { background: #22c55e; }
 
     .range-ends {
       display: flex;
@@ -1011,6 +419,7 @@
       color: #7b8794;
       font-size: 0.78rem;
       margin-top: 2px;
+      width: 100%;
     }
 
     .history-section {
@@ -1305,11 +714,28 @@
       line-height: 1.5em;
     }
 
-    .tomato-mini-box h4 { margin: 0 0 8px 0; font-size: 1em; }
-    .tomato-problem { background: #fff4e5; border-left: 5px solid #f59e0b; }
-    .tomato-problem h4 { color: #b45309; }
-    .tomato-action { background: #eaf7ee; border-left: 5px solid #2e9e57; }
-    .tomato-action h4 { color: #1f7a3a; }
+    .tomato-mini-box h4 {
+      margin: 0 0 8px 0;
+      font-size: 1em;
+    }
+
+    .tomato-problem {
+      background: #fff4e5;
+      border-left: 5px solid #f59e0b;
+    }
+
+    .tomato-problem h4 {
+      color: #b45309;
+    }
+
+    .tomato-action {
+      background: #eaf7ee;
+      border-left: 5px solid #2e9e57;
+    }
+
+    .tomato-action h4 {
+      color: #1f7a3a;
+    }
 
     .tomato-highlight {
       background: rgba(255,255,255,0.78);
@@ -1429,9 +855,11 @@
     <div class="content-wrap">
       <div class="menu-block">
         <div id="menuSubtitle">by Jade Revol &amp; Agathe Monteil</div>
+
         <div id="logoContainer">
           <img src="image/logo.png" alt="logo GreenOps" />
         </div>
+
         <div id="presentationText">
           <div class="main-highlight">GreenOps — Automatisez la surveillance de vos cultures, simplement et durablement.</div>
           Bienvenue sur GreenOps, votre solution d'agriculture intelligente.
@@ -1673,10 +1101,14 @@
             <span class="tomato-date-main" id="tomatoBadgeDate">--/--/----</span>
             <span class="tomato-date-day" id="tomatoBadgeDay">--</span>
           </div>
+
           <div class="tomato-title">Bien-être de votre serre</div>
           <div class="tomato-subtitle">Conseils pour cultiver des tomates dans de bonnes conditions</div>
+
           <div id="presentationText">
-            <div class="main-highlight">Une bonne culture de tomates repose sur l'équilibre entre température, humidité, eau et lumière.</div>
+            <div class="main-highlight">
+              Une bonne culture de tomates repose sur l'équilibre entre température, humidité, eau et lumière.
+            </div>
             Quand un de ces paramètres s'éloigne trop de la zone idéale, la plante ralentit, se fatigue ou devient plus sensible aux maladies.
             Cette page vous aide à comprendre les principaux déséquilibres possibles et les bons réflexes à adopter pour garder une serre saine et productive.
           </div>
@@ -1706,11 +1138,13 @@
           <div class="tomato-card">
             <h3>Température ambiante</h3>
             <p>La température influence directement la croissance, la floraison et la qualité des fruits. Une ambiance trop froide ou trop chaude fatigue rapidement les tomates et peut perturber leur développement.</p>
+
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
               <p><strong>Trop froid :</strong> la croissance ralentit, la nouaison peut être perturbée et des dégâts de froid peuvent apparaître si la situation dure.</p>
               <p><strong>Trop chaud :</strong> le stress thermique augmente, le pollen devient moins viable et la qualité des fruits peut baisser.</p>
             </div>
+
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
               <p>Garder une ambiance la plus stable possible. Chauffer si la température devient trop basse, et en cas de chaleur excessive ventiler, ombrer et surveiller l'arrosage.</p>
@@ -1720,11 +1154,13 @@
           <div class="tomato-card">
             <h3>Humidité de l'air</h3>
             <p>L'humidité de l'air agit sur la transpiration de la plante, la santé du feuillage et la qualité de la pollinisation. Un air trop sec ou trop humide peut vite déséquilibrer la culture.</p>
+
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
               <p><strong>Air trop sec :</strong> la plante perd beaucoup d'eau, peut flétrir si l'arrosage ne suit pas, et les bords des feuilles peuvent se dessécher.</p>
               <p><strong>Air trop humide :</strong> la condensation augmente et le risque de maladies devient plus fort.</p>
             </div>
+
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
               <p>Assurer une bonne circulation d'air dans la serre. Si l'air est trop humide, ventiler davantage. Si l'air est trop sec, surveiller plus finement les besoins en eau.</p>
@@ -1734,11 +1170,13 @@
           <div class="tomato-card">
             <h3>Humidité du sol</h3>
             <p>L'eau disponible dans le sol conditionne directement la vigueur des racines, la croissance du plant et la régularité de la production. Les tomates supportent mal les alternances brutales entre sol trop sec et sol détrempé.</p>
+
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
               <p><strong>Sol trop sec :</strong> stress de la plante, croissance ralentie et fleurs qui peuvent avorter.</p>
               <p><strong>Sol trop humide :</strong> les racines manquent d'oxygène et le risque de maladies racinaires augmente.</p>
             </div>
+
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
               <p>Maintenir un arrosage régulier et éviter les excès. Si le sol est trop sec, arroser. S'il est trop humide, réduire les apports d'eau et améliorer le drainage.</p>
@@ -1748,11 +1186,13 @@
           <div class="tomato-card">
             <h3>Luminosité</h3>
             <p>La lumière permet à la tomate de produire son énergie. Si elle est insuffisante, la plante s'étiole. Si elle est trop agressive, elle augmente la demande en eau et le stress.</p>
+
             <div class="tomato-mini-box tomato-problem">
               <h4>Problèmes possibles</h4>
               <p><strong>Pas assez de lumière :</strong> photosynthèse limitée, croissance moins compacte et maturation plus lente.</p>
               <p><strong>Trop de lumière :</strong> stress lumineux souvent associé à un stress thermique.</p>
             </div>
+
             <div class="tomato-mini-box tomato-action">
               <h4>Bonne réaction</h4>
               <p>Apporter un complément lumineux quand la luminosité devient trop faible. En cas d'excès, limiter l'exposition directe par ombrage si besoin.</p>
@@ -1777,18 +1217,22 @@
   <div id="adviceOverlay" class="overlay" style="display:none;">
     <div class="modal">
       <h3 id="adviceTitle">Conseils</h3>
+
       <div class="advice-block">
         <div class="advice-h">Ce que ça signifie</div>
         <div id="adviceMeaning">--</div>
       </div>
+
       <div class="advice-block">
         <div class="advice-h">Risques</div>
         <div id="adviceRisks">--</div>
       </div>
+
       <div class="advice-block">
         <div class="advice-h">Actions conseillées</div>
         <div id="adviceActions">--</div>
       </div>
+
       <div class="modal-actions">
         <button id="ackBtn">J'ai compris / Accuser réception</button>
         <button id="closeAdviceBtn">Fermer</button>
@@ -1801,39 +1245,39 @@
   </footer>
 
   <script>
-  function showTab(tabId) {
-    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById(tabId);
-    if (target) target.classList.add('active');
+    function showTab(tabId) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
 
-    document.querySelectorAll('nav a').forEach(link => {
-      link.classList.remove('active');
-      const text = link.textContent.trim();
-      if (tabId === 'menu' && text === 'Menu principal') link.classList.add('active');
-      if (tabId === 'suivi' && text === 'Suivi des données') link.classList.add('active');
-      if (tabId === 'tomates' && text === 'Cultiver des tomates') link.classList.add('active');
-    });
+      document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('active');
+        const text = link.textContent.trim();
+        if (tabId === 'menu' && text === 'Menu principal') link.classList.add('active');
+        if (tabId === 'suivi' && text === 'Suivi des données') link.classList.add('active');
+        if (tabId === 'tomates' && text === 'Cultiver des tomates') link.classList.add('active');
+      });
 
-    if (tabId === 'suivi') {
-      setTimeout(drawClimateChart, 50);
+      if (tabId === 'suivi') {
+        setTimeout(drawClimateChart, 50);
+      }
     }
-  }
 
-  const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
+    const API_URL = 'https://qa3lqiwgh4.execute-api.eu-north-1.amazonaws.com/prod';
 
-  const THRESHOLDS = {
-    temperature:  { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
-    airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
-    soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
-    luminosity:   { target: [60, 80], acceptable: [40, 90], critLow: 40, critHigh: 90 }
-  };
+    const THRESHOLDS = {
+      temperature:  { target: [20, 26], acceptable: [16, 28], critLow: 16, critHigh: 28 },
+      airHumidity:  { target: [60, 70], acceptable: [50, 85], critLow: 50, critHigh: 85 },
+      soilHumidity: { target: [60, 75], acceptable: [55, 85], critLow: 55, critHigh: 85 },
+      luminosity:   { target: [60, 80], acceptable: [40, 90], critLow: 40, critHigh: 90 }
+    };
 
-  const SENSOR_UI = {
-    temperature:  { boxId: "temperatureBox",  valueId: "temperature",  unit: " °C", label: "Température" },
-    airHumidity:  { boxId: "airHumidityBox",  valueId: "airHumidity",  unit: " %",  label: "Humidité de l'air" },
-    soilHumidity: { boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %",  label: "Humidité du sol" },
-    luminosity:   { boxId: "luminosityBox",   valueId: "luminosity",   unit: " %",  label: "Luminosité" }
-  };
+    const SENSOR_UI = {
+      temperature:  { boxId: "temperatureBox",  valueId: "temperature",  unit: " °C", label: "Température" },
+      airHumidity:  { boxId: "airHumidityBox",  valueId: "airHumidity",  unit: " %",  label: "Humidité de l'air" },
+      soilHumidity: { boxId: "soilHumidityBox", valueId: "soilHumidity", unit: " %",  label: "Humidité du sol" },
+      luminosity:   { boxId: "luminosityBox",   valueId: "luminosity",   unit: " %",  label: "Luminosité" }
+    };
 
     const WEATHER_API_KEY  = '6ccbda539bcbb73fe70461c935ab77e1';
     const WEATHER_API_URL  = `https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=${WEATHER_API_KEY}&units=metric&lang=fr`;
@@ -2197,7 +1641,7 @@
         document.getElementById('weatherHumidity').textContent = weatherData.main.humidity + ' %';
         document.getElementById('weatherWind').textContent = Math.round(weatherData.wind.speed * 3.6) + ' km/h';
         document.getElementById('weatherFeelsLike').textContent = Math.round(weatherData.main.feels_like) + ' °C';
-        document.getElementById('weatherTempDesc').textContent = weatherData.weather.description;
+        document.getElementById('weatherTempDesc').textContent = weatherData.weather[0].description;
         document.getElementById('weatherWindDir').textContent =
           weatherData.wind.deg != null
             ? `(${['N','NE','E','SE','S','SW','W','NW'][Math.round(weatherData.wind.deg / 45) % 8]})`
@@ -2216,7 +1660,7 @@
         forecastData.list.slice(0, 8).forEach(item => {
           const itemDate = new Date(item.dt * 1000);
           if (itemDate.toDateString() === today) {
-            const icon = WEATHER_ICONS[item.weather.icon] || '🌤️';
+            const icon = WEATHER_ICONS[item.weather[0].icon] || '🌤️';
             const div = document.createElement('div');
             div.className = 'forecast-item';
             div.innerHTML = `<div class="forecast-icon">${icon}</div><div class="forecast-temp">${Math.round(item.main.temp)}°</div><div class="forecast-hour">${itemDate.getHours()}h</div>`;
